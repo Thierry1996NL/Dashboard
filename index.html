@@ -1281,8 +1281,7 @@ function exportCSV() {
   const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
   const lines = [faseRow.map(esc).join(','), colRow.map(esc).join(',')]
     .concat(dataRows.map(row=>row.map(esc).join(',')));
-  const blob = new Blob(['﻿'+lines.join('
-')], {type:'text/csv;charset=utf-8;'});
+  const blob = new Blob(['﻿'+lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
   const date = new Date().toISOString().slice(0,10);
   triggerDownload(blob, 'engineeringsplanning_TPA_'+date+'.csv');
 }
