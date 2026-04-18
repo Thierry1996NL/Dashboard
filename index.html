@@ -446,6 +446,110 @@
   .btn-discard:hover{color:rgba(255,255,255,.9);}
   .changed-cell .badge{outline:2px solid #f0a500 !important;outline-offset:1px;}
 
+
+  /* ══ GITHUB SETTINGS MODAL ══ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 600;
+    display: flex; align-items: center; justify-content: center;
+    padding: 1rem;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: var(--surface);
+    border-radius: 16px;
+    width: 100%; max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+    transform: translateY(8px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: translateY(0); }
+  .modal-header {
+    padding: 1.25rem 1.5rem 1rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .modal-title {
+    font-size: 15px; font-weight: 600; color: var(--text);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .modal-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-faint); font-size: 18px; line-height: 1;
+    transition: color 0.15s; padding: 2px 6px; border-radius: 4px;
+  }
+  .modal-close:hover { color: var(--text); background: var(--surface2); }
+  .modal-body { padding: 1.25rem 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
+  .modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 8px;
+  }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text-muted);
+  }
+  .field-input {
+    padding: 8px 12px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--bg); color: var(--text);
+    outline: none; transition: border-color 0.15s;
+    width: 100%;
+  }
+  .field-input:focus { border-color: var(--text); background: #fff; }
+  .field-input.mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+  .field-hint { font-size: 11px; color: var(--text-faint); }
+  .field-hint a { color: var(--text-muted); }
+  .btn-modal-cancel {
+    padding: 8px 16px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: transparent; color: var(--text-muted); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-modal-cancel:hover { background: var(--surface2); }
+  .btn-modal-save {
+    padding: 8px 18px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    font-weight: 600; border: none; border-radius: 8px;
+    background: var(--text); color: #fff; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-modal-save:hover { background: #333; }
+
+  /* ══ SAVE BAR UPGRADES ══ */
+  .btn-gh-save {
+    background: #238636; color: #fff; border: none;
+    border-radius: 8px; padding: 6px 14px;
+    font-size: 12px; font-weight: 600; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; gap: 5px;
+    transition: background 0.15s;
+  }
+  .btn-gh-save:hover { background: #1a6e2b; }
+  .btn-gh-save:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-gh-settings {
+    background: transparent; color: rgba(255,255,255,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 8px; padding: 6px 10px;
+    font-size: 12px; cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.15s;
+  }
+  .btn-gh-settings:hover { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.85); }
+  .save-status {
+    font-size: 11px; padding: 3px 8px; border-radius: 6px;
+    display: none; align-items: center; gap: 4px;
+  }
+  .save-status.saving { display: flex; color: rgba(255,255,255,0.7); }
+  .save-status.success { display: flex; color: #7ac8a0; }
+  .save-status.error { display: flex; color: #f28b8b; }
+
 </style>
 </head>
 <body>
@@ -911,31 +1015,34 @@ function render() {
   // Body
   html += '<tbody>';
   if (rows.length === 0) {
-    html += `<tr><td colspan="${vcols.length}"><div class="empty-state"><strong>Geen resultaten</strong>Pas de filters aan om werkpakketten te zien.</div></td></tr>`;
+    html += '<tr><td colspan="' + vcols.length + '"><div class="empty-state"><strong>Geen resultaten</strong>Pas de filters aan om werkpakketten te zien.</div></td></tr>';
   } else {
-    rows.forEach(r => {
+    rows.forEach(function(r, ri) {
+      var actualRowIdx = ROWS.indexOf(r);
+      if (actualRowIdx === -1) actualRowIdx = ri;
       html += '<tr>';
-      vcols.forEach(function(c,ci) {
-        const val = r[c.i] || '';
-        const isBase = c.f === '';
-        const fs = FASE_STYLE[c.f];
-        const isFirst = ci===0 || vcols[ci-1].f !== c.f;
-        const bl = isFirst && fs ? `border-left:2px solid ${fs.color}` : '';
-        const cls = isBase ? 'col-base' : (c.i===5 ? 'col-wp' : '');
+      vcols.forEach(function(c, ci) {
+        var val = r[c.i] || '';
+        var isBase = c.f === '';
+        var fs = FASE_STYLE[c.f];
+        var isFirst = ci === 0 || vcols[ci-1].f !== c.f;
+        var bl = isFirst && fs ? 'border-left:2px solid ' + fs.color : '';
+        var cls = isBase ? 'col-base' : (c.i === 5 ? 'col-wp' : '');
 
-        let cell;
-        const bc = badgeCls(val);
+        var bc = badgeCls(val);
+        var cell;
         if (bc) {
-          cell = `<span class="badge ${bc}">${val}</span>`;
-        } else if (c.n.includes('Weken resterend') && val !== '') {
-          const n = parseInt(val);
-          if (!isNaN(n) && Math.abs(n) < 1000) {
-            const wc = n < 0 ? 'wk-over' : n <= 4 ? 'wk-warn' : 'wk-ok';
-            cell = `<span class="${wc}">${n}w</span>`;
-          } else cell = val;
+          cell = '<span class="badge ' + bc + '">' + val + '</span>';
+        } else if (c.n.indexOf('Weken resterend') !== -1 && val !== '') {
+          var wn = parseInt(val);
+          if (!isNaN(wn) && Math.abs(wn) < 1000) {
+            var wc = wn < 0 ? 'wk-over' : wn <= 4 ? 'wk-warn' : 'wk-ok';
+            cell = '<span class="' + wc + '">' + wn + 'w</span>';
+          } else { cell = val; }
         } else {
           cell = val;
         }
+
         var isStatus = bc !== '';
         var chKey = actualRowIdx + '-' + c.i;
         var isChanged = pendingChanges[chKey] !== undefined;
@@ -1134,6 +1241,14 @@ function enterMode(mode) {
   if (eg) eg.style.display = mode === 'editor' ? 'none' : 'flex';
   var app = document.getElementById('app');
   app.className = mode === 'editor' ? 'mode-editor' : '';
+  // Show/hide settings button based on whether token is saved
+  var settingsBtn = document.getElementById('btnGhSettings');
+  if (settingsBtn) {
+    var hasToken = !!localStorage.getItem('gh_token');
+    settingsBtn.title = hasToken ? '⚙ GitHub (token opgeslagen)' : '⚙ GitHub instellen (vereist)';
+    settingsBtn.style.borderColor = hasToken ? 'rgba(122,200,160,0.4)' : 'rgba(255,180,100,0.6)';
+    settingsBtn.style.color = hasToken ? 'rgba(122,200,160,0.8)' : 'rgba(255,200,100,0.9)';
+  }
   render();
 }
 
@@ -1212,6 +1327,155 @@ function saveChanges() {
   exportXLSX();
 }
 
+// ══ GITHUB SETTINGS ══
+var ghSettings = {
+  token:  localStorage.getItem('gh_token')  || '',
+  repo:   localStorage.getItem('gh_repo')   || 'Thierry1996NL/engineeringsplanning_TPA',
+  path:   localStorage.getItem('gh_path')   || 'engineeringsplanning_TPA/index.html',
+  branch: localStorage.getItem('gh_branch') || 'main'
+};
+
+function openGithubModal() {
+  document.getElementById('ghToken').value = ghSettings.token || '';
+  document.getElementById('ghRepo').value = ghSettings.repo || '';
+  document.getElementById('ghPath').value = ghSettings.path || 'engineeringsplanning_tpa.html';
+  document.getElementById('ghBranch').value = ghSettings.branch || 'main';
+  document.getElementById('githubModal').classList.add('open');
+}
+
+function closeGithubModal() {
+  document.getElementById('githubModal').classList.remove('open');
+}
+
+function saveGithubSettings() {
+  ghSettings.token  = document.getElementById('ghToken').value.trim();
+  ghSettings.repo   = document.getElementById('ghRepo').value.trim();
+  ghSettings.path   = document.getElementById('ghPath').value.trim() || 'engineeringsplanning_TPA/index.html';
+  ghSettings.branch = document.getElementById('ghBranch').value.trim() || 'main';
+  // Persist to localStorage so user never has to fill this in again on this device
+  localStorage.setItem('gh_token',  ghSettings.token);
+  localStorage.setItem('gh_repo',   ghSettings.repo);
+  localStorage.setItem('gh_path',   ghSettings.path);
+  localStorage.setItem('gh_branch', ghSettings.branch);
+  closeGithubModal();
+  if (ghSettings.token && ghSettings.repo) {
+    showSaveStatus('success', '✓ Instellingen opgeslagen op dit apparaat');
+    setTimeout(clearSaveStatus, 2500);
+  }
+}
+
+function showSaveStatus(type, msg) {
+  var el = document.getElementById('saveStatus');
+  el.className = 'save-status ' + type;
+  el.textContent = msg;
+}
+
+function clearSaveStatus() {
+  var el = document.getElementById('saveStatus');
+  el.className = 'save-status';
+}
+
+async function pushToGithub() {
+  // Reload from localStorage in case user just saved settings
+  ghSettings.token  = localStorage.getItem('gh_token')  || ghSettings.token;
+  ghSettings.repo   = localStorage.getItem('gh_repo')   || ghSettings.repo;
+  ghSettings.path   = localStorage.getItem('gh_path')   || ghSettings.path;
+  ghSettings.branch = localStorage.getItem('gh_branch') || ghSettings.branch;
+
+  if (!ghSettings.token || !ghSettings.repo) {
+    openGithubModal();
+    return;
+  }
+
+  var btn = document.getElementById('btnGhSave');
+  btn.disabled = true;
+  showSaveStatus('saving', '↻ Bezig met uploaden...');
+
+  try {
+    // 1. Get current file SHA (needed for update)
+    var apiBase = 'https://api.github.com/repos/' + ghSettings.repo + '/contents/' + ghSettings.path;
+    var headers = {
+      'Authorization': 'token ' + ghSettings.token,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+
+    var shaRes = await fetch(apiBase + '?ref=' + ghSettings.branch, { headers: headers });
+    if (!shaRes.ok && shaRes.status !== 404) {
+      throw new Error('Kan bestand niet ophalen (' + shaRes.status + ')');
+    }
+    var sha = null;
+    if (shaRes.ok) {
+      var shaData = await shaRes.json();
+      sha = shaData.sha;
+    }
+
+    // 2. Build updated HTML with current ROWS baked in
+    var updatedHtml = buildUpdatedHtml();
+
+    // 3. Base64 encode
+    var encoded = btoa(unescape(encodeURIComponent(updatedHtml)));
+
+    // 4. Push to GitHub
+    var n = Object.keys(pendingChanges).length;
+    var body = {
+      message: 'Update engineeringsplanning: ' + n + ' statuswijziging' + (n === 1 ? '' : 'en') + ' (' + new Date().toLocaleDateString('nl-NL') + ')',
+      content: encoded,
+      branch: ghSettings.branch
+    };
+    if (sha) body.sha = sha;
+
+    var pushRes = await fetch(apiBase, {
+      method: 'PUT',
+      headers: headers,
+      body: JSON.stringify(body)
+    });
+
+    if (!pushRes.ok) {
+      var errData = await pushRes.json().catch(function() { return {}; });
+      throw new Error(errData.message || 'Upload mislukt (' + pushRes.status + ')');
+    }
+
+    // Success
+    pendingChanges = {};
+    hideSaveBar();
+    render();
+    // Briefly show success toast
+    showSaveStatus('success', '✓ Opgeslagen op GitHub');
+    document.getElementById('saveBar').classList.add('visible');
+    setTimeout(function() {
+      hideSaveBar();
+      clearSaveStatus();
+    }, 3000);
+
+  } catch (err) {
+    showSaveStatus('error', '✗ ' + err.message);
+    document.getElementById('saveBar').classList.add('visible');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function buildUpdatedHtml() {
+  // Take the current page HTML and replace RAW_CSV with updated data
+  var html = document.documentElement.outerHTML;
+
+  // Build new CSV from current ROWS
+  var lines = ROWS.map(function(row) {
+    return row.join(',');
+  });
+  var newCsv = lines.join('\n');
+
+  // Find and replace the RAW_CSV content between backticks
+  var csvStart = html.indexOf('const RAW_CSV = `') + 'const RAW_CSV = `'.length;
+  var csvEnd   = html.indexOf('`;', csvStart);
+  if (csvStart < 0 || csvEnd < 0) {
+    throw new Error('Kan RAW_CSV niet vinden in de HTML');
+  }
+
+  return html.substring(0, csvStart) + newCsv + html.substring(csvEnd);
+}
+
 
 // Init
 ROWS = parseCSV(RAW_CSV);
@@ -1243,8 +1507,54 @@ render();
 
 <div class="save-bar" id="saveBar">
   <span class="changes" id="saveBarCount">0 wijzigingen</span>
+  <span class="save-status" id="saveStatus"></span>
   <button class="btn-discard" onclick="discardChanges()">Verwerpen</button>
-  <button class="btn-save" onclick="saveChanges()">↓ Exporteer wijzigingen</button>
+  <button class="btn-export-changes btn-save" onclick="exportXLSX()" title="Download als Excel">↓ Excel</button>
+  
+  <button class="btn-gh-settings" onclick="openGithubModal()" title="GitHub instellingen" id="btnGhSettings">⚙</button>
+  <button class="btn-gh-save" id="btnGhSave" onclick="pushToGithub()">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.134 1 1 4.134 1 8c0 3.09 2.003 5.716 4.784 6.641.35.064.478-.152.478-.337 0-.166-.006-.606-.01-1.19-1.947.424-2.358-.94-2.358-.94-.318-.809-.777-1.024-.777-1.024-.635-.434.048-.425.048-.425.703.049 1.073.722 1.073.722.624 1.07 1.638.761 2.037.582.063-.452.244-.761.444-.936-1.554-.177-3.188-.777-3.188-3.462 0-.765.273-1.39.722-1.88-.072-.177-.313-.888.069-1.851 0 0 .589-.189 1.928.72A6.71 6.71 0 018 4.958c.596.003 1.196.081 1.756.237 1.338-.909 1.926-.72 1.926-.72.383.963.142 1.674.07 1.851.45.49.72 1.115.72 1.88 0 2.692-1.637 3.283-3.196 3.456.251.217.474.645.474 1.3 0 .938-.009 1.694-.009 1.924 0 .187.126.405.48.337C12.999 13.714 15 11.089 15 8c0-3.866-3.134-7-7-7z" fill="currentColor"/></svg>
+    Opslaan naar GitHub
+  </button>
+</div>
+
+<!-- GitHub Settings Modal -->
+<div class="modal-overlay" id="githubModal" onclick="if(event.target===this)closeGithubModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1C4.134 1 1 4.134 1 8c0 3.09 2.003 5.716 4.784 6.641.35.064.478-.152.478-.337 0-.166-.006-.606-.01-1.19-1.947.424-2.358-.94-2.358-.94-.318-.809-.777-1.024-.777-1.024-.635-.434.048-.425.048-.425.703.049 1.073.722 1.073.722.624 1.07 1.638.761 2.037.582.063-.452.244-.761.444-.936-1.554-.177-3.188-.777-3.188-3.462 0-.765.273-1.39.722-1.88-.072-.177-.313-.888.069-1.851 0 0 .589-.189 1.928.72A6.71 6.71 0 018 4.958c.596.003 1.196.081 1.756.237 1.338-.909 1.926-.72 1.926-.72.383.963.142 1.674.07 1.851.45.49.72 1.115.72 1.88 0 2.692-1.637 3.283-3.196 3.456.251.217.474.645.474 1.3 0 .938-.009 1.694-.009 1.924 0 .187.126.405.48.337C12.999 13.714 15 11.089 15 8c0-3.866-3.134-7-7-7z" fill="var(--text)"/></svg>
+        GitHub instellingen
+      </div>
+      <button class="modal-close" onclick="closeGithubModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="field-group">
+        <label class="field-label">Personal Access Token</label>
+        <input class="field-input mono" type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <span class="field-hint">Maak een token aan via GitHub → Settings → Developer settings → Personal access tokens. Scope: <b>repo</b>.</span>
+      </div>
+      <div class="field-group">
+        <label class="field-label">Repository (gebruiker/repo)</label>
+        <input class="field-input mono" type="text" id="ghRepo" placeholder="Thierry1996NL/engineeringsplanning_TPA">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Bestandspad in repository</label>
+        <input class="field-input mono" type="text" id="ghPath" placeholder="engineeringsplanning_TPA/index.html">
+      </div>
+      <div class="field-group">
+        <label class="field-label">Branch</label>
+        <input class="field-input mono" type="text" id="ghBranch" placeholder="main">
+      </div>
+      <div class="field-hint" style="background:var(--surface2);border-radius:8px;padding:.625rem .875rem;line-height:1.6;">
+        ⚠️ Je token wordt <b>niet</b> opgeslagen na het sluiten van de browser. Vul het elke sessie opnieuw in.
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-modal-cancel" onclick="closeGithubModal()">Annuleren</button>
+      <button class="btn-modal-save" onclick="saveGithubSettings()">Opslaan</button>
+    </div>
+  </div>
 </div>
 
 </body>
