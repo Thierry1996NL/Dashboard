@@ -616,18 +616,224 @@
   .toast.show {transform:translateX(-50%) translateY(0);}
   .toast.success {background:#2d7a4f;}
   .toast.error {background:#b53030;}
+
+  /* ══ SPINNER ══ */
+  .spinner {
+    width:32px;height:32px;border:2.5px solid var(--border-strong);
+    border-top-color:var(--text);border-radius:50%;
+    animation:spin .7s linear infinite;margin:0 auto 1rem;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  /* ══ LOGIN ══ */
+  #loginScreen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:2000;padding:1rem;}
+  .login-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2.5rem 2rem;width:100%;max-width:380px;box-shadow:0 8px 32px rgba(0,0,0,.08);}
+  .login-logo{font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--text-faint);margin-bottom:1.5rem;}
+  .login-title{font-size:22px;font-weight:300;color:var(--text);margin-bottom:6px;}
+  .login-sub{font-size:13px;color:var(--text-muted);margin-bottom:2rem;}
+  .login-field{display:flex;flex-direction:column;gap:5px;margin-bottom:1rem;}
+  .login-label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);}
+  .login-input{padding:10px 12px;font-family:"DM Sans",sans-serif;font-size:14px;border:1px solid var(--border-strong);border-radius:8px;background:var(--bg);color:var(--text);outline:none;transition:border-color .15s;width:100%;}
+  .login-input:focus{border-color:var(--text);background:#fff;}
+  .login-btn{width:100%;padding:11px;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;border:none;border-radius:8px;background:var(--text);color:#fff;cursor:pointer;transition:background .15s;margin-top:.5rem;}
+  .login-btn:hover{background:#333;}
+  .login-error{font-size:12px;color:#b53030;background:#fce8e8;border-radius:6px;padding:8px 10px;margin-top:.75rem;display:none;}
+
+  /* ══ REALTIME DOT ══ */
+  .rt-dot{width:7px;height:7px;border-radius:50%;background:#2d7a4f;display:inline-block;margin-right:5px;animation:rtpulse 2s ease-in-out infinite;}
+  @keyframes rtpulse{0%,100%{opacity:1}50%{opacity:.4}}
+  .rt-offline{background:#b53030;animation:none;}
+
+  /* ══ USER BADGE ══ */
+  .user-badge{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:rgba(255,255,255,.6);margin-right:1rem;}
+  .user-avatar{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;color:#fff;}
+
+  /* ══ ONLINE USERS ══ */
+  .online-users{display:flex;gap:4px;align-items:center;margin-right:1rem;}
+  .online-pip{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:rgba(255,255,255,.8);cursor:default;position:relative;}
+  .online-pip:hover .pip-tooltip{display:block;}
+  .pip-tooltip{display:none;position:absolute;top:28px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;white-space:nowrap;z-index:50;pointer-events:none;}
+
+  /* ══ TOAST ══ */
+  .toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:var(--text);color:#fff;border-radius:10px;padding:.6rem 1.2rem;font-size:13px;z-index:300;transition:transform .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;white-space:nowrap;display:flex;align-items:center;gap:8px;}
+  .toast.show{transform:translateX(-50%) translateY(0);}
+  .toast.success{background:#2d7a4f;}
+  .toast.error{background:#b53030;}
+  .toast.info{background:#1a5fa8;}
+
+  /* ══ CHANGED CELL TOOLTIP ══ */
+  .cell-changed{position:relative;}
+  .cell-changed .badge{outline:2px solid #f0a500;outline-offset:1px;}
+  .cell-changed::after{content:attr(data-who);position:absolute;bottom:calc(100% + 4px);left:50%;transform:translateX(-50%);background:var(--text);color:#fff;font-size:10px;padding:3px 7px;border-radius:5px;white-space:nowrap;z-index:50;pointer-events:none;opacity:0;transition:opacity .15s;}
+  .cell-changed:hover::after{opacity:1;}
+
+  /* ══ SAVE INDICATOR ══ */
+  .saving-indicator{display:none;align-items:center;gap:5px;font-size:11px;color:rgba(255,255,255,.5);margin-right:.75rem;}
+  .saving-indicator.show{display:flex;}
+  .saving-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.5);animation:savepulse .6s ease-in-out infinite alternate;}
+  @keyframes savepulse{to{opacity:.2}}
+
+  /* ══ STICKY THEAD ══ */
+  .tbl-scroll{overflow-x:auto;overflow-y:auto;max-height:calc(100vh - 310px);}
+  thead{position:sticky;top:0;z-index:10;}
+
+  /* ══ MOBILE IMPROVEMENTS ══ */
+  @media(max-width:900px){
+    .kpi-row{grid-template-columns:repeat(3,1fr);}
+    .online-users{display:none;}
+    .site-header .updated{display:none;}
+  }
+  @media(max-width:600px){
+    .kpi-row{grid-template-columns:repeat(2,1fr);}
+    .main{padding:.75rem;}
+    .controls-bar{padding:.75rem 1rem;}
+    .fase-row{gap:4px;}
+    .tab{padding:4px 9px;font-size:11px;}
+    .filter-row{flex-wrap:wrap;}
+    .search-box{min-width:100%;order:-1;}
+  }
+
+  /* ══ DATE PICKER ══ */
+  .date-cell { cursor: pointer; position: relative; }
+  .date-cell:hover .date-val { text-decoration: underline; text-decoration-style: dashed; text-underline-offset: 2px; }
+  .mode-editor .date-cell { cursor: pointer; }
+  .mode-editor .date-cell:hover { background: rgba(26,95,168,0.04); }
+
+  .date-popup {
+    position: fixed;
+    background: var(--surface);
+    border: 1px solid var(--border-strong);
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    z-index: 500;
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    gap: 0.75rem;
+    min-width: 220px;
+  }
+  .date-popup.open { display: flex; }
+  .date-popup-header {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: .06em; color: var(--text-faint);
+  }
+  .date-popup input[type="date"] {
+    padding: 7px 10px;
+    font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--bg); color: var(--text);
+    outline: none; width: 100%;
+    transition: border-color .15s;
+  }
+  .date-popup input[type="date"]:focus { border-color: var(--text); background: #fff; }
+  .date-popup-actions { display: flex; gap: 6px; justify-content: flex-end; }
+  .date-popup-actions button {
+    padding: 6px 13px; font-size: 12px; font-family: 'DM Sans', sans-serif;
+    border-radius: 7px; cursor: pointer; border: 1px solid var(--border-strong);
+    transition: all .15s;
+  }
+  .btn-date-cancel { background: transparent; color: var(--text-muted); }
+  .btn-date-cancel:hover { background: var(--surface2); }
+  .btn-date-save { background: var(--text); color: #fff; border-color: var(--text); font-weight: 600; }
+  .btn-date-save:hover { background: #333; }
+  .btn-date-clear { background: transparent; color: var(--c-geblokkeerd); border-color: transparent; margin-right: auto; }
+  .btn-date-clear:hover { background: var(--c-geblokkeerd-bg); }
+
+
+  /* ══ JA/NEE TOGGLE ══ */
+  .janee-ja  { display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;background:#e8f5ee;color:#2d7a4f; }
+  .janee-nee { display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;background:#fce8e8;color:#b53030; }
+  .janee-leeg{ display:inline-block;font-size:11px;padding:2px 9px;border-radius:10px;background:var(--surface2);color:var(--text-faint); }
+  .mode-editor .janee-cell { cursor:pointer; }
+  .mode-editor .janee-cell:hover .janee-ja,
+  .mode-editor .janee-cell:hover .janee-nee,
+  .mode-editor .janee-cell:hover .janee-leeg {
+    outline:2px solid rgba(0,0,0,0.15); outline-offset:1px;
+  }
+
+
+  /* ══ OPMERKINGEN ══ */
+  .opmerking-cell { cursor: pointer; min-width: 140px; max-width: 200px; }
+  .opmerking-leeg {
+    display: inline-block; font-size: 11px; font-style: italic;
+    color: var(--text-faint); padding: 2px 4px;
+  }
+  .opmerking-tekst {
+    display: inline-block; font-size: 11px; color: var(--text);
+    max-width: 190px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    background: #fdf8e8; border-radius: 4px; padding: 2px 6px;
+    border-left: 2px solid #f0a500;
+  }
+  .mode-editor .opmerking-cell:hover .opmerking-leeg,
+  .mode-editor .opmerking-cell:hover .opmerking-tekst {
+    outline: 2px solid var(--border-strong); outline-offset: 1px;
+  }
+
+  /* Opmerking modal */
+  .opm-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.3);
+    z-index: 600; display: flex; align-items: center; justify-content: center;
+    padding: 1rem; opacity: 0; pointer-events: none; transition: opacity .15s;
+  }
+  .opm-overlay.open { opacity: 1; pointer-events: all; }
+  .opm-modal {
+    background: var(--surface); border-radius: 14px; width: 100%; max-width: 460px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+    transform: translateY(6px); transition: transform .15s;
+  }
+  .opm-overlay.open .opm-modal { transform: translateY(0); }
+  .opm-modal-header {
+    padding: 1rem 1.25rem .75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .opm-modal-title { font-size: 14px; font-weight: 600; color: var(--text); }
+  .opm-modal-sub { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+  .opm-close {
+    background: none; border: none; cursor: pointer; color: var(--text-faint);
+    font-size: 16px; padding: 2px 6px; border-radius: 4px; line-height: 1;
+  }
+  .opm-close:hover { background: var(--surface2); color: var(--text); }
+  .opm-modal-body { padding: 1rem 1.25rem; }
+  .opm-textarea {
+    width: 100%; min-height: 100px; max-height: 240px;
+    padding: 10px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: var(--bg); color: var(--text);
+    outline: none; resize: vertical; line-height: 1.5;
+    transition: border-color .15s;
+  }
+  .opm-textarea:focus { border-color: var(--text); background: #fff; }
+  .opm-modal-footer {
+    padding: .75rem 1.25rem; border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 8px; align-items: center;
+  }
+  .opm-char-count { font-size: 11px; color: var(--text-faint); margin-right: auto; }
+  .btn-opm-cancel {
+    padding: 7px 14px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border-strong); border-radius: 8px;
+    background: transparent; color: var(--text-muted); cursor: pointer;
+  }
+  .btn-opm-cancel:hover { background: var(--surface2); }
+  .btn-opm-save {
+    padding: 7px 16px; font-size: 13px; font-family: 'DM Sans', sans-serif;
+    font-weight: 600; border: none; border-radius: 8px;
+    background: var(--text); color: #fff; cursor: pointer;
+  }
+  .btn-opm-save:hover { background: #333; }
+
 </style>
 </head>
 <body>
 
-<!-- ══ LOGIN SCREEN ══ -->
+<!-- LOGIN -->
 <div id="loginScreen">
   <div class="login-box">
     <div class="login-logo">TPA · Engineeringsplanning</div>
     <h1 class="login-title">Welkom terug</h1>
     <p class="login-sub">Selecteer je naam om verder te gaan</p>
     <div class="login-field">
-      <label class="login-label">Engineer</label>
+      <label class="login-label">Naam</label>
       <select class="login-input" id="loginEngineer">
         <option value="">— Kies je naam —</option>
         <option>Peter Teeninga</option>
@@ -646,17 +852,20 @@
         <option value="editor">Bewerker — statussen aanpassen</option>
       </select>
     </div>
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">Verder →</button>
+    <button class="login-btn" onclick="doLogin()">Verder →</button>
     <div class="login-error" id="loginError"></div>
   </div>
 </div>
 
-<!-- ══ APP ══ -->
+<!-- APP -->
 <div id="app" style="display:none">
-
 <header class="site-header">
   <div class="logo">TPA · Engineeringsplanning</div>
-  <div style="display:flex;align-items:center">
+  <div style="display:flex;align-items:center;flex-wrap:wrap;gap:0">
+    <span class="saving-indicator" id="savingIndicator">
+      <span class="saving-dot"></span>opslaan...
+    </span>
+    <div class="online-users" id="onlineUsers" title="Actieve gebruikers"></div>
     <span class="user-badge">
       <span class="user-avatar" id="userAvatar">?</span>
       <span id="userName">—</span>
@@ -669,7 +878,8 @@
       <span class="rt-dot" id="rtDot"></span>
       <span id="rtStatus">verbinden...</span>
     </span>
-    <div class="meta" id="hdr-count">laden...</div>
+    <div class="meta" id="hdr-count" style="margin-right:.5rem">laden...</div>
+    <div class="updated">Bijgewerkt 18 april 2026</div>
     <button class="btn-back" onclick="doLogout()">↩ Uitloggen</button>
   </div>
 </header>
@@ -699,7 +909,7 @@
       <button class="tab" onclick="setFase('Geotechnisch',this)">Geotechnisch</button>
     </div>
     <div class="filter-row">
-      <input class="search-box" type="text" id="search" placeholder="🔍  Zoek op naam, engineer, werkpakket..." oninput="render()">
+      <input class="search-box" type="text" id="search" placeholder="&#128269;  Zoek op naam, engineer, werkpakket..." oninput="debouncedRender()">
       <select id="locFilter" onchange="render()">
         <option value="">Alle locaties</option>
         <option>Spannenburg</option><option>Joure</option><option>Wolvega</option><option>Luinjeberd</option>
@@ -717,12 +927,10 @@
       <span class="row-count" id="row-count"></span>
       <div class="export-group" id="exportGroup">
         <button class="btn-export csv" onclick="exportCSV()">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          CSV
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
         </button>
         <button class="btn-export xlsx" onclick="exportXLSX()">
-          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          Excel
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
         </button>
       </div>
     </div>
@@ -735,15 +943,17 @@
     <span class="legend-item"><span class="legend-dot" style="background:var(--c-review)"></span>Review</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--c-geblokkeerd)"></span>Geblokkeerd</span>
     <span class="legend-item"><span class="legend-dot" style="background:var(--c-todo)"></span>Nog te starten</span>
+    <span style="margin-left:1rem;font-size:11px;color:var(--text-faint);">&#9679; Gele rand = recent gewijzigd (hover voor wie)</span>
   </div>
 
   <div id="editorNotice" class="editor-notice" style="display:none">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6.5" stroke="#2d7a4f" stroke-width="1.2"/><path d="M8 5v4M8 10.5v.5" stroke="#2d7a4f" stroke-width="1.3" stroke-linecap="round"/></svg>
-    <span><b>Bewerkermodus</b> — klik op een statuscel om de waarde te wijzigen. Wijzigingen worden direct opgeslagen in de database.</span>
+    <span><b>Bewerkermodus</b> — klik op een statuscel om de waarde te wijzigen. Wijzigingen slaan direct op in de database.</span>
   </div>
 
-  <div id="loadingState" style="text-align:center;padding:3rem;color:var(--text-faint);font-size:13px;">
-    Data laden uit database...
+  <div id="loadingState" style="text-align:center;padding:3rem;color:var(--text-faint)">
+    <div class="spinner"></div>
+    <div style="font-size:13px">Data laden uit database...</div>
   </div>
 
   <div class="table-card" id="tableCard" style="display:none">
@@ -766,15 +976,59 @@
   <div class="status-option" onclick="closeStatusPicker()" style="color:var(--text-faint)">Annuleren</div>
 </div>
 
-<!-- Toast notification -->
+
+<!-- Date Picker Popup -->
+<div class="date-popup" id="datePicker">
+  <div class="date-popup-header">Datum aanpassen</div>
+  <input type="date" id="dateInput" />
+  <div class="date-popup-actions">
+    <button class="btn-date-clear" onclick="clearDate()">Wissen</button>
+    <button class="btn-date-cancel" onclick="closeDatePicker()">Annuleren</button>
+    <button class="btn-date-save" onclick="saveDate()">Opslaan</button>
+  </div>
+</div>
+
+<!-- Opmerkingen Modal -->
+<div class="opm-overlay" id="opmOverlay" onclick="if(event.target===this)closeOpmModal()">
+  <div class="opm-modal">
+    <div class="opm-modal-header">
+      <div>
+        <div class="opm-modal-title">&#128221; Opmerking</div>
+        <div class="opm-modal-sub" id="opmModalSub"></div>
+      </div>
+      <button class="opm-close" onclick="closeOpmModal()">&#10005;</button>
+    </div>
+    <div class="opm-modal-body">
+      <textarea class="opm-textarea" id="opmTextarea" placeholder="Typ hier je opmerking..." oninput="updateOpmCount()" maxlength="500"></textarea>
+    </div>
+    <div class="opm-modal-footer">
+      <span class="opm-char-count" id="opmCharCount">0 / 500</span>
+      <button class="btn-opm-cancel" onclick="closeOpmModal()">Annuleren</button>
+      <button class="btn-opm-save" onclick="saveOpmerking()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
-// ══ SUPABASE CONFIG ══
+// ══ CONFIG ══
 const SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
 const SUPA_KEY = 'sb_publishable_Etgi3cTtObxJbAvf2WR-mw_dFajr5Qr';
+const POLL_MS  = 5000;
 
+// ══ HTML ESCAPE (XSS prevention) ══
+function esc(v) {
+  return String(v)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
+// ══ SUPABASE CLIENT ══
 const supa = {
   async req(method, path, body) {
     const r = await fetch(SUPA_URL + path, {
@@ -788,14 +1042,13 @@ const supa = {
       body: body ? JSON.stringify(body) : undefined
     });
     if (!r.ok) {
-      const e = await r.json().catch(() => ({}));
-      throw new Error(e.message || r.status);
+      const e = await r.json().catch(function() { return {}; });
+      throw new Error(e.message || 'HTTP ' + r.status);
     }
-    return method === 'PATCH' ? null : r.json();
+    return (method === 'PATCH' || method === 'DELETE') ? null : r.json();
   },
-  get: (path) => supa.req('GET', path),
-  post: (path, b) => supa.req('POST', path, b),
-  patch: (path, b) => supa.req('PATCH', path, b),
+  get:   function(p)    { return supa.req('GET', p); },
+  patch: function(p, b) { return supa.req('PATCH', p, b); },
 };
 
 // ══ STATE ══
@@ -812,12 +1065,14 @@ const COLS = [
   {i:22,f:"Analyse",n:"Warme overdracht"},{i:23,f:"Analyse",n:"Inrichten projectomgeving"},
   {i:24,f:"Analyse",n:"[Analyse] Overgangsdatum"},{i:25,f:"Analyse",n:"[Analyse] Weken resterend"},
   {i:26,f:"Analyse",n:"[Analyse] Gereed"},
+  {i:200,f:"Analyse",n:"[Analyse] Opmerkingen"},
   {i:27,f:"VO-Fase",n:"Eisen beoordelen projectteam"},{i:28,f:"VO-Fase",n:"Eisen verwerken Excel"},
   {i:29,f:"VO-Fase",n:"Kennismaking bevoegd gezag"},{i:30,f:"VO-Fase",n:"Periodiek overleg BG"},
   {i:31,f:"VO-Fase",n:"Opvragen raakvlakken"},{i:32,f:"VO-Fase",n:"DR's/iMSR's bespreken"},
   {i:33,f:"VO-Fase",n:"Spelregels bevoegd gezag"},{i:34,f:"VO-Fase",n:"Schetsontwerp opstellen"},
   {i:35,f:"VO-Fase",n:"[VO] Overgangsdatum"},{i:36,f:"VO-Fase",n:"[VO] Weken resterend"},
   {i:37,f:"VO-Fase",n:"[VO] Gereed"},
+  {i:201,f:"VO-Fase",n:"[VO] Opmerkingen"},
   {i:38,f:"DO-Fase",n:"Eisen BG in werktekening"},{i:39,f:"DO-Fase",n:"CROW-500 invullen"},
   {i:40,f:"DO-Fase",n:"EV-beheerders contacteren"},{i:41,f:"DO-Fase",n:"Vitens contacteren"},
   {i:42,f:"DO-Fase",n:"Stakeholders inventariseren"},{i:43,f:"DO-Fase",n:"Aantal percelen"},
@@ -830,6 +1085,7 @@ const COLS = [
   {i:56,f:"DO-Fase",n:"Schouw bevoegd gezag"},{i:57,f:"DO-Fase",n:"Opmerkingen schouw BG"},
   {i:58,f:"DO-Fase",n:"[DO] Overgangsdatum"},{i:59,f:"DO-Fase",n:"[DO] Weken resterend"},
   {i:60,f:"DO-Fase",n:"[DO] Gereed"},
+  {i:202,f:"DO-Fase",n:"[DO] Opmerkingen"},
   {i:61,f:"Onderzoeksfase",n:"Conditionerende onderzoeken"},{i:62,f:"Onderzoeksfase",n:"Beïnvloedingsberekening"},
   {i:63,f:"Onderzoeksfase",n:"Toestemming GasUnie/NEN3654"},{i:64,f:"Onderzoeksfase",n:"Belastbaarheidsberekening"},
   {i:65,f:"Onderzoeksfase",n:"Toestemming TenneT"},{i:66,f:"Onderzoeksfase",n:"Toetsen met OIV'er"},
@@ -849,12 +1105,14 @@ const COLS = [
   {i:93,f:"Onderzoeksfase",n:"Verkeersplannen opstellen"},{i:94,f:"Onderzoeksfase",n:"DO-raming opstellen"},
   {i:95,f:"Onderzoeksfase",n:"[Onderzoek] Overgangsdatum"},{i:96,f:"Onderzoeksfase",n:"[Onderzoek] Weken resterend"},
   {i:97,f:"Onderzoeksfase",n:"[Onderzoek] Gereed"},
+  {i:203,f:"Onderzoeksfase",n:"[Onderzoek] Opmerkingen"},
   {i:98,f:"DO-Fase",n:"AVOI-vergunningen aanvragen"},{i:99,f:"DO-Fase",n:"Omgevingsvergunningen"},
   {i:100,f:"DO-Fase",n:"Input Ontwikkelnota (1)"},{i:101,f:"DO-Fase",n:"Input Ontwikkelnota (2)"},
   {i:102,f:"DO-Fase",n:"Input Ontwikkelnota (3)"},{i:103,f:"DO-Fase",n:"Input Ontwikkelnota (4)"},
   {i:104,f:"DO-Fase",n:"Interne review DO nota"},{i:105,f:"DO-Fase",n:"Beoordeling OG"},
   {i:106,f:"DO-Fase",n:"[DO-verg.] Overgangsdatum"},{i:107,f:"DO-Fase",n:"[DO-verg.] Weken resterend"},
   {i:108,f:"DO-Fase",n:"[DO-verg.] Gereed"},
+  {i:204,f:"DO-Fase",n:"[DO-verg.] Opmerkingen"},
   {i:109,f:"UO-Fase",n:"UO-tekeningen (stempel)"},{i:110,f:"UO-Fase",n:"UO-kabeltrektekening"},
   {i:111,f:"UO-Fase",n:"Materiaallijst definitief"},{i:112,f:"UO-Fase",n:"WBS-tracker opstellen"},
   {i:113,f:"UO-Fase",n:"Verificatierapport"},{i:114,f:"UO-Fase",n:"Bemalingsplan"},
@@ -864,32 +1122,49 @@ const COLS = [
   {i:121,f:"UO-Fase",n:"Interne W-formulier"},{i:122,f:"UO-Fase",n:"UO begroting opstellen"},
   {i:123,f:"UO-Fase",n:"[UO] Overgangsdatum"},{i:124,f:"UO-Fase",n:"[UO] Weken resterend"},
   {i:125,f:"UO-Fase",n:"[UO] Gereed"},
+  {i:205,f:"UO-Fase",n:"[UO] Opmerkingen"},
   {i:126,f:"Natuurtoets",n:"Ecologische quickscan uitgezet"},{i:127,f:"Natuurtoets",n:"Ecologische quickscan: datum"},
-  {i:128,f:"Natuurtoets",n:"Ecologische quickscan: gereed"},{i:129,f:"Natuurtoets",n:"Ecologisch vervolgonderzoek"},
+  {i:128,f:"Natuurtoets",n:"Ecologische quickscan: gereed"},
+  {i:206,f:"Natuurtoets",n:"Ecologische quickscan: opmerkingen"},{i:129,f:"Natuurtoets",n:"Ecologisch vervolgonderzoek"},
   {i:130,f:"Natuurtoets",n:"Vervolgonderzoek: datum"},{i:131,f:"Natuurtoets",n:"Vervolgonderzoek: gereed"},
+  {i:207,f:"Natuurtoets",n:"Vervolgonderzoek: opmerkingen"},
   {i:132,f:"Natuurtoets",n:"Natura 2000 / AERIUS uitgezet"},{i:133,f:"Natuurtoets",n:"AERIUS: datum"},
-  {i:134,f:"Natuurtoets",n:"AERIUS: gereed"},{i:135,f:"Natuurtoets",n:"Natuurtoets / voortoets uitgezet"},
+  {i:134,f:"Natuurtoets",n:"AERIUS: gereed"},
+  {i:208,f:"Natuurtoets",n:"AERIUS: opmerkingen"},{i:135,f:"Natuurtoets",n:"Natuurtoets / voortoets uitgezet"},
   {i:136,f:"Natuurtoets",n:"Voortoets: datum"},{i:137,f:"Natuurtoets",n:"Voortoets: gereed"},
+  {i:209,f:"Natuurtoets",n:"Voortoets: opmerkingen"},
   {i:138,f:"Archeologie",n:"Bureauonderzoek uitgezet"},{i:139,f:"Archeologie",n:"Bureauonderzoek: datum"},
-  {i:140,f:"Archeologie",n:"Bureauonderzoek: gereed"},{i:141,f:"Archeologie",n:"IVO uitgezet"},
+  {i:140,f:"Archeologie",n:"Bureauonderzoek: gereed"},
+  {i:210,f:"Archeologie",n:"Bureauonderzoek: opmerkingen"},{i:141,f:"Archeologie",n:"IVO uitgezet"},
   {i:142,f:"Archeologie",n:"IVO: datum"},{i:143,f:"Archeologie",n:"IVO: gereed"},
+  {i:211,f:"Archeologie",n:"IVO: opmerkingen"},
   {i:144,f:"Archeologie",n:"Proefsleuvenonderzoek uitgezet"},{i:145,f:"Archeologie",n:"Proefsleuven: datum"},
   {i:146,f:"Archeologie",n:"Proefsleuven: gereed"},
+  {i:212,f:"Archeologie",n:"Proefsleuven: opmerkingen"},
   {i:147,f:"Bodem",n:"Historisch bodemonderzoek uitgezet"},{i:148,f:"Bodem",n:"Historisch bodem: datum"},
-  {i:149,f:"Bodem",n:"Historisch bodem: gereed"},{i:150,f:"Bodem",n:"Verkennend bodemonderzoek"},
+  {i:149,f:"Bodem",n:"Historisch bodem: gereed"},
+  {i:213,f:"Bodem",n:"Historisch bodem: opmerkingen"},{i:150,f:"Bodem",n:"Verkennend bodemonderzoek"},
   {i:151,f:"Bodem",n:"Verkennend bodem: datum"},{i:152,f:"Bodem",n:"Verkennend bodem: gereed"},
+  {i:214,f:"Bodem",n:"Verkennend bodem: opmerkingen"},
   {i:153,f:"Bodem",n:"Nader onderzoek / sanering"},{i:154,f:"Bodem",n:"Nader onderzoek: datum"},
   {i:155,f:"Bodem",n:"Nader onderzoek: gereed"},
+  {i:215,f:"Bodem",n:"Nader onderzoek: opmerkingen"},
   {i:156,f:"NGE/OO",n:"Explosieven quickscan uitgezet"},{i:157,f:"NGE/OO",n:"Explosieven quickscan: datum"},
-  {i:158,f:"NGE/OO",n:"Explosieven quickscan: gereed"},{i:159,f:"NGE/OO",n:"NGE detectieonderzoek"},
+  {i:158,f:"NGE/OO",n:"Explosieven quickscan: gereed"},
+  {i:216,f:"NGE/OO",n:"Explosieven quickscan: opmerkingen"},{i:159,f:"NGE/OO",n:"NGE detectieonderzoek"},
   {i:160,f:"NGE/OO",n:"NGE detectie: datum"},{i:161,f:"NGE/OO",n:"NGE detectie: gereed"},
+  {i:217,f:"NGE/OO",n:"NGE detectie: opmerkingen"},
   {i:162,f:"NGE/OO",n:"NGE begeleiding graafwerk"},{i:163,f:"NGE/OO",n:"NGE begeleiding: datum"},
   {i:164,f:"NGE/OO",n:"NGE begeleiding: gereed"},
+  {i:218,f:"NGE/OO",n:"NGE begeleiding: opmerkingen"},
   {i:165,f:"Geotechnisch",n:"Geotechnisch onderzoek uitgezet"},{i:166,f:"Geotechnisch",n:"Geotechnisch: datum"},
-  {i:167,f:"Geotechnisch",n:"Geotechnisch: gereed"},{i:168,f:"Geotechnisch",n:"Thermische grondweerstand"},
+  {i:167,f:"Geotechnisch",n:"Geotechnisch: gereed"},
+  {i:219,f:"Geotechnisch",n:"Geotechnisch: opmerkingen"},{i:168,f:"Geotechnisch",n:"Thermische grondweerstand"},
   {i:169,f:"Geotechnisch",n:"Thermische weerstand: datum"},{i:170,f:"Geotechnisch",n:"Thermische weerstand: gereed"},
+  {i:220,f:"Geotechnisch",n:"Thermische weerstand: opmerkingen"},
   {i:171,f:"Geotechnisch",n:"Grondwateronderzoek uitgezet"},{i:172,f:"Geotechnisch",n:"Grondwater: datum"},
-  {i:173,f:"Geotechnisch",n:"Grondwater: gereed"}
+  {i:173,f:"Geotechnisch",n:"Grondwater: gereed"},
+  {i:221,f:"Geotechnisch",n:"Grondwater: opmerkingen"}
 ];
 
 
@@ -907,44 +1182,48 @@ const FASE_STYLE = {
 };
 
 
-var ROWS = [];        // array of arrays [col0, col1, ..., col173]
-var DB_ROWS = [];     // raw DB rows [{id, row_idx, cel_data, ...}]
+var ROWS       = [];
+var DB_ROWS    = [];
+var CHANGES    = {}; // key "rowIdx-colIdx" -> {val, by, at}
 var currentFase = 'alle';
 var currentMode = 'viewer';
 var currentUser = '';
 var sortCol = -1, sortDir = 1;
 var pickerTarget = null;
-var realtimeChannel = null;
+var pollTimer = null;
+var isSaving = false;
+var debounceTimer = null;
+
+// ══ DEBOUNCED RENDER ══
+function debouncedRender() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(render, 200);
+}
 
 // ══ LOGIN ══
 function doLogin() {
-  const eng = document.getElementById('loginEngineer').value;
-  const role = document.getElementById('loginRole').value;
-  if (!eng) {
-    showLoginError('Kies je naam om verder te gaan.');
-    return;
-  }
-  currentUser = eng === '__viewer__' ? 'Viewer' : eng;
+  var eng  = document.getElementById('loginEngineer').value;
+  var role = document.getElementById('loginRole').value;
+  if (!eng) { showLoginError('Kies je naam om verder te gaan.'); return; }
+  currentUser = (eng === '__viewer__') ? 'Viewer' : eng;
   currentMode = (eng === '__viewer__') ? 'viewer' : role;
   startApp();
 }
 
 function doLogout() {
-  if (realtimeChannel) {
-    realtimeChannel.close();
-    realtimeChannel = null;
-  }
+  clearInterval(pollTimer);
+  pollTimer = null;
+  ROWS = []; DB_ROWS = []; CHANGES = {};
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
   document.getElementById('loginEngineer').value = '';
   document.getElementById('loginRole').value = 'viewer';
-  ROWS = []; DB_ROWS = [];
+  document.getElementById('onlineUsers').innerHTML = '';
 }
 
 function showLoginError(msg) {
-  const el = document.getElementById('loginError');
-  el.textContent = msg;
-  el.style.display = 'block';
+  var el = document.getElementById('loginError');
+  el.textContent = msg; el.style.display = 'block';
 }
 
 // ══ APP START ══
@@ -952,35 +1231,27 @@ async function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
 
-  // Set user info in header
-  const initials = currentUser.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+  var initials = currentUser.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
   document.getElementById('userAvatar').textContent = initials;
-  document.getElementById('userName').textContent = currentUser;
+  document.getElementById('userName').textContent   = currentUser;
 
-  // Set mode badge
-  const badge = document.getElementById('modeBadge');
-  const lbl   = document.getElementById('modeLabel');
+  var badge = document.getElementById('modeBadge');
   badge.className = 'mode-badge ' + currentMode;
-  lbl.textContent = currentMode === 'viewer' ? 'Viewer' : 'Bewerker';
-
-  // Show/hide editor notice & export
+  document.getElementById('modeLabel').textContent  = currentMode === 'viewer' ? 'Viewer' : 'Bewerker';
   document.getElementById('editorNotice').style.display = currentMode === 'editor' ? 'flex' : 'none';
   document.getElementById('exportGroup').style.display  = currentMode === 'viewer' ? 'flex' : 'none';
 
-  // Load data
   await loadData();
-
-  // Subscribe to realtime updates
-  subscribeRealtime();
+  await loadOpmerkingen();
+  startPolling();
 }
 
 // ══ DATA LOADING ══
 async function loadData() {
   document.getElementById('loadingState').style.display = 'block';
   document.getElementById('tableCard').style.display = 'none';
-
   try {
-    const data = await supa.get('/rest/v1/werkpakketten?select=*&order=row_idx.asc');
+    var data = await supa.get('/rest/v1/werkpakketten?select=*&order=row_idx.asc');
     DB_ROWS = data;
     buildROWS(data);
     document.getElementById('loadingState').style.display = 'none';
@@ -988,7 +1259,9 @@ async function loadData() {
     render();
     setRtStatus(true);
   } catch(e) {
-    document.getElementById('loadingState').textContent = 'Fout bij laden: ' + e.message;
+    document.getElementById('loadingState').innerHTML =
+      '<div style="color:#b53030;font-size:13px">&#10007; Laden mislukt: ' + esc(e.message) +
+      '<br><br><button onclick="loadData()" style="padding:6px 14px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit">Opnieuw proberen</button></div>';
     setRtStatus(false);
   }
 }
@@ -1002,57 +1275,93 @@ function buildROWS(dbData) {
   });
 }
 
-// ══ REALTIME ══
-function subscribeRealtime() {
-  if (realtimeChannel) realtimeChannel.close();
-
-  // Use Supabase Realtime v2 REST long-poll as simple polling fallback
-  // since we don't have the full JS client loaded
-  var pollInterval = setInterval(async function() {
+// ══ POLLING ══
+function startPolling() {
+  clearInterval(pollTimer);
+  pollTimer = setInterval(async function() {
+    if (isSaving) return; // skip poll while user is saving
     try {
-      const data = await supa.get('/rest/v1/werkpakketten?select=row_idx,cel_data,updated_by,updated_at&order=row_idx.asc');
+      var data = await supa.get('/rest/v1/werkpakketten?select=row_idx,cel_data,updated_by,updated_at&order=row_idx.asc');
       var changed = false;
       data.forEach(function(row, i) {
-        if (DB_ROWS[i] && JSON.stringify(DB_ROWS[i].cel_data) !== JSON.stringify(row.cel_data)) {
-          DB_ROWS[i] = Object.assign(DB_ROWS[i], row);
+        if (!DB_ROWS[i]) return;
+        var oldJson = JSON.stringify(DB_ROWS[i].cel_data);
+        var newJson = JSON.stringify(row.cel_data);
+        if (oldJson !== newJson) {
+          // Find which cells changed and track them
+          var oldCd = DB_ROWS[i].cel_data || {};
+          var newCd = row.cel_data || {};
+          Object.keys(newCd).forEach(function(k) {
+            if (newCd[k] !== oldCd[k]) {
+              var key = i + '-' + k;
+              // Only update CHANGES if it wasn't changed by current user
+              if (!CHANGES[key] || CHANGES[key].by !== currentUser) {
+                CHANGES[key] = { val: newCd[k], by: row.updated_by || '?', at: row.updated_at };
+              }
+            }
+          });
+          DB_ROWS[i] = Object.assign({}, DB_ROWS[i], row);
           changed = true;
         }
       });
       if (changed) {
         buildROWS(DB_ROWS);
         render();
-        showToast('↻ Data bijgewerkt door een andere gebruiker', 'success');
+        showToast('&#8635; Bijgewerkt door een collega', 'info');
       }
+      // Also refresh opmerkingen occasionally (every 3rd poll)
+      if (!window._pollCount) window._pollCount = 0;
+      window._pollCount++;
+      if (window._pollCount % 3 === 0) loadOpmerkingen();
       setRtStatus(true);
     } catch(e) {
       setRtStatus(false);
     }
-  }, 5000); // poll every 5 seconds
-
-  realtimeChannel = { close: function() { clearInterval(pollInterval); } };
+  }, POLL_MS);
 }
 
 function setRtStatus(online) {
-  const dot = document.getElementById('rtDot');
-  const lbl = document.getElementById('rtStatus');
-  dot.className = 'rt-dot' + (online ? '' : ' rt-offline');
-  lbl.textContent = online ? 'live' : 'offline';
+  document.getElementById('rtDot').className = 'rt-dot' + (online ? '' : ' rt-offline');
+  document.getElementById('rtStatus').textContent = online ? 'live' : 'offline';
+}
+
+// ══ ONLINE USERS (simple: show last-active based on updated_by) ══
+async function refreshOnlineUsers() {
+  try {
+    var data = await supa.get(
+      '/rest/v1/werkpakketten?select=updated_by,updated_at&updated_at=gte.' +
+      new Date(Date.now() - 5*60*1000).toISOString() + '&limit=20'
+    );
+    var users = {};
+    data.forEach(function(r) {
+      if (r.updated_by && r.updated_by !== currentUser) users[r.updated_by] = true;
+    });
+    var container = document.getElementById('onlineUsers');
+    var html = '';
+    Object.keys(users).slice(0,5).forEach(function(name) {
+      var init = name.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase();
+      html += '<div class="online-pip">' + esc(init) + '<span class="pip-tooltip">' + esc(name) + ' (actief)</span></div>';
+    });
+    container.innerHTML = html;
+  } catch(e) {}
 }
 
 // ══ STATUS PICKER ══
 function openStatusPicker(e, rowIdx, colIdx) {
   if (currentMode !== 'editor') return;
   e.stopPropagation();
-  pickerTarget = { rowIdx, colIdx };
-  const picker = document.getElementById('statusPicker');
-  const cur = ROWS[rowIdx][colIdx];
+  pickerTarget = { rowIdx: rowIdx, colIdx: colIdx };
+  var picker = document.getElementById('statusPicker');
+  var cur = ROWS[rowIdx][colIdx];
   picker.querySelectorAll('.status-option[data-val]').forEach(function(opt) {
     opt.classList.toggle('active', opt.getAttribute('data-val') === cur);
   });
-  const rect = e.currentTarget.getBoundingClientRect();
+  var rect = e.currentTarget.getBoundingClientRect();
   var left = rect.left;
   if (left + 170 > window.innerWidth) left = window.innerWidth - 175;
-  picker.style.top  = (rect.bottom + 6) + 'px';
+  var top = rect.bottom + 6;
+  if (top + 220 > window.innerHeight) top = rect.top - 226;
+  picker.style.top  = top + 'px';
   picker.style.left = left + 'px';
   picker.classList.add('open');
   setTimeout(function() { document.addEventListener('click', closeOnOutside, { once: true }); }, 0);
@@ -1069,140 +1378,487 @@ function closeStatusPicker() {
 
 async function applyStatus(newVal) {
   if (!pickerTarget) return;
-  const ri = pickerTarget.rowIdx;
-  const ci = pickerTarget.colIdx;
+  var ri = pickerTarget.rowIdx;
+  var ci = pickerTarget.colIdx;
+  var oldVal = ROWS[ri][ci];
   closeStatusPicker();
+  if (newVal === oldVal) return; // no change
 
-  // Update local state immediately (optimistic)
+  // Optimistic update
   ROWS[ri][ci] = newVal;
+  var key = ri + '-' + ci;
+  CHANGES[key] = { val: newVal, by: currentUser, at: new Date().toISOString() };
   render();
 
-  // Save to Supabase
+  // Save indicator
+  isSaving = true;
+  document.getElementById('savingIndicator').classList.add('show');
+
   try {
-    const dbRow = DB_ROWS[ri];
-    const newCelData = Object.assign({}, dbRow.cel_data || {});
+    var dbRow = DB_ROWS[ri];
+    var newCelData = Object.assign({}, dbRow.cel_data || {});
     newCelData[String(ci)] = newVal;
 
     await supa.patch(
       '/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx,
       { cel_data: newCelData, updated_by: currentUser, updated_at: new Date().toISOString() }
     );
-
-    // Update local DB row too
     DB_ROWS[ri].cel_data = newCelData;
-    showToast('✓ Opgeslagen', 'success');
+    showToast('&#10003; Opgeslagen', 'success');
+    refreshOnlineUsers();
   } catch(e) {
-    // Revert on failure
-    ROWS[ri][ci] = DB_ROWS[ri].cel_data[String(ci)] || '';
+    // Revert
+    ROWS[ri][ci] = oldVal;
+    delete CHANGES[key];
     render();
-    showToast('✗ Opslaan mislukt: ' + e.message, 'error');
+    showToast('&#10007; Opslaan mislukt: ' + e.message, 'error');
+  } finally {
+    isSaving = false;
+    document.getElementById('savingIndicator').classList.remove('show');
   }
 }
 
 // ══ TOAST ══
+var toastTimer = null;
 function showToast(msg, type) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
+  var t = document.getElementById('toast');
+  t.innerHTML = msg;
   t.className = 'toast ' + (type||'') + ' show';
-  setTimeout(function() { t.className = 'toast ' + (type||''); }, 2500);
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() { t.className = 'toast ' + (type||''); }, 2500);
 }
+
+// ══ DATE COLUMN MAPPING ══
+// Each pair: [datumKolom, wekenKolom]
+var DATE_WEEK_PAIRS = [
+  [24, 25],   // [Analyse] Overgangsdatum -> Weken resterend
+  [35, 36],   // [VO] Overgangsdatum -> Weken resterend
+  [58, 59],   // [DO] Overgangsdatum -> Weken resterend
+  [95, 96],   // [Onderzoek] Overgangsdatum -> Weken resterend
+  [106, 107], // [DO-verg.] Overgangsdatum -> Weken resterend
+  [123, 124], // [UO] Overgangsdatum -> Weken resterend
+];
+
+// Cols that are "plandatum" type (date only, no linked week col)
+var PLANDATUM_COLS = [127,130,133,136,139,142,145,148,151,154,157,160,163,166,169,172];
+
+// All date col indices for quick lookup
+var DATE_COL_INDICES = DATE_WEEK_PAIRS.map(function(p){return p[0];})
+  .concat(PLANDATUM_COLS);
+
+var datePicker_target = null; // { rowIdx, colIdx }
+
+// Parse DD-MM-YYYY or YYYY-MM-DD to Date object
+function parseDatum(str) {
+  if (!str || str === '?') return null;
+  str = str.trim();
+  // DD-MM-YYYY
+  var m = str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+  // YYYY-MM-DD
+  m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  return null;
+}
+
+// Format Date to DD-MM-YYYY
+function formatDatum(d) {
+  if (!d) return '';
+  var day   = String(d.getDate()).padStart(2,'0');
+  var month = String(d.getMonth()+1).padStart(2,'0');
+  var year  = d.getFullYear();
+  return day + '-' + month + '-' + year;
+}
+
+// Format Date to YYYY-MM-DD for <input type="date">
+function toInputDate(d) {
+  if (!d) return '';
+  var day   = String(d.getDate()).padStart(2,'0');
+  var month = String(d.getMonth()+1).padStart(2,'0');
+  return d.getFullYear() + '-' + month + '-' + day;
+}
+
+// Calculate weeks remaining from a datum string
+function calcWeken(datumStr) {
+  var d = parseDatum(datumStr);
+  if (!d) return '';
+  var today = new Date();
+  today.setHours(0,0,0,0);
+  var diffDays = (d - today) / (1000 * 60 * 60 * 24);
+  return String(Math.ceil(diffDays / 7));
+}
+
+// Open date picker for a cell
+function openDatePicker(e, rowIdx, colIdx) {
+  if (currentMode !== 'editor') return;
+  e.stopPropagation();
+  datePicker_target = { rowIdx: rowIdx, colIdx: colIdx };
+
+  var cur = ROWS[rowIdx][colIdx];
+  var d = parseDatum(cur);
+  document.getElementById('dateInput').value = d ? toInputDate(d) : '';
+
+  var popup = document.getElementById('datePicker');
+  var rect = e.currentTarget.getBoundingClientRect();
+  var left = rect.left;
+  var top  = rect.bottom + 6;
+  if (left + 240 > window.innerWidth)  left = window.innerWidth - 245;
+  if (top  + 160 > window.innerHeight) top  = rect.top - 166;
+  popup.style.top  = top + 'px';
+  popup.style.left = left + 'px';
+  popup.classList.add('open');
+
+  setTimeout(function() {
+    document.getElementById('dateInput').focus();
+    document.addEventListener('click', closeDateOnOutside, { once: true });
+  }, 50);
+}
+
+function closeDateOnOutside(e) {
+  var popup = document.getElementById('datePicker');
+  if (!popup.contains(e.target)) closeDatePicker();
+}
+
+function closeDatePicker() {
+  document.getElementById('datePicker').classList.remove('open');
+  datePicker_target = null;
+}
+
+function clearDate() {
+  if (!datePicker_target) return;
+  applyDate('');
+}
+
+function saveDate() {
+  if (!datePicker_target) return;
+  var inputVal = document.getElementById('dateInput').value; // YYYY-MM-DD
+  if (!inputVal) { applyDate(''); return; }
+  var parts = inputVal.split('-');
+  var formatted = parts[2] + '-' + parts[1] + '-' + parts[0]; // DD-MM-YYYY
+  applyDate(formatted);
+}
+
+async function applyDate(newDateStr) {
+  if (!datePicker_target) return;
+  var ri = datePicker_target.rowIdx;
+  var ci = datePicker_target.colIdx;
+  closeDatePicker();
+
+  // Build updates: date col + linked week col (if any)
+  var updates = {};
+  updates[ci] = newDateStr;
+
+  // Find if this date col has a linked week col
+  for (var p = 0; p < DATE_WEEK_PAIRS.length; p++) {
+    if (DATE_WEEK_PAIRS[p][0] === ci) {
+      var weekIdx = DATE_WEEK_PAIRS[p][1];
+      updates[weekIdx] = newDateStr ? calcWeken(newDateStr) : '';
+      break;
+    }
+  }
+
+  // Optimistic update
+  var oldVals = {};
+  Object.keys(updates).forEach(function(k) {
+    oldVals[k] = ROWS[ri][parseInt(k)];
+    ROWS[ri][parseInt(k)] = updates[k];
+    CHANGES[ri + '-' + k] = { val: updates[k], by: currentUser, at: new Date().toISOString() };
+  });
+  render();
+
+  // Save to Supabase
+  isSaving = true;
+  document.getElementById('savingIndicator').classList.add('show');
+  try {
+    var dbRow = DB_ROWS[ri];
+    var newCelData = Object.assign({}, dbRow.cel_data || {});
+    Object.keys(updates).forEach(function(k) {
+      if (updates[k] !== '') {
+        newCelData[k] = updates[k];
+      } else {
+        delete newCelData[k];
+      }
+    });
+    await supa.patch(
+      '/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx,
+      { cel_data: newCelData, updated_by: currentUser, updated_at: new Date().toISOString() }
+    );
+    DB_ROWS[ri].cel_data = newCelData;
+    var n = Object.keys(updates).length;
+    showToast('&#10003; Datum opgeslagen' + (n > 1 ? ' + weken bijgewerkt' : ''), 'success');
+    refreshOnlineUsers();
+  } catch(err) {
+    // Revert
+    Object.keys(oldVals).forEach(function(k) {
+      ROWS[ri][parseInt(k)] = oldVals[k];
+      delete CHANGES[ri + '-' + k];
+    });
+    render();
+    showToast('&#10007; Opslaan mislukt: ' + err.message, 'error');
+  } finally {
+    isSaving = false;
+    document.getElementById('savingIndicator').classList.remove('show');
+  }
+}
+
+
+// ══ JA/NEE KOLOMMEN ══
+var JANEE_COL_INDICES = [26,37,60,97,108,125,128,131,134,137,140,143,146,149,152,155,158,161,164,167,170,173];
+
+async function toggleJaNee(e, rowIdx, colIdx) {
+  if (currentMode !== 'editor') return;
+  e.stopPropagation();
+  var cur = ROWS[rowIdx][colIdx];
+  var newVal = (cur === 'Ja') ? 'Nee' : 'Ja';
+
+  // Optimistic update
+  var oldVal = cur;
+  ROWS[rowIdx][colIdx] = newVal;
+  CHANGES[rowIdx + '-' + colIdx] = { val: newVal, by: currentUser, at: new Date().toISOString() };
+  render();
+
+  isSaving = true;
+  document.getElementById('savingIndicator').classList.add('show');
+  try {
+    var dbRow = DB_ROWS[rowIdx];
+    var newCelData = Object.assign({}, dbRow.cel_data || {});
+    newCelData[String(colIdx)] = newVal;
+    await supa.patch(
+      '/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx,
+      { cel_data: newCelData, updated_by: currentUser, updated_at: new Date().toISOString() }
+    );
+    DB_ROWS[rowIdx].cel_data = newCelData;
+    showToast('&#10003; ' + newVal, 'success');
+  } catch(err) {
+    ROWS[rowIdx][colIdx] = oldVal;
+    delete CHANGES[rowIdx + '-' + colIdx];
+    render();
+    showToast('&#10007; Opslaan mislukt: ' + err.message, 'error');
+  } finally {
+    isSaving = false;
+    document.getElementById('savingIndicator').classList.remove('show');
+  }
+}
+
+
+// ══ OPMERKINGEN ══
+var OPMERKINGEN = {};  // key: "rowIdx-fase" -> tekst
+var OPM_VIRT_MAP = {
+  200:'Analyse', 201:'VO-Fase', 202:'DO-Fase', 203:'Onderzoeksfase',
+  204:'DO-Fase', 205:'UO-Fase', 206:'Natuurtoets', 207:'Natuurtoets',
+  208:'Natuurtoets', 209:'Natuurtoets', 210:'Archeologie', 211:'Archeologie',
+  212:'Archeologie', 213:'Bodem', 214:'Bodem', 215:'Bodem',
+  216:'NGE/OO', 217:'NGE/OO', 218:'NGE/OO', 219:'Geotechnisch',
+  220:'Geotechnisch', 221:'Geotechnisch'
+};
+// Virtual col -> sub-label (for modal title)
+var OPM_SUB_LABELS = {
+  200:'Analyse-fase', 201:'VO-Fase', 202:'DO-Fase', 203:'Onderzoeksfase',
+  204:'DO-vergunningen', 205:'UO-Fase',
+  206:'Ecologische quickscan', 207:'Ecologisch vervolgonderzoek',
+  208:'Natura 2000 / AERIUS', 209:'Natuurtoets / voortoets',
+  210:'Bureauonderzoek', 211:'Inventariserend veldonderzoek',
+  212:'Proefsleuvenonderzoek', 213:'Historisch bodemonderzoek',
+  214:'Verkennend bodemonderzoek', 215:'Nader onderzoek / sanering',
+  216:'Explosieven quickscan', 217:'NGE detectieonderzoek',
+  218:'NGE begeleiding graafwerk', 219:'Geotechnisch onderzoek',
+  220:'Thermische grondweerstand', 221:'Grondwateronderzoek'
+};
+var VIRT_COLS = Object.keys(OPM_VIRT_MAP).map(Number);
+var opmTarget = null; // { rowIdx, virtColIdx }
+
+async function loadOpmerkingen() {
+  try {
+    var data = await supa.get('/rest/v1/opmerkingen?select=row_idx,fase,tekst');
+    OPMERKINGEN = {};
+    data.forEach(function(row) {
+      OPMERKINGEN[row.row_idx + '-' + row.fase] = row.tekst || '';
+    });
+  } catch(e) {
+    console.warn('Opmerkingen laden mislukt:', e.message);
+  }
+}
+
+function getOpmerking(rowIdx, virtColIdx) {
+  // Some fases have multiple virtual cols - use virtColIdx as unique key
+  return OPMERKINGEN[rowIdx + '-opm-' + virtColIdx] || '';
+}
+
+function openOpmModal(e, rowIdx, virtColIdx) {
+  if (currentMode !== 'editor') {
+    // In viewer mode just show the text if any
+    var tekst = getOpmerking(rowIdx, virtColIdx);
+    if (tekst) showToast(tekst, 'info');
+    return;
+  }
+  e.stopPropagation();
+  opmTarget = { rowIdx: rowIdx, virtColIdx: virtColIdx };
+  var tekst = getOpmerking(rowIdx, virtColIdx);
+  var projectnaam = ROWS[rowIdx] ? (ROWS[rowIdx][2] || '') : '';
+  var wp          = ROWS[rowIdx] ? (ROWS[rowIdx][5] || '') : '';
+  document.getElementById('opmTextarea').value = tekst;
+  document.getElementById('opmModalSub').textContent =
+    projectnaam + (wp ? ' · ' + wp : '') + ' · ' + (OPM_SUB_LABELS[virtColIdx] || '');
+  updateOpmCount();
+  document.getElementById('opmOverlay').classList.add('open');
+  setTimeout(function() { document.getElementById('opmTextarea').focus(); }, 100);
+}
+
+function closeOpmModal() {
+  document.getElementById('opmOverlay').classList.remove('open');
+  opmTarget = null;
+}
+
+function updateOpmCount() {
+  var len = document.getElementById('opmTextarea').value.length;
+  document.getElementById('opmCharCount').textContent = len + ' / 500';
+}
+
+async function saveOpmerking() {
+  if (!opmTarget) return;
+  var ri  = opmTarget.rowIdx;
+  var vci = opmTarget.virtColIdx;
+  var tekst = document.getElementById('opmTextarea').value.trim();
+  closeOpmModal();
+
+  // Update local state
+  var key = ri + '-opm-' + vci;
+  OPMERKINGEN[key] = tekst;
+  render();
+
+  isSaving = true;
+  document.getElementById('savingIndicator').classList.add('show');
+  try {
+    var fase = OPM_VIRT_MAP[vci];
+    // Use upsert: insert or update based on (row_idx, fase, virt_col_idx)
+    var projectnaam = ROWS[ri] ? (ROWS[ri][2] || '') : '';
+    var wp = ROWS[ri] ? (ROWS[ri][5] || '') : '';
+    // Store with unique key including vci so multiple opmerkingen per fase work
+    var upsertData = {
+      row_idx: ri,
+      fase: 'opm-' + vci,
+      tekst: tekst,
+      updated_by: currentUser,
+      updated_at: new Date().toISOString()
+    };
+    // Try PATCH first, then POST if not exists
+    var existing = await supa.get(
+      '/rest/v1/opmerkingen?row_idx=eq.' + ri + '&fase=eq.opm-' + vci + '&select=id'
+    );
+    if (existing && existing.length > 0) {
+      await supa.patch(
+        '/rest/v1/opmerkingen?row_idx=eq.' + ri + '&fase=eq.opm-' + vci,
+        { tekst: tekst, updated_by: currentUser, updated_at: new Date().toISOString() }
+      );
+    } else {
+      await supa.req('POST', '/rest/v1/opmerkingen', upsertData);
+    }
+    showToast(tekst ? '&#10003; Opmerking opgeslagen' : '&#10003; Opmerking verwijderd', 'success');
+  } catch(err) {
+    showToast('&#10007; Opslaan mislukt: ' + err.message, 'error');
+  } finally {
+    isSaving = false;
+    document.getElementById('savingIndicator').classList.remove('show');
+  }
+}
+
 
 // ══ RENDER ══
 function visibleCols() {
   if (currentFase === 'alle') {
-    return COLS.filter(c => c.f==='' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].includes(c.f));
+    return COLS.filter(function(c) {
+      return c.f === '' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(c.f) >= 0;
+    });
   }
-  return COLS.filter(c => c.f==='' || c.f===currentFase);
+  return COLS.filter(function(c) { return c.f === '' || c.f === currentFase; });
 }
 
 function filterRows() {
-  const search = document.getElementById('search').value.toLowerCase();
-  const loc    = document.getElementById('locFilter').value;
-  const status = document.getElementById('statusFilter').value;
-  const eng    = document.getElementById('engFilter').value;
-  const vcols  = visibleCols();
+  var search = document.getElementById('search').value.toLowerCase();
+  var loc    = document.getElementById('locFilter').value;
+  var status = document.getElementById('statusFilter').value;
+  var eng    = document.getElementById('engFilter').value;
+  var vcols  = visibleCols();
 
   return ROWS.filter(function(r) {
-    if (search && ![r[2],r[8],r[5],r[6],r[7]].some(v=>(v||'').toLowerCase().includes(search))) return false;
-    if (loc && r[2] !== loc) return false;
-    if (eng && r[8] !== eng) return false;
-    if (status) {
-      if (!vcols.filter(c=>c.f!=='').some(c=>r[c.i]===status)) return false;
-    }
+    if (search && ![r[2],r[8],r[5],r[6],r[7]].some(function(v){ return (v||'').toLowerCase().indexOf(search) >= 0; })) return false;
+    if (loc    && r[2] !== loc)  return false;
+    if (eng    && r[8] !== eng)  return false;
+    if (status && !vcols.filter(function(c){return c.f!=='';}).some(function(c){return r[c.i]===status;})) return false;
     return true;
   });
 }
 
 function badgeCls(v) {
-  if(v==='Gereed') return 'G';
-  if(v==='Loopt') return 'L';
-  if(v==='Review') return 'R';
-  if(v==='Geblokkeerd') return 'B';
+  if(v==='Gereed')       return 'G';
+  if(v==='Loopt')        return 'L';
+  if(v==='Review')       return 'R';
+  if(v==='Geblokkeerd')  return 'B';
   if(v==='Nog te starten') return 'N';
   return '';
 }
 
 function dominantStatus(r, vcols) {
-  const order = ['Geblokkeerd','Review','Loopt','Nog te starten','Gereed'];
-  const tc = vcols.filter(c=>c.f!=='');
-  for (const s of order) { if (tc.some(c=>r[c.i]===s)) return s; }
+  var order = ['Geblokkeerd','Review','Loopt','Nog te starten','Gereed'];
+  var tc = vcols.filter(function(c){return c.f!=='';});
+  for (var i=0; i<order.length; i++) {
+    if (tc.some(function(c){return r[c.i]===order[i];})) return order[i];
+  }
   return '';
 }
 
 function updateKPIs(rows, vcols) {
-  let g=0,l=0,rv=0,gb=0;
+  var g=0,l=0,rv=0,gb=0;
   rows.forEach(function(r) {
-    const d = dominantStatus(r, vcols);
-    if(d==='Gereed') g++;
-    else if(d==='Loopt') l++;
-    else if(d==='Review') rv++;
-    else if(d==='Geblokkeerd') gb++;
+    var d = dominantStatus(r, vcols);
+    if(d==='Gereed') g++; else if(d==='Loopt') l++; else if(d==='Review') rv++; else if(d==='Geblokkeerd') gb++;
   });
-  const n = rows.length;
-  document.getElementById('kpi-total').textContent     = n;
-  document.getElementById('kpi-gereed').textContent    = g;
-  document.getElementById('kpi-gereed-pct').textContent= n ? Math.round(g/n*100)+'% van totaal' : '';
-  document.getElementById('kpi-loopt').textContent     = l;
-  document.getElementById('kpi-review').textContent    = rv;
-  document.getElementById('kpi-geblokkeerd').textContent = gb;
-  document.getElementById('hdr-count').textContent     = n + ' werkpakketten';
-  document.getElementById('row-count').textContent     = n + ' rijen';
+  var n = rows.length;
+  document.getElementById('kpi-total').textContent      = n;
+  document.getElementById('kpi-gereed').textContent     = g;
+  document.getElementById('kpi-gereed-pct').textContent = n ? Math.round(g/n*100)+'% van totaal' : '';
+  document.getElementById('kpi-loopt').textContent      = l;
+  document.getElementById('kpi-review').textContent     = rv;
+  document.getElementById('kpi-geblokkeerd').textContent= gb;
+  document.getElementById('hdr-count').textContent      = n + ' werkpakketten';
+  document.getElementById('row-count').textContent      = n + ' rijen';
 }
 
 function render() {
-  const vcols = visibleCols();
-  let rows = filterRows();
+  if (!ROWS.length) return;
+  var vcols = visibleCols();
+  var rows  = filterRows();
 
   if (sortCol >= 0 && sortCol < vcols.length) {
-    const ci = vcols[sortCol].i;
-    rows.sort((a,b) => { const av=a[ci]||'',bv=b[ci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
+    var _ci = vcols[sortCol].i;
+    rows.sort(function(a,b){ var av=a[_ci]||'',bv=b[_ci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
   }
 
   updateKPIs(rows, vcols);
 
-  // Fase header groups
-  const groups = [];
-  let lastF = null;
-  vcols.forEach(function(c,ci) {
+  // Fase groups for header
+  var groups = [];
+  var lastF  = null;
+  vcols.forEach(function(c) {
     if (c.f !== lastF) { groups.push({f:c.f, count:1}); lastF=c.f; }
     else groups[groups.length-1].count++;
   });
 
-  let html = '<thead>';
-  html += '<tr class="fase-hdr-row">';
+  var html = '<thead><tr class="fase-hdr-row">';
   groups.forEach(function(g) {
-    const label = g.f || 'Projectinfo';
-    const s = FASE_STYLE[g.f];
-    const style = s ? 'color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color : 'color:var(--text-faint);background:var(--surface2)';
-    html += '<th colspan="'+g.count+'" style="'+style+'">'+label+'</th>';
+    var label = g.f || 'Projectinfo';
+    var s = FASE_STYLE[g.f];
+    var style = s ? 'color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color
+                  : 'color:var(--text-faint);background:var(--surface2)';
+    html += '<th colspan="'+g.count+'" style="'+style+'">'+esc(label)+'</th>';
   });
   html += '</tr><tr class="col-hdr-row">';
   vcols.forEach(function(c,ci) {
-    const arrow = sortCol===ci ? (sortDir===1?' ▲':' ▼') : '';
-    const fs = FASE_STYLE[c.f];
-    const isFirst = ci===0 || vcols[ci-1].f !== c.f;
-    const bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
-    html += '<th onclick="sortBy('+ci+')" title="'+c.n+'" style="'+bl+'">'+c.n+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+'</th>';
+    var arrow = sortCol===ci ? (sortDir===1?' ▲':' ▼') : '';
+    var fs = FASE_STYLE[c.f];
+    var isFirst = ci===0 || vcols[ci-1].f !== c.f;
+    var bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
+    html += '<th onclick="sortBy('+ci+')" title="'+esc(c.n)+'" style="'+bl+'">'+esc(c.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+'</th>';
   });
   html += '</tr></thead><tbody>';
 
@@ -1210,35 +1866,81 @@ function render() {
     html += '<tr><td colspan="'+vcols.length+'"><div class="empty-state"><strong>Geen resultaten</strong>Pas de filters aan.</div></td></tr>';
   } else {
     rows.forEach(function(r, ri) {
-      const actualIdx = ROWS.indexOf(r);
+      var actualIdx = ROWS.indexOf(r);
       html += '<tr>';
       vcols.forEach(function(c, ci) {
-        const val = r[c.i] || '';
-        const isBase = c.f === '';
-        const fs = FASE_STYLE[c.f];
-        const isFirst = ci===0 || vcols[ci-1].f !== c.f;
-        const bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
-        const cls = isBase ? 'col-base' : (c.i===5 ? 'col-wp' : '');
-        const bc = badgeCls(val);
-        let cell;
+        var raw = r[c.i] !== undefined ? r[c.i] : '';
+        var val = esc(raw);
+        var isBase = c.f === '';
+        var fs = FASE_STYLE[c.f];
+        var isFirst = ci===0 || vcols[ci-1].f !== c.f;
+        var bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
+        var cls = isBase ? 'col-base' : (c.i===5 ? 'col-wp' : '');
+
+        var isVirtCol  = VIRT_COLS.indexOf(c.i) >= 0;
+        if (isVirtCol) {
+          // Opmerking virtual column
+          var opmKey  = actualIdx + '-opm-' + c.i;
+          var opmTekst = OPMERKINGEN[opmKey] || '';
+          var opmCell;
+          if (opmTekst) {
+            opmCell = '<span class="opmerking-tekst" title="'+esc(opmTekst)+'">'+esc(opmTekst)+'</span>';
+          } else {
+            opmCell = currentMode === 'editor'
+              ? '<span class="opmerking-leeg">+ opmerking</span>'
+              : '<span class="opmerking-leeg">—</span>';
+          }
+          var opmClick = ' onclick="openOpmModal(event,'+actualIdx+','+c.i+')"';
+          html += '<td class="opmerking-cell" style="'+bl+'"'+opmClick+'>'+opmCell+'</td>';
+          return; // skip normal cell rendering
+        }
+
+        var bc = badgeCls(raw);
+        var isDateCol  = DATE_COL_INDICES.indexOf(c.i) >= 0;
+        var isJaNeeCol = JANEE_COL_INDICES.indexOf(c.i) >= 0;
+        var cell;
         if (bc) {
           cell = '<span class="badge '+bc+'">'+val+'</span>';
-        } else if (c.n.indexOf('Weken resterend') !== -1 && val !== '') {
-          const wn = parseInt(val);
+        } else if (c.n.indexOf('Weken resterend') >= 0 && raw !== '') {
+          var wn = parseInt(raw);
           if (!isNaN(wn) && Math.abs(wn) < 1000) {
-            const wc = wn<0?'wk-over':wn<=4?'wk-warn':'wk-ok';
+            var wc = wn<0?'wk-over':wn<=4?'wk-warn':'wk-ok';
             cell = '<span class="'+wc+'">'+wn+'w</span>';
           } else { cell = val; }
-        } else { cell = val; }
-
-        const isStatus = bc !== '';
-        var clickAttr = '';
-        var editCls = '';
-        if (currentMode === 'editor' && isStatus) {
-          clickAttr = ' onclick="openStatusPicker(event,'+actualIdx+','+c.i+')"';
-          editCls = ' editable';
+        } else if (isDateCol && raw) {
+          var icon = currentMode === 'editor' ? '<svg width="11" height="11" viewBox="0 0 16 16" fill="none" style="opacity:.4;margin-right:3px;vertical-align:-1px"><rect x="1" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M5 1v4M11 1v4M1 7h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>' : '';
+          cell = '<span class="date-val">'+icon+val+'</span>';
+        } else if (isJaNeeCol) {
+          var jnCls = raw === 'Ja' ? 'janee-ja' : raw === 'Nee' ? 'janee-nee' : 'janee-leeg';
+          var jnLabel = raw || '—';
+          cell = '<span class="'+jnCls+'">'+esc(jnLabel)+'</span>';
+        } else {
+          cell = val;
         }
-        html += '<td class="'+cls+editCls+'" style="'+bl+'" title="'+val+'"'+clickAttr+'>'+cell+'</td>';
+
+        // Changed cell tooltip
+        var chKey = actualIdx + '-' + c.i;
+        var chInfo = CHANGES[chKey];
+        var changedCls = chInfo ? ' cell-changed' : '';
+        var whoAttr    = chInfo ? ' data-who="'+esc(chInfo.by)+'"' : '';
+
+        // Click handler
+        var clickAttr = '';
+        var editCls   = '';
+        if (currentMode === 'editor') {
+          if (bc) {
+            clickAttr = ' onclick="openStatusPicker(event,'+actualIdx+','+c.i+')"';
+            editCls   = ' editable';
+          } else if (isDateCol) {
+            clickAttr = ' onclick="openDatePicker(event,'+actualIdx+','+c.i+')"';
+            editCls   = ' date-cell';
+          } else if (isJaNeeCol) {
+            clickAttr = ' onclick="toggleJaNee(event,'+actualIdx+','+c.i+')"';
+            editCls   = ' janee-cell';
+          }
+        }
+
+        html += '<td class="'+cls+editCls+changedCls+'" style="'+bl+'" title="'+val+'"'+whoAttr+clickAttr+'>'+cell+'</td>';
       });
       html += '</tr>';
     });
@@ -1254,7 +1956,7 @@ function sortBy(ci) {
 
 function setFase(f, btn) {
   currentFase = f;
-  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   sortCol = -1;
   render();
@@ -1262,48 +1964,54 @@ function setFase(f, btn) {
 
 // ══ EXPORT ══
 function getExportData() {
-  const vcols = visibleCols();
-  let rows = filterRows();
+  var vcols = visibleCols();
+  var rows  = filterRows();
   if (sortCol >= 0 && sortCol < vcols.length) {
-    const ci = vcols[sortCol].i;
-    rows.sort((a,b)=>{ const av=a[ci]||'',bv=b[ci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
+    var _ci = vcols[sortCol].i;
+    rows.sort(function(a,b){ var av=a[_ci]||'',bv=b[_ci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
   }
   return {
-    faseRow:  vcols.map(c=>c.f||'Projectinfo'),
-    colRow:   vcols.map(c=>c.n),
-    dataRows: rows.map(r=>vcols.map(c=>r[c.i]||'')),
-    vcols
+    faseRow:  vcols.map(function(col){ return col.f || 'Projectinfo'; }),
+    colRow:   vcols.map(function(col){ return col.n; }),
+    dataRows: rows.map(function(r) {
+      var ai = ROWS.indexOf(r);
+      return vcols.map(function(col) {
+        if (VIRT_COLS.indexOf(col.i) >= 0) {
+          return OPMERKINGEN[ai + '-opm-' + col.i] || '';
+        }
+        return r[col.i] || '';
+      });
+    }),
+    vcols: vcols
   };
 }
 
 function exportCSV() {
-  const { faseRow, colRow, dataRows } = getExportData();
-  const esc = v => '"'+String(v).replace(/"/g,'""')+'"';
-  const lines = [faseRow.map(esc).join(','), colRow.map(esc).join(',')]
-    .concat(dataRows.map(row=>row.map(esc).join(',')));
-  const blob = new Blob(['﻿'+lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
-  const date = new Date().toISOString().slice(0,10);
-  triggerDownload(blob, 'engineeringsplanning_TPA_'+date+'.csv');
+  var d = getExportData();
+  var e = function(v){ return '"'+String(v).replace(/"/g,'""')+'"'; };
+  var lines = [d.faseRow.map(e).join(','), d.colRow.map(e).join(',')]
+    .concat(d.dataRows.map(function(r){return r.map(e).join(',');}));
+  var blob = new Blob(['﻿' + lines.join('\r\n')], {type:'text/csv;charset=utf-8;'});
+  triggerDownload(blob, 'engineeringsplanning_TPA_'+new Date().toISOString().slice(0,10)+'.csv');
 }
 
 function exportXLSX() {
-  if (typeof XLSX === 'undefined') { alert('Even wachten...'); return; }
-  const { faseRow, colRow, dataRows, vcols } = getExportData();
-  const wb = XLSX.utils.book_new();
-  const ws = XLSX.utils.aoa_to_sheet([faseRow, colRow].concat(dataRows));
-  ws['!cols'] = vcols.map(c=>({wch:Math.min(Math.max(c.n.length+2,10),30)}));
-  const date = new Date().toISOString().slice(0,10);
+  if (typeof XLSX === 'undefined') { showToast('Even wachten...','info'); return; }
+  var d = getExportData();
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet([d.faseRow, d.colRow].concat(d.dataRows));
+  ws['!cols'] = d.vcols.map(function(c){return {wch:Math.min(Math.max(c.n.length+2,10),30)};});
   XLSX.utils.book_append_sheet(wb, ws, 'Data');
-  XLSX.writeFile(wb, 'engineeringsplanning_TPA_'+date+'.xlsx');
+  XLSX.writeFile(wb, 'engineeringsplanning_TPA_'+new Date().toISOString().slice(0,10)+'.xlsx');
 }
 
 function triggerDownload(blob, filename) {
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
   a.href=url; a.download=filename;
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  setTimeout(function(){URL.revokeObjectURL(url);},1000);
 }
 </script>
 </body>
