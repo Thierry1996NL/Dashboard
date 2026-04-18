@@ -282,7 +282,7 @@
     border-radius: 12px;
     overflow: hidden;
   }
-  .tbl-scroll { overflow-x: auto; }
+  .tbl-scroll { overflow-x: auto; overflow-y: auto; max-height: calc(100vh - 280px); }
 
   table {
     border-collapse: collapse;
@@ -291,7 +291,7 @@
   }
 
   /* Sticky header rows */
-  thead { position: sticky; top: 56px; z-index: 10; }
+  thead { position: sticky; top: 0; z-index: 10; }
 
   .fase-hdr-row th {
     padding: 5px 10px;
@@ -549,6 +549,7 @@
   .save-status.saving { display: flex; color: rgba(255,255,255,0.7); }
   .save-status.success { display: flex; color: #7ac8a0; }
   .save-status.error { display: flex; color: #f28b8b; }
+
 
 </style>
 </head>
@@ -1056,23 +1057,22 @@ function render() {
   let html = '<thead>';
   // Fase header row
   html += '<tr class="fase-hdr-row">';
-  groups.forEach(g => {
-    const label = g.f || 'Projectinfo';
-    const s = FASE_STYLE[g.f];
-    const style = s ? `color:${s.color};background:${s.bg};border-bottom:2px solid ${s.color}` : 'color:var(--text-faint);background:var(--surface2)';
-    html += `<th colspan="${g.count}" style="${style}">${label}</th>`;
+  groups.forEach(function(g) {
+    var label = g.f || 'Projectinfo';
+    var s = FASE_STYLE[g.f];
+    var style = s ? 'color:' + s.color + ';background:' + s.bg + ';border-bottom:2px solid ' + s.color : 'color:var(--text-faint);background:var(--surface2)';
+    html += '<th colspan="' + g.count + '" style="' + style + '">' + label + '</th>';
   });
   html += '</tr>';
 
   // Column header row
   html += '<tr class="col-hdr-row">';
   vcols.forEach(function(c,ci) {
-    const arrow = sortCol===ci ? (sortDir===1 ? ' ▲' : ' ▼') : '';
-    const fs = FASE_STYLE[c.f];
-    const isFirst = ci===0 || vcols[ci-1].f !== c.f;
-    const bl = isFirst && fs ? `border-left:2px solid ${fs.color}` : '';
-    html += `<th onclick="sortBy(${ci})" title="${c.n}" style="${bl}">${c.n}${arrow?`<span class="sort-arrow">${arrow}</span>`:''}`;
-    html += `</th>`;
+    var arrow = sortCol===ci ? (sortDir===1 ? ' ▲' : ' ▼') : '';
+    var fs = FASE_STYLE[c.f];
+    var isFirst = ci===0 || vcols[ci-1].f !== c.f;
+    var bl = isFirst && fs ? 'border-left:2px solid ' + fs.color : '';
+    html += '<th onclick="sortBy(' + ci + ')" title="' + c.n + '" style="' + bl + '">' + c.n + (arrow ? '<span class="sort-arrow">' + arrow + '</span>' : '') + '</th>';
   });
   html += '</tr></thead>';
 
