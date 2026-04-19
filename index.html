@@ -53,12 +53,12 @@
   .btn-back:hover { background:rgba(0,0,0,0.07); color:var(--text); }
   .mode-badge { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; margin-right:.875rem; letter-spacing:.03em; }
   .mode-badge .dot { width:5px; height:5px; border-radius:50%; }
-  .mode-badge.viewer { background:var(--accent-2); color:var(--accent); border-color:rgba(0,113,227,0.2); }
+  .mode-badge.viewer { background:var(--accent-2); color:var(--accent); }
   .mode-badge.viewer .dot { background:#80AAFF; }
-  .mode-badge.editor { background:var(--g-bg); color:var(--g-fg); border-color:rgba(26,127,60,0.2); }
+  .mode-badge.editor { background:var(--g-bg); color:var(--g-fg); }
   .mode-badge.editor .dot { background:#4DC499; }
   .online-users { display:flex; gap:2px; align-items:center; margin-right:.875rem; }
-  .online-pip { width:22px; height:22px; border-radius:6px; background:var(--accent); border:1px solid rgba(0,113,227,0.2); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:#fff; cursor:default; position:relative; }
+  .online-pip { width:22px; height:22px; border-radius:6px; background:var(--navy-3); border:1px solid rgba(255,255,255,0.09); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:rgba(255,255,255,0.58); cursor:default; position:relative; }
   .online-pip:hover .pip-tooltip { display:block; }
   .pip-tooltip { display:none; position:absolute; top:28px; left:50%; transform:translateX(-50%); background:var(--navy-2); color:#fff; font-size:10px; padding:3px 8px; border-radius:5px; white-space:nowrap; z-index:50; pointer-events:none; border:1px solid rgba(255,255,255,0.08); box-shadow:var(--sh-md); }
   .rt-dot { width:5px; height:5px; border-radius:50%; background:#4DC499; display:inline-block; margin-right:4px; animation:rtpulse 2.5s ease-in-out infinite; }
@@ -636,6 +636,23 @@
   }
   .role-btn.active:hover { background:#0077ED; }
 
+
+  .btn-archief {
+    display:inline-flex; align-items:center; gap:4px; padding:5px 13px;
+    font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px; font-weight:400;
+    border:none; border-radius:20px;
+    background:rgba(0,0,0,0.05); color:var(--text-2); cursor:pointer; transition:all .12s;
+    white-space:nowrap;
+  }
+  .btn-archief:hover { background:rgba(0,0,0,0.09); color:var(--text); }
+  .btn-archief.active { background:var(--r-bg); color:var(--r-fg); }
+  .archief-banner {
+    display:none; align-items:center; gap:8px; padding:.5rem 1rem;
+    background:var(--r-bg); border-bottom:1px solid var(--r-mid);
+    font-size:12px; color:var(--r-fg); font-weight:500;
+  }
+  .archief-banner.show { display:flex; }
+
 </style>
 </head>
 <body>
@@ -721,6 +738,10 @@
       </div>
       <span class="ts-pct" id="row-count" style="color:var(--text-3);font-size:10px"></span>
       <div style="margin-left:auto;display:flex;align-items:center;gap:.5rem">
+        <button class="btn-archief" id="btnArchief" onclick="toggleArchief()">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 7h14M6 10h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 4V3a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.4"/></svg>
+          Archief
+        </button>
         <button class="btn-hdd" onclick="">
           <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
           HDD Dashboard
@@ -739,6 +760,11 @@
     <span id="kpi-gereed-pct" style="display:none"></span>
     <span id="hdr-count" style="display:none"></span>
 
+    <div class="archief-banner" id="archiefBanner">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="4" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 7h14M6 10h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 4V3a1 1 0 011-1h6a1 1 0 011 1v1" stroke="currentColor" stroke-width="1.4"/></svg>
+      Archiefmodus — gearchiveerde projecten
+      <button onclick="toggleArchief()" style="margin-left:auto;background:none;border:none;cursor:pointer;color:var(--r-fg);font-size:12px;font-weight:600">✕ Sluiten</button>
+    </div>
     <!-- Fase tabs + search + filters in één balk -->
     <div class="top-controls">
       <div class="fase-rows">
@@ -776,20 +802,6 @@
 
         </div>
       </div>
-      <div class="top-tools">
-        <input class="search-box" type="text" id="search" placeholder="&#128269; Zoeken..." oninput="debouncedRender()">
-        <span class="row-count" id="row-count"></span>
-        <div class="export-group" id="exportGroup" style="display:none">
-          <button class="btn-export csv" onclick="exportCSV()">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
-          </button>
-          <button class="btn-export xlsx" onclick="exportXLSX()">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
   <div id="editorNotice" class="editor-notice" style="display:none">
@@ -954,7 +966,7 @@
       </div>
     </div>
     <div class="proj-modal-footer">
-      <button class="btn-proj-delete" id="btnDeleteProject" onclick="deleteProject()" style="display:none">&#128465; Verwijderen</button>
+      <button class="btn-proj-delete" id="btnDeleteProject" onclick="archiveProject()" style="display:none">Archiveren</button>
       <button class="btn-proj-cancel" onclick="closeProjModal()">Annuleren</button>
       <button class="btn-proj-save" onclick="saveProject()">Opslaan</button>
     </div>
@@ -985,8 +997,6 @@ function esc(v) {
 
 // ══ SUPABASE — Promise-based, no async/await ══
 function supaReq(method, path, body) {
-  var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
-  var timer = controller ? setTimeout(function() { controller.abort(); }, 10000) : null;
   return fetch(SUPA_URL + path, {
     method: method,
     headers: {
@@ -995,20 +1005,14 @@ function supaReq(method, path, body) {
       'Content-Type': 'application/json',
       'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
     },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: controller ? controller.signal : undefined
+    body: body ? JSON.stringify(body) : undefined
   }).then(function(r) {
-    if (timer) clearTimeout(timer);
     if (!r.ok) {
       return r.json().catch(function() { return {}; }).then(function(e) {
-        throw new Error(e.message || 'HTTP ' + r.status + ' - controleer je API sleutel');
+        throw new Error(e.message || 'HTTP ' + r.status);
       });
     }
     return (method === 'PATCH' || method === 'DELETE') ? null : r.json();
-  }).catch(function(err) {
-    if (timer) clearTimeout(timer);
-    if (err.name === 'AbortError') throw new Error('Verbinding time-out (>10s). Controleer je internetverbinding.');
-    throw err;
   });
 }
 function supaGet(path)         { return supaReq('GET',   path); }
@@ -1173,7 +1177,8 @@ var pollTimer       = null;
 var isSaving        = false;
 var debounceTimer   = null;
 var toastTimer      = null;
-var activeFilters   = {};  // colIdx -> { selected: {val:true,...}, allSelected: bool }
+var activeFilters   = {};
+var archiefModus    = false;  // colIdx -> { selected: {val:true,...}, allSelected: bool }
 var activeStatusFilter = '';
 var cfpColIdx = -1;      // currently open column filter
 var cfpAllValues = [];   // all unique values for current col
@@ -1513,9 +1518,6 @@ function loadData() {
   document.getElementById('tableCard').style.display = 'none';
   return supaGet('/rest/v1/werkpakketten?select=*&order=row_idx.asc')
     .then(function(data) {
-      if (!Array.isArray(data)) {
-        throw new Error(data && data.message ? data.message : 'Onverwacht antwoord van database: ' + JSON.stringify(data).slice(0,100));
-      }
       DB_ROWS = data;
       buildROWS(data);
       document.getElementById('loadingState').style.display = 'none';
@@ -1526,11 +1528,8 @@ function loadData() {
     })
     .catch(function(e) {
       document.getElementById('loadingState').innerHTML =
-        '<div style="color:#b53030;font-size:13px;line-height:1.6">'
-        + '<b>\u2717 Verbinding mislukt</b><br>'
-        + esc(e.message) + '<br><br>'
-        + '<button onclick="loadData()" style="padding:6px 14px;border:1px solid #b53030;border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit">Opnieuw proberen</button>'
-        + '</div>';
+        '<div style="color:#b53030;font-size:13px">\u2717 Laden mislukt: ' + esc(e.message) +
+        '<br><br><button onclick="loadData()" style="padding:6px 14px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit">Opnieuw proberen</button></div>';
       setRtStatus(false);
       throw e;
     });
@@ -1541,6 +1540,7 @@ function buildROWS(dbData) {
     var arr = new Array(174).fill('');
     var cd = row.cel_data || {};
     Object.keys(cd).forEach(function(k) { arr[parseInt(k)] = cd[k] || ''; });
+    arr._gearchiveerd = row.gearchiveerd || false;
     return arr;
   });
 }
@@ -2158,6 +2158,57 @@ function openAnalysePage() {
 function toggleInlineFilter() {}
 
 
+// ══ ARCHIEF ══
+function toggleArchief() {
+  archiefModus = !archiefModus;
+  document.getElementById('btnArchief').classList.toggle('active', archiefModus);
+  document.getElementById('archiefBanner').classList.toggle('show', archiefModus);
+  render();
+}
+
+function archiveProject() {
+  if (projModalRowIdx < 0) return;
+  var naam = ROWS[projModalRowIdx][2] || 'dit project';
+  if (!confirm('Weet je zeker dat je "' + naam + '" wilt archiveren?')) return;
+  var ri    = projModalRowIdx;
+  var dbRow = DB_ROWS[ri];
+  closeProjModal();
+  showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
+    gearchiveerd: true,
+    updated_by: currentUser,
+    updated_at: new Date().toISOString()
+  }).then(function() {
+    showSaving(false);
+    showToast('✓ Project gearchiveerd', 'success');
+    return loadData();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Fout: ' + err.message, 'error');
+  });
+}
+
+function restoreProject(rowIdx) {
+  if (!confirm('Project terugzetten naar actief?')) return;
+  var dbRow = DB_ROWS[rowIdx];
+  showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
+    gearchiveerd: false,
+    updated_by: currentUser,
+    updated_at: new Date().toISOString()
+  }).then(function() {
+    showSaving(false);
+    showToast('✓ Project hersteld', 'success');
+    return loadData();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Fout: ' + err.message, 'error');
+  });
+}
+
+function deleteProject() { archiveProject(); }
+
+
 // ══ RENDER HELPERS ══
 function visibleCols() {
   if (currentFase === 'alle') {
@@ -2171,6 +2222,8 @@ function filterRows() {
   var search = document.getElementById('search').value.toLowerCase();
   var vcols  = visibleCols();
   return ROWS.filter(function(r) {
+    if (archiefModus && !r._gearchiveerd) return false;
+    if (!archiefModus && r._gearchiveerd) return false;
     if (search && ![r[0],r[1],r[2],r[3],r[4],r[5],r[6],r[7],r[8]].some(function(v) {
       return (v||'').toLowerCase().indexOf(search) >= 0;
     })) return false;
@@ -2260,7 +2313,11 @@ function render() {
       var actualIdx = ROWS.indexOf(r);
       html += '<tr onclick="handleRowClick(event,'+actualIdx+')" title="Klik om project te openen">';
       if (currentMode==='editor') {
-        html += '<td class="edit-col-cell" onclick="event.stopPropagation();openProjectModal('+actualIdx+')" title="Project bewerken">&#9998;</td>';
+        if (archiefModus) {
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
+        } else {
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openProjectModal('+actualIdx+')" title="Project bewerken">&#9998;</td>';
+        }
       }
       vcols.forEach(function(col, ci) {
         var raw      = r[col.i] !== undefined ? r[col.i] : '';
