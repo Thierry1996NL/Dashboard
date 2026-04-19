@@ -192,6 +192,42 @@
   .fase-section.all-hidden { display:none; }
   .field-row.df-hidden { display:none; }
 
+
+  /* ── FASE TABS ── */
+  .detail-controls {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:.5rem .875rem; margin-bottom:.75rem; display:flex; flex-direction:column; gap:.5rem;
+  }
+  .detail-fase-row { display:flex; gap:3px; flex-wrap:wrap; align-items:center; }
+  .detail-fase-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); margin-right:4px; white-space:nowrap; }
+  .dtab {
+    padding:3px 11px; font-size:10px; font-weight:500; border:1px solid var(--border-md);
+    border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer;
+    transition:all .1s; font-family:'DM Sans',sans-serif; white-space:nowrap;
+  }
+  .dtab:hover { background:var(--surface2); color:var(--text); border-color:var(--border-strong); }
+  .dtab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .detail-filter-row { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
+  .filter-status-btns { display:flex; gap:3px; flex-wrap:wrap; }
+
+  /* ── EXPORT BUTTONS ── */
+  .detail-export-row {
+    display:flex; gap:.5rem; align-items:center; padding:.5rem .875rem;
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    margin-bottom:.75rem;
+  }
+  .export-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); margin-right:4px; }
+  .btn-det-export {
+    display:inline-flex; align-items:center; gap:4px; padding:4px 11px;
+    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;
+    border-radius:var(--r); cursor:pointer; border:1px solid var(--border-md); transition:all .1s;
+  }
+  .btn-det-export.csv  { background:var(--surface2); color:var(--text-2); }
+  .btn-det-export.csv:hover  { background:var(--surface3); color:var(--text); }
+  .btn-det-export.xlsx { background:var(--g-fg); color:#fff; border-color:var(--g-fg); }
+  .btn-det-export.xlsx:hover { background:#00523A; }
+  .export-fase-note { font-size:10px; color:var(--text-3); margin-left:auto; }
+
 </style>
 </head>
 <body>
@@ -216,21 +252,49 @@
 </header>
 
 
-<!-- Detail filter bar -->
-<div class="detail-filter-bar" id="detailFilterBar" style="display:none">
-  <input class="detail-search" type="text" id="detailSearch" placeholder="&#128269; Zoek veldnaam..." oninput="applyDetailFilters()">
-  <div class="filter-status-btns">
-    <button class="fsb fsb-G" onclick="toggleStatusFilter('Gereed',this)"><span class="fsb-dot" style="background:var(--g-fg)"></span>Gereed</button>
-    <button class="fsb fsb-L" onclick="toggleStatusFilter('Loopt',this)"><span class="fsb-dot" style="background:var(--l-fg)"></span>Loopt</button>
-    <button class="fsb fsb-R" onclick="toggleStatusFilter('Review',this)"><span class="fsb-dot" style="background:var(--r-fg)"></span>Review</button>
-    <button class="fsb fsb-B" onclick="toggleStatusFilter('Geblokkeerd',this)"><span class="fsb-dot" style="background:var(--b-fg)"></span>Geblokkeerd</button>
-    <button class="fsb fsb-N" onclick="toggleStatusFilter('Nog te starten',this)"><span class="fsb-dot" style="background:var(--n-fg)"></span>Nog te starten</button>
+<!-- Detail controls -->
+<div class="detail-controls" id="detailControls" style="display:none">
+  <div class="detail-fase-row">
+    <span class="detail-fase-label">Fase</span>
+    <button class="dtab active" onclick="setDetailFase('alle',this)">Alle fases</button>
+    <button class="dtab" onclick="setDetailFase('Analyse',this)">Analyse</button>
+    <button class="dtab" onclick="setDetailFase('VO-Fase',this)">VO-Fase</button>
+    <button class="dtab" onclick="setDetailFase('DO-Fase',this)">DO-Fase</button>
+    <button class="dtab" onclick="setDetailFase('Onderzoeksfase',this)">Onderzoeksfase</button>
+    <button class="dtab" onclick="setDetailFase('UO-Fase',this)">UO-Fase</button>
+    <button class="dtab" onclick="setDetailFase('Natuurtoets',this)">Natuurtoets</button>
+    <button class="dtab" onclick="setDetailFase('Archeologie',this)">Archeologie</button>
+    <button class="dtab" onclick="setDetailFase('Bodem',this)">Bodem</button>
+    <button class="dtab" onclick="setDetailFase('NGE/OO',this)">NGE/OO</button>
+    <button class="dtab" onclick="setDetailFase('Geotechnisch',this)">Geotechnisch</button>
   </div>
-  <label class="toggle-empty">
-    <input type="checkbox" id="hideEmpty" onchange="applyDetailFilters()"> Verberg lege velden
-  </label>
-  <span class="detail-filter-count" id="detailFilterCount"></span>
+  <div class="detail-filter-row">
+    <input class="detail-search" type="text" id="detailSearch" placeholder="&#128269; Zoek veldnaam..." oninput="applyDetailFilters()">
+    <div class="filter-status-btns">
+      <button class="fsb fsb-G" onclick="toggleStatusFilter('Gereed',this)"><span class="fsb-dot" style="background:var(--g-fg)"></span>Gereed</button>
+      <button class="fsb fsb-L" onclick="toggleStatusFilter('Loopt',this)"><span class="fsb-dot" style="background:var(--l-fg)"></span>Loopt</button>
+      <button class="fsb fsb-R" onclick="toggleStatusFilter('Review',this)"><span class="fsb-dot" style="background:var(--r-fg)"></span>Review</button>
+      <button class="fsb fsb-B" onclick="toggleStatusFilter('Geblokkeerd',this)"><span class="fsb-dot" style="background:var(--b-fg)"></span>Geblokkeerd</button>
+      <button class="fsb fsb-N" onclick="toggleStatusFilter('Nog te starten',this)"><span class="fsb-dot" style="background:var(--n-fg)"></span>Nog te starten</button>
+    </div>
+    <label class="toggle-empty">
+      <input type="checkbox" id="hideEmpty" onchange="applyDetailFilters()"> Verberg lege velden
+    </label>
+    <span class="detail-filter-count" id="detailFilterCount"></span>
+  </div>
 </div>
+
+<div class="detail-export-row" id="detailExportRow" style="display:none">
+  <span class="export-label">Exporteer</span>
+  <button class="btn-det-export csv" onclick="exportDetailCSV()">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
+  </button>
+  <button class="btn-det-export xlsx" onclick="exportDetailXLSX()">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
+  </button>
+  <span class="export-fase-note" id="exportFaseNote">Huidig gefilterde fase</span>
+</div>
+
 <main class="main" id="mainContent">
   <div class="loading-box">
     <div class="spinner"></div>
@@ -284,6 +348,7 @@
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 function goBack() {
   if (window.history.length > 1) {
@@ -528,7 +593,37 @@ async function loadProject() {
 
 
 // ══ DETAIL PAGE FILTERS ══
-var activeDetailStatus = {};  // { 'Gereed': true, ... }
+var activeDetailStatus = {};
+var currentDetailFase  = 'alle';
+
+function setDetailFase(fase, btn) {
+  currentDetailFase = fase;
+  document.querySelectorAll('.dtab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
+
+  // Show/hide fase sections
+  document.querySelectorAll('.fase-section').forEach(function(sec) {
+    var secFase = sec.getAttribute('data-fase');
+    if (fase === 'alle' || secFase === fase) {
+      sec.style.display = '';
+      // Auto-expand selected fase
+      if (fase !== 'alle') {
+        var body = sec.querySelector('.fase-section-body');
+        var hdr  = sec.querySelector('.fase-section-header');
+        if (body) body.classList.remove('collapsed');
+        if (hdr)  hdr.classList.remove('collapsed');
+      }
+    } else {
+      sec.style.display = 'none';
+    }
+  });
+
+  // Update export note
+  var note = document.getElementById('exportFaseNote');
+  if (note) note.textContent = fase === 'alle' ? 'Alle fases' : fase;
+
+  applyDetailFilters();
+}
 
 function toggleStatusFilter(status, btn) {
   if (activeDetailStatus[status]) {
@@ -542,55 +637,77 @@ function toggleStatusFilter(status, btn) {
 }
 
 function applyDetailFilters() {
-  var search    = (document.getElementById('detailSearch').value || '').toLowerCase();
-  var hideEmpty = document.getElementById('hideEmpty').checked;
+  var search    = (document.getElementById('detailSearch') ? document.getElementById('detailSearch').value : '').toLowerCase();
+  var hideEmpty = document.getElementById('hideEmpty') ? document.getElementById('hideEmpty').checked : false;
   var hasStatusFilter = Object.keys(activeDetailStatus).length > 0;
   var totalVisible = 0;
 
-  // For each field-row, decide show/hide
   document.querySelectorAll('.field-row').forEach(function(row) {
     var label  = (row.getAttribute('data-label')  || '').toLowerCase();
     var val    = (row.getAttribute('data-val')    || '');
     var status = (row.getAttribute('data-status') || '');
+    var secEl  = row.closest('.fase-section');
+    var secFase = secEl ? secEl.getAttribute('data-fase') : '';
+
+    // Skip rows in hidden fase sections
+    if (currentDetailFase !== 'alle' && secFase !== currentDetailFase) return;
 
     var show = true;
-    // Search filter
     if (search && label.indexOf(search) < 0) show = false;
-    // Status filter
     if (show && hasStatusFilter && status && !activeDetailStatus[status]) show = false;
-    // Hide empty
     if (show && hideEmpty && !val) show = false;
 
     row.classList.toggle('df-hidden', !show);
     if (show) totalVisible++;
   });
 
-  // Hide fase sections where all fields are hidden
-  document.querySelectorAll('.fase-section').forEach(function(sec) {
-    var visible = sec.querySelectorAll('.field-row:not(.df-hidden)').length;
-    sec.classList.toggle('all-hidden', visible === 0);
-    // Auto-expand sections that have matching results
-    if (visible > 0 && (search || hasStatusFilter || hideEmpty)) {
-      var body = sec.querySelector('.fase-section-body');
-      var hdr  = sec.querySelector('.fase-section-header');
-      if (body && hdr) {
-        body.classList.remove('collapsed');
-        hdr.classList.remove('collapsed');
-      }
-    }
-  });
-
   // Update count
-  document.getElementById('detailFilterCount').textContent = totalVisible + ' velden zichtbaar';
+  var countEl = document.getElementById('detailFilterCount');
+  if (countEl) countEl.textContent = totalVisible + ' velden';
 }
 
-function resetDetailFilters() {
-  activeDetailStatus = {};
-  document.querySelectorAll('.fsb').forEach(function(b) { b.classList.remove('active'); });
-  document.getElementById('detailSearch').value = '';
-  document.getElementById('hideEmpty').checked = false;
-  applyDetailFilters();
+// ══ EXPORT ══
+function getDetailExportData() {
+  var rows = [];
+  document.querySelectorAll('.fase-section').forEach(function(sec) {
+    if (sec.style.display === 'none') return;
+    var fase = sec.getAttribute('data-fase') || '';
+    sec.querySelectorAll('.field-row:not(.df-hidden)').forEach(function(row) {
+      var label  = row.querySelector('.field-label') ? row.querySelector('.field-label').textContent : '';
+      var valEl  = row.querySelector('.field-val');
+      var val    = valEl ? valEl.textContent.trim() : '';
+      rows.push([fase, label, val]);
+    });
+  });
+  return rows;
 }
+
+function exportDetailCSV() {
+  var naam = ROW_DATA[2] || 'project';
+  var fase = currentDetailFase === 'alle' ? 'alle-fases' : currentDetailFase;
+  var e2 = function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; };
+  var header = [e2('Fase'), e2('Veld'), e2('Waarde')].join(',');
+  var data = getDetailExportData().map(function(r) { return r.map(e2).join(','); });
+  var blob = new Blob(['﻿' + [header].concat(data).join('\r\n')], {type:'text/csv;charset=utf-8;'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = naam + '_' + fase + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
+}
+
+function exportDetailXLSX() {
+  if (typeof XLSX === 'undefined') { showToast('Even wachten...','info'); return; }
+  var naam = ROW_DATA[2] || 'project';
+  var fase = currentDetailFase === 'alle' ? 'alle-fases' : currentDetailFase;
+  var data = getDetailExportData();
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet([['Fase','Veld','Waarde']].concat(data));
+  ws['!cols'] = [{wch:18},{wch:36},{wch:24}];
+  XLSX.utils.book_append_sheet(wb, ws, fase.substring(0,31));
+  XLSX.writeFile(wb, naam + '_' + fase + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
+}
+
 
 function renderPage() {
   var naam = ROW_DATA[2] || 'Onbekend project';
@@ -633,7 +750,7 @@ function renderPage() {
     if (!faseCols.length) return;
     var fs = FASE_STYLE[fase] || {};
 
-    html += '<div class="fase-section">';
+    html += '<div class="fase-section" data-fase="'+esc(fase)+'">';
     html += '<div class="fase-section-header" onclick="toggleSection(this)">';
     html += '<span class="fase-title" style="background:'+fs.bg+';color:'+fs.color+'">'+esc(fase)+'</span>';
     html += '<span class="collapse-icon">&#9660;</span>';
@@ -705,7 +822,8 @@ function renderPage() {
 
   html += '</div>'; // app-wrapper
   document.getElementById('mainContent').innerHTML = html;
-  document.getElementById('detailFilterBar').style.display = 'flex';
+  document.getElementById('detailControls').style.display = 'flex';
+  document.getElementById('detailExportRow').style.display = 'flex';
   applyDetailFilters();
 }
 
