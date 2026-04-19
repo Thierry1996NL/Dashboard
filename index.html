@@ -971,6 +971,8 @@ function esc(v) {
 
 // ══ SUPABASE — Promise-based, no async/await ══
 function supaReq(method, path, body) {
+  var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  var timer = controller ? setTimeout(function() { controller.abort(); }, 10000) : null;
   return fetch(SUPA_URL + path, {
     method: method,
     headers: {
@@ -979,14 +981,20 @@ function supaReq(method, path, body) {
       'Content-Type': 'application/json',
       'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
     },
-    body: body ? JSON.stringify(body) : undefined
+    body: body ? JSON.stringify(body) : undefined,
+    signal: controller ? controller.signal : undefined
   }).then(function(r) {
+    if (timer) clearTimeout(timer);
     if (!r.ok) {
       return r.json().catch(function() { return {}; }).then(function(e) {
-        throw new Error(e.message || 'HTTP ' + r.status);
+        throw new Error(e.message || 'HTTP ' + r.status + ' - controleer je API sleutel');
       });
     }
     return (method === 'PATCH' || method === 'DELETE') ? null : r.json();
+  }).catch(function(err) {
+    if (timer) clearTimeout(timer);
+    if (err.name === 'AbortError') throw new Error('Verbinding time-out (>10s). Controleer je internetverbinding.');
+    throw err;
   });
 }
 function supaGet(path)         { return supaReq('GET',   path); }
@@ -1491,6 +1499,9 @@ function loadData() {
   document.getElementById('tableCard').style.display = 'none';
   return supaGet('/rest/v1/werkpakketten?select=*&order=row_idx.asc')
     .then(function(data) {
+      if (!Array.isArray(data)) {
+        throw new Error(data && data.message ? data.message : 'Onverwacht antwoord van database: ' + JSON.stringify(data).slice(0,100));
+      }
       DB_ROWS = data;
       buildROWS(data);
       document.getElementById('loadingState').style.display = 'none';
@@ -1501,8 +1512,11 @@ function loadData() {
     })
     .catch(function(e) {
       document.getElementById('loadingState').innerHTML =
-        '<div style="color:#b53030;font-size:13px">\u2717 Laden mislukt: ' + esc(e.message) +
-        '<br><br><button onclick="loadData()" style="padding:6px 14px;border:1px solid var(--border-strong);border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit">Opnieuw proberen</button></div>';
+        '<div style="color:#b53030;font-size:13px;line-height:1.6">'
+        + '<b>\u2717 Verbinding mislukt</b><br>'
+        + esc(e.message) + '<br><br>'
+        + '<button onclick="loadData()" style="padding:6px 14px;border:1px solid #b53030;border-radius:8px;background:var(--surface);cursor:pointer;font-family:inherit">Opnieuw proberen</button>'
+        + '</div>';
       setRtStatus(false);
       throw e;
     });
