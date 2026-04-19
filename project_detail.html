@@ -155,6 +155,43 @@
   .loading-box { text-align:center; padding:4rem; color:var(--text-3); font-size:13px; }
 
   @media(max-width:600px) { .main{padding:1rem;} .fase-section-body{grid-template-columns:1fr;} .project-info{grid-template-columns:1fr 1fr;} }
+
+  /* ── DETAIL FILTERS ── */
+  .detail-filter-bar {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:.5rem .875rem; margin-bottom:.875rem;
+    display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
+  }
+  .detail-search {
+    flex:1; min-width:160px; padding:5px 10px; font-family:'DM Sans',sans-serif;
+    font-size:12px; border:1px solid var(--border-md); border-radius:var(--r);
+    background:var(--surface2); color:var(--text); outline:none; transition:all .1s;
+  }
+  .detail-search:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .detail-search::placeholder { color:var(--text-3); }
+  .filter-status-btns { display:flex; gap:3px; flex-wrap:wrap; }
+  .fsb {
+    display:inline-flex; align-items:center; gap:3px; padding:3px 9px;
+    font-size:10px; font-weight:600; border-radius:20px; cursor:pointer;
+    border:1px solid var(--border-md); background:transparent; color:var(--text-2);
+    font-family:'DM Sans',sans-serif; transition:all .1s; white-space:nowrap;
+  }
+  .fsb:hover { background:var(--surface2); }
+  .fsb.active { border-color:currentColor; }
+  .fsb.fsb-G.active { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-fg); }
+  .fsb.fsb-L.active { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-fg); }
+  .fsb.fsb-R.active { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-fg); }
+  .fsb.fsb-B.active { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-fg); }
+  .fsb.fsb-N.active { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-fg); }
+  .fsb-dot { width:6px; height:6px; border-radius:50%; }
+  .detail-filter-count { font-size:10px; color:var(--text-3); font-family:'DM Mono',monospace; margin-left:auto; white-space:nowrap; }
+  .toggle-empty { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--text-2); cursor:pointer; user-select:none; white-space:nowrap; }
+  .toggle-empty input { accent-color:var(--accent); cursor:pointer; }
+
+  /* hide fase sections when all fields filtered out */
+  .fase-section.all-hidden { display:none; }
+  .field-row.df-hidden { display:none; }
+
 </style>
 </head>
 <body>
@@ -178,6 +215,22 @@
   </div>
 </header>
 
+
+<!-- Detail filter bar -->
+<div class="detail-filter-bar" id="detailFilterBar" style="display:none">
+  <input class="detail-search" type="text" id="detailSearch" placeholder="&#128269; Zoek veldnaam..." oninput="applyDetailFilters()">
+  <div class="filter-status-btns">
+    <button class="fsb fsb-G" onclick="toggleStatusFilter('Gereed',this)"><span class="fsb-dot" style="background:var(--g-fg)"></span>Gereed</button>
+    <button class="fsb fsb-L" onclick="toggleStatusFilter('Loopt',this)"><span class="fsb-dot" style="background:var(--l-fg)"></span>Loopt</button>
+    <button class="fsb fsb-R" onclick="toggleStatusFilter('Review',this)"><span class="fsb-dot" style="background:var(--r-fg)"></span>Review</button>
+    <button class="fsb fsb-B" onclick="toggleStatusFilter('Geblokkeerd',this)"><span class="fsb-dot" style="background:var(--b-fg)"></span>Geblokkeerd</button>
+    <button class="fsb fsb-N" onclick="toggleStatusFilter('Nog te starten',this)"><span class="fsb-dot" style="background:var(--n-fg)"></span>Nog te starten</button>
+  </div>
+  <label class="toggle-empty">
+    <input type="checkbox" id="hideEmpty" onchange="applyDetailFilters()"> Verberg lege velden
+  </label>
+  <span class="detail-filter-count" id="detailFilterCount"></span>
+</div>
 <main class="main" id="mainContent">
   <div class="loading-box">
     <div class="spinner"></div>
@@ -473,6 +526,72 @@ async function loadProject() {
   }
 }
 
+
+// ══ DETAIL PAGE FILTERS ══
+var activeDetailStatus = {};  // { 'Gereed': true, ... }
+
+function toggleStatusFilter(status, btn) {
+  if (activeDetailStatus[status]) {
+    delete activeDetailStatus[status];
+    btn.classList.remove('active');
+  } else {
+    activeDetailStatus[status] = true;
+    btn.classList.add('active');
+  }
+  applyDetailFilters();
+}
+
+function applyDetailFilters() {
+  var search    = (document.getElementById('detailSearch').value || '').toLowerCase();
+  var hideEmpty = document.getElementById('hideEmpty').checked;
+  var hasStatusFilter = Object.keys(activeDetailStatus).length > 0;
+  var totalVisible = 0;
+
+  // For each field-row, decide show/hide
+  document.querySelectorAll('.field-row').forEach(function(row) {
+    var label  = (row.getAttribute('data-label')  || '').toLowerCase();
+    var val    = (row.getAttribute('data-val')    || '');
+    var status = (row.getAttribute('data-status') || '');
+
+    var show = true;
+    // Search filter
+    if (search && label.indexOf(search) < 0) show = false;
+    // Status filter
+    if (show && hasStatusFilter && status && !activeDetailStatus[status]) show = false;
+    // Hide empty
+    if (show && hideEmpty && !val) show = false;
+
+    row.classList.toggle('df-hidden', !show);
+    if (show) totalVisible++;
+  });
+
+  // Hide fase sections where all fields are hidden
+  document.querySelectorAll('.fase-section').forEach(function(sec) {
+    var visible = sec.querySelectorAll('.field-row:not(.df-hidden)').length;
+    sec.classList.toggle('all-hidden', visible === 0);
+    // Auto-expand sections that have matching results
+    if (visible > 0 && (search || hasStatusFilter || hideEmpty)) {
+      var body = sec.querySelector('.fase-section-body');
+      var hdr  = sec.querySelector('.fase-section-header');
+      if (body && hdr) {
+        body.classList.remove('collapsed');
+        hdr.classList.remove('collapsed');
+      }
+    }
+  });
+
+  // Update count
+  document.getElementById('detailFilterCount').textContent = totalVisible + ' velden zichtbaar';
+}
+
+function resetDetailFilters() {
+  activeDetailStatus = {};
+  document.querySelectorAll('.fsb').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById('detailSearch').value = '';
+  document.getElementById('hideEmpty').checked = false;
+  applyDetailFilters();
+}
+
 function renderPage() {
   var naam = ROW_DATA[2] || 'Onbekend project';
   var wp   = ROW_DATA[5] || '';
@@ -573,7 +692,9 @@ function renderPage() {
         }
       }
 
-      html += '<div class="field-row'+(isFullW?' full-width':'')+editCls+'"'+clickAttr+'>';
+      var statusAttr = bc ? ' data-status="'+esc(raw)+'"' : '';
+      var rawVal = raw || '';
+      html += '<div class="field-row'+(isFullW?' full-width':'')+editCls+'" data-label="'+esc(col.n.toLowerCase())+'" data-val="'+esc(rawVal)+'"'+statusAttr+clickAttr+'>';
       html += '<span class="field-label" title="'+esc(col.n)+'">'+esc(col.n)+'</span>';
       html += '<span class="field-val">'+valHtml+'</span>';
       html += '</div>';
@@ -584,6 +705,8 @@ function renderPage() {
 
   html += '</div>'; // app-wrapper
   document.getElementById('mainContent').innerHTML = html;
+  document.getElementById('detailFilterBar').style.display = 'flex';
+  applyDetailFilters();
 }
 
 function toggleSection(header) {
