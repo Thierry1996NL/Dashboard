@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planning — Dashboard Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+  :root {
+    --bg:#F5F5F7; --surface:#fff; --surface2:#F5F5F7; --surface3:#E8E8ED;
+    --border:rgba(0,0,0,0.08); --border-md:rgba(0,0,0,0.12); --border-strong:rgba(0,0,0,0.20);
+    --text:#1D1D1F; --text-2:#6E6E73; --text-3:#A1A1A6;
+    --accent:#0071E3; --accent-2:rgba(0,113,227,0.08);
+    --navy:#1D1D1F;
+    --g-fg:#1A7F3C; --g-bg:#F0FBF4;
+    --l-fg:#0071E3; --l-bg:#EAF4FF;
+    --r-fg:#8E6000; --r-bg:#FFF8ED;
+    --b-fg:#D70015; --b-bg:#FFF0F0;
+    --n-fg:#6E6E73; --n-bg:#F5F5F7;
+    --r:6px; --r-md:8px; --r-lg:12px; --r-xl:16px;
+    --sh-sm:0 1px 4px rgba(0,0,0,0.06);
+    --sh-md:0 4px 20px rgba(0,0,0,0.08);
+  }
+  body { font-family:'Inter',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:13px; -webkit-font-smoothing:antialiased; min-height:100vh; }
+
+  .page-header {
+    background:rgba(255,255,255,0.80); backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    color:var(--text); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between;
+    height:44px; position:sticky; top:0; z-index:100; border-bottom:1px solid var(--border);
+  }
+  .logo { font-size:13px; font-weight:600; letter-spacing:-.01em; display:flex; align-items:center; gap:8px; font-family:'Poppins',sans-serif; }
+  .logo-icon { width:18px; height:18px; background:var(--accent); border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .btn-back { display:inline-flex; align-items:center; gap:4px; font-size:12px; padding:4px 11px; border-radius:20px; border:1px solid var(--border-md); background:rgba(0,0,0,0.04); color:var(--text-2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .12s; }
+  .btn-back:hover { background:rgba(0,0,0,0.07); color:var(--text); }
+
+  .main { max-width:1400px; margin:0 auto; padding:1.25rem 1.5rem 3rem; }
+
+  /* FILTER BAR */
+  .filter-bar {
+    background:rgba(255,255,255,0.80); backdrop-filter:blur(10px);
+    border:1px solid var(--border); border-radius:var(--r-xl);
+    padding:.625rem 1rem; margin-bottom:.875rem;
+    display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;
+  }
+  .filter-bar select, .filter-bar input {
+    padding:5px 10px; font-family:'Inter',sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2);
+    color:var(--text); outline:none; transition:all .1s;
+  }
+  .filter-bar select { padding-right:26px; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A8A8E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center;
+  }
+  .filter-bar select:focus, .filter-bar input:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .filter-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); }
+  .filter-count { font-size:11px; color:var(--text-3); margin-left:auto; font-variant-numeric:tabular-nums; }
+
+  /* TABLE */
+  .table-wrap {
+    background:rgba(255,255,255,0.85); backdrop-filter:blur(10px);
+    border:1px solid var(--border); border-radius:var(--r-xl);
+    overflow:hidden; box-shadow:var(--sh-sm);
+  }
+  .tbl-scroll { overflow-x:auto; max-height:calc(100vh - 200px); }
+  .tbl-scroll::-webkit-scrollbar { height:4px; width:4px; }
+  .tbl-scroll::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  table { border-collapse:collapse; width:100%; font-size:12px; }
+  thead { position:sticky; top:0; z-index:10; }
+  th {
+    padding:8px 12px; font-size:10px; font-weight:600; text-align:left;
+    color:var(--text-2); background:var(--surface2); border-bottom:1px solid var(--border-md);
+    white-space:nowrap; font-family:'Inter',sans-serif; letter-spacing:-.01em; cursor:pointer;
+    user-select:none;
+  }
+  th:hover { background:var(--surface3); color:var(--text); }
+  th.sort-asc::after { content:' ▲'; font-size:8px; opacity:.5; }
+  th.sort-desc::after { content:' ▼'; font-size:8px; opacity:.5; }
+  td { padding:7px 12px; border-bottom:1px solid var(--border); color:var(--text); vertical-align:middle; white-space:nowrap; font-family:'Inter',sans-serif; }
+  tbody tr:last-child td { border-bottom:none; }
+  tbody tr:hover td { background:var(--surface2); }
+
+  /* PROJECT NAME col */
+  .col-naam { font-weight:500; max-width:200px; overflow:hidden; text-overflow:ellipsis; }
+  .col-wp { color:var(--text-3); font-size:11px; }
+  .col-eng { color:var(--text-2); }
+
+  /* STATUS BADGES */
+  .badge { display:inline-flex; align-items:center; gap:3px; font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+  .badge::before { content:''; width:5px; height:5px; border-radius:50%; flex-shrink:0; }
+  .G { background:var(--g-bg); color:var(--g-fg); } .G::before { background:var(--g-fg); }
+  .L { background:var(--l-bg); color:var(--l-fg); } .L::before { background:var(--l-fg); }
+  .R { background:var(--r-bg); color:var(--r-fg); } .R::before { background:var(--r-fg); }
+  .B { background:var(--b-bg); color:var(--b-fg); } .B::before { background:var(--b-fg); }
+  .N { background:var(--n-bg); color:var(--n-fg); } .N::before { background:var(--n-fg); }
+
+  /* WEKEN */
+  .wk-chip { display:inline-flex; align-items:center; gap:3px; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; font-variant-numeric:tabular-nums; }
+  .wk-over { background:var(--b-bg); color:var(--b-fg); }
+  .wk-warn { background:var(--r-bg); color:var(--r-fg); }
+  .wk-ok   { background:var(--g-bg); color:var(--g-fg); }
+  .wk-neutral { background:var(--n-bg); color:var(--n-fg); }
+
+  /* DATE */
+  .date-val { font-size:11px; color:var(--text-2); font-variant-numeric:tabular-nums; }
+  .date-empty { font-size:11px; color:var(--text-3); font-style:italic; }
+
+  /* PROGRESS BAR */
+  .prog-wrap { width:80px; height:6px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .prog-fill { height:100%; border-radius:3px; transition:width .3s; }
+
+  /* PHASE TABS */
+  .fase-tabs { display:flex; gap:3px; margin-bottom:.75rem; flex-wrap:wrap; }
+  .ftab { padding:4px 12px; font-size:11px; font-weight:400; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .12s; }
+  .ftab:hover { background:var(--surface3); }
+  .ftab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+  .empty-state { text-align:center; padding:3rem; color:var(--text-3); font-size:13px; }
+  .spinner { width:22px; height:22px; border:2px solid var(--border-md); border-top-color:var(--accent); border-radius:50%; animation:spin .5s linear infinite; margin:2rem auto; }
+  @keyframes spin { to{transform:rotate(360deg)} }
+</style>
+</head>
+<body>
+
+<header class="page-header">
+  <div class="logo">
+    <span class="logo-icon">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="white" stroke-width="1.4"/><path d="M5 1v3M11 1v3M1 6h14" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+    </span>
+    Planning
+  </div>
+  <button class="btn-back" onclick="goBack()">
+    <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    Terug
+  </button>
+</header>
+
+<main class="main" id="main">
+  <div class="spinner"></div>
+</main>
+
+<script>
+var SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
+
+var DATE_COLS = [24,35,58,95,106,123,127,130,133,136,139,142,145,148,151,154,157,160,163,166,169,172];
+var WEEK_COLS = [25,36,59,96,107,124];
+var STATUS_COLS = [12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,30,31,32,33,34,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,98,99,100,101,102,103,104,105,109,110,111,112,113,114,115,116,117,118,119,120,121,122,126,129,132,135,138,141,144,147,150,153,156,159,162,165,168,171];
+
+var FASE_DATES = {
+  'Analyse':       {datum:24, weken:25},
+  'VO-Fase':       {datum:35, weken:36},
+  'DO-Fase':       {datum:58, weken:59},
+  'Onderzoeksfase':{datum:95, weken:96},
+  'UO-Fase':       {datum:106,weken:107},
+  'Plandata':      {datum:123,weken:124}
+};
+
+var PLANDATUMS = [
+  {label:'Ecologische quickscan',  datum:127},
+  {label:'Vervolgonderzoek',       datum:130},
+  {label:'AERIUS',                 datum:133},
+  {label:'Voortoets',              datum:136},
+  {label:'Bureauonderzoek',        datum:139},
+  {label:'IVO',                    datum:142},
+  {label:'Proefsleuven',           datum:145},
+  {label:'Hist. bodem',            datum:148},
+  {label:'Verkennend bodem',       datum:151},
+  {label:'Nader onderzoek',        datum:154},
+  {label:'Explosieven scan',       datum:157},
+  {label:'NGE detectie',           datum:160},
+  {label:'NGE begeleiding',        datum:163},
+  {label:'Geotechnisch',           datum:166},
+  {label:'Thermische weerstand',   datum:169},
+  {label:'Grondwater',             datum:172},
+];
+
+var ALL_DATA = [];
+var sortColIdx = -1;
+var sortDir = 1;
+var filterEng = '';
+var filterStatus = '';
+var currentFase = 'overzicht';
+
+function goBack() {
+  if (window.history.length > 1) window.history.back();
+  else if (window.opener) { window.opener.focus(); window.close(); }
+  else window.close();
+}
+
+function supaGet(path) {
+  return fetch(SUPA_URL + path, {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+  }).then(function(r) { return r.json(); });
+}
+
+function esc(v) {
+  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function parseDatum(str) {
+  if (!str || str === '01-01-2020' || str === '?') return null;
+  var m = str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
+  if (m) return new Date(parseInt(m[3]), parseInt(m[2])-1, parseInt(m[1]));
+  m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) return new Date(parseInt(m[1]), parseInt(m[2])-1, parseInt(m[3]));
+  return null;
+}
+
+function formatDate(str) {
+  var d = parseDatum(str);
+  if (!d) return null;
+  return d.getDate() + '-' + (d.getMonth()+1) + '-' + d.getFullYear();
+}
+
+function wekenResterend(str) {
+  var d = parseDatum(str);
+  if (!d) return null;
+  var today = new Date(); today.setHours(0,0,0,0);
+  return Math.ceil((d - today) / (1000*60*60*24*7));
+}
+
+function wekenChip(wk) {
+  if (wk === null) return '<span class="date-empty">—</span>';
+  var cls = wk < 0 ? 'wk-over' : wk <= 4 ? 'wk-warn' : 'wk-ok';
+  return '<span class="wk-chip ' + cls + '">' + wk + 'w</span>';
+}
+
+function badgeCls(v) {
+  if (v==='Gereed') return 'G';
+  if (v==='Loopt')  return 'L';
+  if (v==='Review') return 'R';
+  if (v==='Geblokkeerd') return 'B';
+  if (v==='Nog te starten') return 'N';
+  return '';
+}
+
+function dominantStatus(cd) {
+  var order = ['Geblokkeerd','Review','Loopt','Nog te starten','Gereed'];
+  var found = {};
+  STATUS_COLS.forEach(function(i) { var v = cd[String(i)]; if(v) found[v] = true; });
+  for (var i=0; i<order.length; i++) { if (found[order[i]]) return order[i]; }
+  return '';
+}
+
+function progressPct(cd) {
+  var done = 0;
+  STATUS_COLS.forEach(function(i) { if (cd[String(i)] === 'Gereed') done++; });
+  return Math.round(done / STATUS_COLS.length * 100);
+}
+
+function progColor(pct) {
+  if (pct >= 75) return 'var(--g-fg)';
+  if (pct >= 40) return 'var(--r-fg)';
+  return 'var(--b-fg)';
+}
+
+window.addEventListener('load', function() {
+  supaGet('/rest/v1/werkpakketten?select=*&order=row_idx.asc&gearchiveerd=is.false')
+    .then(function(data) {
+      ALL_DATA = Array.isArray(data) ? data : [];
+      render();
+    })
+    .catch(function(e) {
+      document.getElementById('main').innerHTML = '<p style="color:#b53030;padding:2rem">Laden mislukt: ' + esc(e.message) + '</p>';
+    });
+});
+
+function setFase(f) {
+  currentFase = f;
+  document.querySelectorAll('.ftab').forEach(function(b) {
+    b.classList.toggle('active', b.getAttribute('data-fase') === f);
+  });
+  renderTable();
+}
+
+function render() {
+  var engineers = [];
+  ALL_DATA.forEach(function(r) {
+    var e = (r.cel_data && r.cel_data['8']) || r.engineer || '';
+    if (e && engineers.indexOf(e) < 0) engineers.push(e);
+  });
+  engineers.sort();
+
+  var html = '';
+
+  // Filter bar
+  html += '<div class="filter-bar">';
+  html += '<span class="filter-label">Engineer</span>';
+  html += '<select onchange="filterEng=this.value;renderTable()">';
+  html += '<option value="">Alle</option>';
+  engineers.forEach(function(e) {
+    html += '<option value="'+esc(e)+'">'+esc(e)+'</option>';
+  });
+  html += '</select>';
+  html += '<span class="filter-label" style="margin-left:.5rem">Status</span>';
+  html += '<select onchange="filterStatus=this.value;renderTable()">';
+  html += '<option value="">Alle statussen</option>';
+  ['Gereed','Loopt','Review','Geblokkeerd','Nog te starten'].forEach(function(s) {
+    html += '<option value="'+esc(s)+'">'+esc(s)+'</option>';
+  });
+  html += '</select>';
+  html += '<span class="filter-count" id="filterCount"></span>';
+  html += '</div>';
+
+  // Fase tabs
+  html += '<div class="fase-tabs">';
+  var tabs = [
+    {f:'overzicht', label:'Overzicht'},
+    {f:'Analyse',   label:'Analyse'},
+    {f:'VO-Fase',   label:'VO-Fase'},
+    {f:'DO-Fase',   label:'DO-Fase'},
+    {f:'Onderzoeksfase', label:'Onderzoeksfase'},
+    {f:'UO-Fase',   label:'UO-Fase'},
+    {f:'plandatums',label:'Plandatums'},
+  ];
+  tabs.forEach(function(t) {
+    html += '<button class="ftab'+(t.f===currentFase?' active':'')
+      +'" data-fase="'+t.f+'" onclick="setFase(\''+t.f+'\')">'
+      + esc(t.label) + '</button>';
+  });
+  html += '</div>';
+
+  html += '<div class="table-wrap"><div class="tbl-scroll"><table id="planTbl"></table></div></div>';
+
+  document.getElementById('main').innerHTML = html;
+  renderTable();
+}
+
+function getFilteredRows() {
+  return ALL_DATA.filter(function(r) {
+    var cd = r.cel_data || {};
+    if (filterEng) {
+      var eng = cd['8'] || r.engineer || '';
+      if (eng !== filterEng) return false;
+    }
+    if (filterStatus) {
+      if (dominantStatus(cd) !== filterStatus) return false;
+    }
+    return true;
+  });
+}
+
+function renderTable() {
+  var rows = getFilteredRows();
+  var countEl = document.getElementById('filterCount');
+  if (countEl) countEl.textContent = rows.length + ' projecten';
+
+  if (currentFase === 'overzicht') renderOverzicht(rows);
+  else if (currentFase === 'plandatums') renderPlandatums(rows);
+  else renderFase(rows, currentFase);
+}
+
+function sortRows(rows, colFn) {
+  return rows.slice().sort(function(a,b) {
+    var av = colFn(a), bv = colFn(b);
+    if (av === bv) return 0;
+    return (av < bv ? -1 : 1) * sortDir;
+  });
+}
+
+function renderOverzicht(rows) {
+  var html = '<thead><tr>';
+  ['Project', 'WP', 'Engineer', 'Status', 'Voortgang', 'Analyse datum', 'VO datum', 'DO datum', 'UO datum', 'Weken'].forEach(function(h) {
+    html += '<th>'+esc(h)+'</th>';
+  });
+  html += '</tr></thead><tbody>';
+
+  if (!rows.length) {
+    html += '<tr><td colspan="10"><div class="empty-state">Geen projecten</div></td></tr>';
+  }
+
+  rows.forEach(function(r) {
+    var cd = r.cel_data || {};
+    var naam = cd['2'] || r.projectnaam || '';
+    var wp   = cd['5'] || r.werkpakket  || '';
+    var eng  = cd['8'] || r.engineer    || '';
+    var status = dominantStatus(cd);
+    var bc = badgeCls(status);
+    var pct = progressPct(cd);
+
+    var d_analyse    = formatDate(cd['24']);
+    var d_vo         = formatDate(cd['35']);
+    var d_do         = formatDate(cd['58']);
+    var d_uo         = formatDate(cd['123']);
+
+    // Nearest upcoming date for weken
+    var nearest = null;
+    [24,35,58,123].forEach(function(i) {
+      var d = parseDatum(cd[String(i)]);
+      if (d) { if (!nearest || d < nearest) nearest = d; }
+    });
+    var wk = nearest ? Math.ceil((nearest - new Date().setHours(0,0,0,0)) / (1000*60*60*24*7)) : null;
+
+    html += '<tr>';
+    html += '<td class="col-naam" title="'+esc(naam)+'">'+esc(naam)+'</td>';
+    html += '<td class="col-wp">'+esc(wp)+'</td>';
+    html += '<td class="col-eng">'+esc(eng)+'</td>';
+    html += '<td>'+(bc?'<span class="badge '+bc+'">'+esc(status)+'</span>':esc(status||'—'))+'</td>';
+    html += '<td><div style="display:flex;align-items:center;gap:6px"><div class="prog-wrap"><div class="prog-fill" style="width:'+pct+'%;background:'+progColor(pct)+'"></div></div><span style="font-size:10px;color:var(--text-3)">'+pct+'%</span></div></td>';
+    html += '<td>'+(d_analyse?'<span class="date-val">'+esc(d_analyse)+'</span>':'<span class="date-empty">—</span>')+'</td>';
+    html += '<td>'+(d_vo?'<span class="date-val">'+esc(d_vo)+'</span>':'<span class="date-empty">—</span>')+'</td>';
+    html += '<td>'+(d_do?'<span class="date-val">'+esc(d_do)+'</span>':'<span class="date-empty">—</span>')+'</td>';
+    html += '<td>'+(d_uo?'<span class="date-val">'+esc(d_uo)+'</span>':'<span class="date-empty">—</span>')+'</td>';
+    html += '<td>'+wekenChip(wk)+'</td>';
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  document.getElementById('planTbl').innerHTML = html;
+}
+
+function renderFase(rows, fase) {
+  var faseDateMap = FASE_DATES[fase];
+  var datumCol = faseDateMap ? faseDateMap.datum : null;
+  var wekenCol = faseDateMap ? faseDateMap.weken : null;
+
+  // Get status cols for this fase
+  var faseStatusCols = {
+    'Analyse':       [12,13,14,15,16,17,18,19,20,21,22,23],
+    'VO-Fase':       [27,28,29,30,31,32,33,34],
+    'DO-Fase':       [38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,98,99,100,101,102,103,104,105],
+    'Onderzoeksfase':[61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94],
+    'UO-Fase':       [109,110,111,112,113,114,115,116,117,118,119,120,121,122],
+  };
+  var cols = faseStatusCols[fase] || [];
+  var totalTasks = cols.length;
+
+  var html = '<thead><tr>';
+  html += '<th>Project</th><th>WP</th><th>Engineer</th>';
+  html += '<th>Status fase</th>';
+  html += '<th>Voortgang</th>';
+  if (datumCol) html += '<th>Overgangsdatum</th><th>Weken</th>';
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(function(r) {
+    var cd = r.cel_data || {};
+    var naam = cd['2'] || r.projectnaam || '';
+    var wp   = cd['5'] || r.werkpakket  || '';
+    var eng  = cd['8'] || r.engineer    || '';
+
+    // Fase-specific dominant status
+    var faseStatuses = {};
+    cols.forEach(function(i) { var v = cd[String(i)]; if(v) faseStatuses[v] = true; });
+    var order = ['Geblokkeerd','Review','Loopt','Nog te starten','Gereed'];
+    var faseStatus = '';
+    for (var i=0; i<order.length; i++) { if (faseStatuses[order[i]]) { faseStatus=order[i]; break; } }
+
+    // Fase progress
+    var done = cols.filter(function(i){ return cd[String(i)] === 'Gereed'; }).length;
+    var pct = totalTasks > 0 ? Math.round(done / totalTasks * 100) : 0;
+    var bc = badgeCls(faseStatus);
+
+    var datum = datumCol ? formatDate(cd[String(datumCol)]) : null;
+    var wk    = datumCol ? wekenResterend(cd[String(datumCol)]) : null;
+
+    html += '<tr>';
+    html += '<td class="col-naam" title="'+esc(naam)+'">'+esc(naam)+'</td>';
+    html += '<td class="col-wp">'+esc(wp)+'</td>';
+    html += '<td class="col-eng">'+esc(eng)+'</td>';
+    html += '<td>'+(bc?'<span class="badge '+bc+'">'+esc(faseStatus)+'</span>':esc(faseStatus||'—'))+'</td>';
+    html += '<td><div style="display:flex;align-items:center;gap:6px"><div class="prog-wrap"><div class="prog-fill" style="width:'+pct+'%;background:'+progColor(pct)+'"></div></div><span style="font-size:10px;color:var(--text-3)">'+pct+'%</span></div></td>';
+    if (datumCol) {
+      html += '<td>'+(datum?'<span class="date-val">'+esc(datum)+'</span>':'<span class="date-empty">—</span>')+'</td>';
+      html += '<td>'+wekenChip(wk)+'</td>';
+    }
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  document.getElementById('planTbl').innerHTML = html;
+}
+
+function renderPlandatums(rows) {
+  var html = '<thead><tr><th>Project</th><th>WP</th><th>Engineer</th>';
+  PLANDATUMS.forEach(function(p) { html += '<th>'+esc(p.label)+'</th>'; });
+  html += '</tr></thead><tbody>';
+
+  rows.forEach(function(r) {
+    var cd = r.cel_data || {};
+    var naam = cd['2'] || r.projectnaam || '';
+    var wp   = cd['5'] || r.werkpakket  || '';
+    var eng  = cd['8'] || r.engineer    || '';
+
+    html += '<tr>';
+    html += '<td class="col-naam" title="'+esc(naam)+'">'+esc(naam)+'</td>';
+    html += '<td class="col-wp">'+esc(wp)+'</td>';
+    html += '<td class="col-eng">'+esc(eng)+'</td>';
+    PLANDATUMS.forEach(function(p) {
+      var datum = formatDate(cd[String(p.datum)]);
+      var wk    = wekenResterend(cd[String(p.datum)]);
+      if (datum) {
+        var wkCls = wk === null ? '' : wk < 0 ? 'wk-over' : wk <= 4 ? 'wk-warn' : '';
+        html += '<td><span class="date-val'+(wkCls?' '+wkCls:'')+'">'+esc(datum)+'</span>';
+        if (wk !== null) html += ' <span style="font-size:10px;color:var(--text-3)">'+wk+'w</span>';
+        html += '</td>';
+      } else {
+        html += '<td><span class="date-empty">—</span></td>';
+      }
+    });
+    html += '</tr>';
+  });
+
+  html += '</tbody>';
+  document.getElementById('planTbl').innerHTML = html;
+}
+</script>
+</body>
+</html>
