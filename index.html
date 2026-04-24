@@ -57,6 +57,7 @@
   .mode-badge.viewer .dot { background:#80AAFF; }
   .mode-badge.editor { background:var(--g-bg); color:var(--g-fg); }
   .mode-badge.editor .dot { background:#4DC499; }
+  .mode-badge:hover { opacity:.8; }
   .online-users { display:flex; gap:2px; align-items:center; margin-right:.875rem; }
   .online-pip { width:22px; height:22px; border-radius:6px; background:var(--navy-3); border:1px solid rgba(255,255,255,0.09); display:flex; align-items:center; justify-content:center; font-size:8px; font-weight:700; color:rgba(255,255,255,0.58); cursor:default; position:relative; }
   .online-pip:hover .pip-tooltip { display:block; }
@@ -813,7 +814,7 @@
       <span class="user-avatar" id="userAvatar">?</span>
       <span id="userName" style="font-size:12px;color:var(--text-2);">—</span>
     </div>
-    <span class="mode-badge viewer" id="modeBadge"><span class="dot"></span><span id="modeLabel">Viewer</span></span>
+    <span class="mode-badge viewer" id="modeBadge" onclick="toggleMode()" title="Klik om te wisselen" style="cursor:pointer;user-select:none"><span class="dot"></span><span id="modeLabel">Viewer</span></span>
     <div class="hdr-live">
       <span class="rt-dot" id="rtDot"></span>
       <span id="rtStatus" style="font-size:10px;color:var(--text-3)">live</span>
@@ -1651,6 +1652,18 @@ function doLogin() {
     btn.textContent = 'Verder \u2192';
     showLoginError('Fout: ' + err.message);
   });
+}
+
+function toggleMode() {
+  currentMode = currentMode === 'viewer' ? 'editor' : 'viewer';
+  var badge = document.getElementById('modeBadge');
+  badge.className = 'mode-badge ' + currentMode;
+  document.getElementById('app').className = currentMode === 'editor' ? 'mode-editor' : '';
+  document.getElementById('modeLabel').textContent  = currentMode === 'viewer' ? 'Viewer' : 'Bewerker';
+  document.getElementById('editorNotice').style.display = currentMode === 'editor' ? 'flex' : 'none';
+  document.getElementById('exportGroup').style.display  = currentMode === 'viewer' ? 'flex' : 'none';
+  showToast(currentMode === 'editor' ? '✎ Bewerkermodus actief' : '◎ Viewermodus actief', 'info');
+  loadData();
 }
 
 function doLogout() {
