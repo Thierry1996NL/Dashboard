@@ -1323,7 +1323,7 @@ var DATE_COL_INDICES  = [24,35,58,95,106,123,127,130,133,136,139,142,145,148,151
 var JANEE_COL_INDICES = [26,37,60,97,108,125,128,131,134,137,140,143,146,149,152,155,158,161,164,167,170,173];
 var VIRT_COLS         = [200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,400,401];
 var TEXT_COL_INDICES  = [0,1,2,3,4,5,6,7,8,9,10,11];
-var ENGINEER_OPTIONS  = ['Peter Teeninga','Lucas van der Cammen','Frans Hamelijnck','Dennis Verkoeijen','Gabor Misic','Thierry Papenhuijzen'];
+var ENGINEER_OPTIONS  = []; // Dynamisch geladen vanuit database
 
 var OPM_VIRT_MAP = {200:'Analyse',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfase',204:'DO-Fase',205:'UO-Fase',206:'Natuurtoets',207:'Natuurtoets',208:'Natuurtoets',209:'Natuurtoets',210:'Archeologie',211:'Archeologie',212:'Archeologie',213:'Bodem',214:'Bodem',215:'Bodem',216:'NGE/OO',217:'NGE/OO',218:'NGE/OO',219:'Geotechnisch',220:'Geotechnisch',221:'Geotechnisch',400:'Vergunningen',401:'Sleufloze technieken'};
 var OPM_SUB_LABELS = {200:'Analyse-fase',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfase',204:'DO-vergunningen',205:'UO-Fase',206:'Ecologische quickscan',207:'Ecologisch vervolgonderzoek',208:'Natura 2000 / AERIUS',209:'Natuurtoets / voortoets',210:'Bureauonderzoek',211:'Inventariserend veldonderzoek',212:'Proefsleuvenonderzoek',213:'Historisch bodemonderzoek',214:'Verkennend bodemonderzoek',215:'Nader onderzoek / sanering',216:'Explosieven quickscan',217:'NGE detectieonderzoek',218:'NGE begeleiding graafwerk',219:'Geotechnisch onderzoek',220:'Thermische grondweerstand',221:'Grondwateronderzoek',400:'Vergunningen opmerkingen',401:'Sleufloze technieken opmerkingen'};
@@ -1656,6 +1656,7 @@ function loadData() {
       }
       DB_ROWS = data;
       buildROWS(data);
+      buildEngineerOptionsFromDB();
       document.getElementById('loadingState').style.display = 'none';
       document.getElementById('tableCard').style.display = 'block';
       render();
@@ -1679,6 +1680,19 @@ function buildROWS(dbData) {
     arr._gearchiveerd = row.gearchiveerd || false;
     return arr;
   });
+}
+
+function buildEngineerOptionsFromDB() {
+  // Collect all unique engineer names from col 8 in cel_data
+  var seen = {};
+  DB_ROWS.forEach(function(row) {
+    var eng = (row.cel_data && row.cel_data['8']) || (row.engineer || '');
+    if (eng && eng.trim()) seen[eng.trim()] = true;
+  });
+  // Merge with any manually added engineers (preserve additions made during session)
+  ENGINEER_OPTIONS.forEach(function(e) { if (e) seen[e] = true; });
+  ENGINEER_OPTIONS = Object.keys(seen).sort();
+  refreshProjectModalSelect();
 }
 
 function loadOpmerkingen() {
