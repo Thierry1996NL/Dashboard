@@ -678,9 +678,9 @@
   }
   .rollen-overlay.open { opacity:1; pointer-events:all; }
   .rollen-modal {
-    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:440px;
+    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:480px;
     box-shadow:var(--sh-lg); border:1px solid var(--border-md);
-    transform:translateY(8px); transition:transform .15s; display:flex; flex-direction:column; max-height:85vh;
+    transform:translateY(8px); transition:transform .15s; display:flex; flex-direction:column; max-height:88vh;
   }
   .rollen-overlay.open .rollen-modal { transform:translateY(0); }
   .rollen-modal-header {
@@ -689,6 +689,29 @@
   }
   .rollen-modal-title { font-size:14px; font-weight:600; color:var(--text); }
   .rollen-modal-sub   { font-size:10px; color:var(--text-3); margin-top:1px; }
+
+  /* Role tabs */
+  .role-tabs {
+    display:flex; border-bottom:1px solid var(--border); flex-shrink:0; padding:0 1.25rem;
+    gap:0; overflow-x:auto;
+  }
+  .role-tabs::-webkit-scrollbar { display:none; }
+  .role-tab {
+    display:flex; align-items:center; gap:5px; padding:.625rem .875rem;
+    font-size:11px; font-weight:500; color:var(--text-2); cursor:pointer;
+    border-bottom:2px solid transparent; margin-bottom:-1px; white-space:nowrap;
+    transition:all .12s; background:none; border-top:none; border-left:none; border-right:none;
+    font-family:'Inter',system-ui,-apple-system,sans-serif;
+  }
+  .role-tab:hover { color:var(--text); }
+  .role-tab.active { color:var(--tab-color); border-bottom-color:var(--tab-color); font-weight:600; }
+  .role-tab-dot { width:7px; height:7px; border-radius:50%; background:var(--tab-color); }
+  .role-tab-count {
+    font-size:9px; font-weight:700; padding:1px 5px; border-radius:20px;
+    background:rgba(0,0,0,0.06); color:var(--text-3); font-variant-numeric:tabular-nums;
+  }
+  .role-tab.active .role-tab-count { background:var(--tab-color); color:#fff; }
+
   .rollen-modal-body  { padding:.75rem 1.25rem; overflow-y:auto; flex:1; }
   .rollen-modal-footer {
     padding:.625rem 1.25rem; border-top:1px solid var(--border);
@@ -701,7 +724,7 @@
   }
   .eng-row:hover { background:var(--surface3); }
   .eng-avatar-sm {
-    width:28px; height:28px; border-radius:50%; background:var(--accent);
+    width:28px; height:28px; border-radius:50%;
     display:flex; align-items:center; justify-content:center;
     font-size:10px; font-weight:700; color:#fff; flex-shrink:0;
   }
@@ -735,6 +758,7 @@
     font-size:14px; padding:3px 6px; border-radius:5px; transition:all .1s; line-height:1;
   }
   .btn-rollen-close:hover { background:var(--surface2); color:var(--text); }
+  .eng-empty { font-size:12px; color:var(--text-3); padding:.5rem 0; font-style:italic; }
 
 </style>
 </head>
@@ -1090,19 +1114,22 @@
       <div>
         <div class="rollen-modal-title">
           <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:5px"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 14c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-          Rollen &amp; Engineers
+          Rollen &amp; Personen
         </div>
-        <div class="rollen-modal-sub">Personen die als Engineer, Projectleider, Uitvoerder of Werkvoorbereider kunnen worden toegewezen</div>
+        <div class="rollen-modal-sub">Beheer de personen per rol</div>
       </div>
       <button class="btn-rollen-close" onclick="closeRollenModal()">&#10005;</button>
     </div>
+    <!-- Role tabs -->
+    <div class="role-tabs" id="roleTabs"></div>
+    <!-- Body -->
     <div class="rollen-modal-body">
       <div class="rollen-del-confirm" id="rollenDelConfirm"></div>
       <div class="eng-list" id="engList"></div>
       <div class="rollen-add-row">
-        <input class="rollen-input" type="text" id="rollenInput" placeholder="Naam nieuwe engineer..." maxlength="60"
+        <input class="rollen-input" type="text" id="rollenInput" placeholder="Naam toevoegen..." maxlength="60"
           onkeydown="if(event.key==='Enter')addEngineer()">
-        <button class="btn-eng-add" onclick="addEngineer()">+ Toevoegen</button>
+        <button class="btn-eng-add" id="btnEngAdd" onclick="addEngineer()">+ Toevoegen</button>
       </div>
     </div>
     <div class="rollen-modal-footer">
@@ -1947,7 +1974,9 @@ function openTextPicker(e, rowIdx, colIdx) {
     var emptyOpt = document.createElement('option');
     emptyOpt.value = ''; emptyOpt.textContent = '— Kies een persoon —';
     sel.appendChild(emptyOpt);
-    ENGINEER_OPTIONS.forEach(function(eng) {
+    var rd2 = getRoleByCol(colIdx);
+    var roleList = (ROLE_LISTS[rd2.key]||[]).length ? ROLE_LISTS[rd2.key] : ENGINEER_OPTIONS;
+    roleList.forEach(function(eng) {
       var opt = document.createElement('option');
       opt.value = eng; opt.textContent = eng;
       sel.appendChild(opt);
@@ -2666,112 +2695,172 @@ function triggerDownload(blob, filename) {
   document.body.removeChild(a);
   setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
 }
-// ══ ROLLEN MODAL ══════════════════════════════════════════
+// ══ ROLLEN MODAL — TABBED ══════════════════════════════
+
+var ROLE_DEFS = [
+  { key:'engineer',        label:'Engineer',         col:'8',   color:'#0071E3' },
+  { key:'projectleider',   label:'Projectleider',    col:'179', color:'#1A7F3C' },
+  { key:'uitvoerder',      label:'Uitvoerder',       col:'180', color:'#8E6000' },
+  { key:'werkvoorbereider',label:'Werkvoorbereider', col:'181', color:'#6F35CE' }
+];
+
+var ROLE_LISTS      = { engineer:[], projectleider:[], uitvoerder:[], werkvoorbereider:[] };
+var activeRoleTab   = 'engineer';
+
+function getRoleByCol(col) {
+  for (var i=0; i<ROLE_DEFS.length; i++) { if (ROLE_DEFS[i].col===String(col)) return ROLE_DEFS[i]; }
+  return ROLE_DEFS[0];
+}
+
+function buildEngineerOptionsFromDB() {
+  var seen = { engineer:{}, projectleider:{}, uitvoerder:{}, werkvoorbereider:{} };
+  DB_ROWS.forEach(function(row) {
+    var cd = row.cel_data || {};
+    if ((cd['8']  ||'').trim()) seen.engineer[cd['8'].trim()]         = true;
+    if ((cd['179']||'').trim()) seen.projectleider[cd['179'].trim()]  = true;
+    if ((cd['180']||'').trim()) seen.uitvoerder[cd['180'].trim()]     = true;
+    if ((cd['181']||'').trim()) seen.werkvoorbereider[cd['181'].trim()]= true;
+    if ((row.engineer||'').trim()) seen.engineer[row.engineer.trim()] = true;
+  });
+  ROLE_LISTS.engineer         = Object.keys(seen.engineer).sort();
+  ROLE_LISTS.projectleider    = Object.keys(seen.projectleider).sort();
+  ROLE_LISTS.uitvoerder       = Object.keys(seen.uitvoerder).sort();
+  ROLE_LISTS.werkvoorbereider = Object.keys(seen.werkvoorbereider).sort();
+  var all = {};
+  Object.keys(seen).forEach(function(k){ Object.keys(seen[k]).forEach(function(n){ all[n]=true; }); });
+  ENGINEER_OPTIONS = Object.keys(all).sort();
+  refreshProjectModalSelect();
+}
 
 function openRollenModal() {
+  activeRoleTab = 'engineer';
+  renderRoleTabs();
   renderEngList();
   document.getElementById('rollenOverlay').classList.add('open');
   document.getElementById('rollenInput').value = '';
   document.getElementById('rollenDelConfirm').classList.remove('show');
 }
-function closeRollenModal() {
-  document.getElementById('rollenOverlay').classList.remove('open');
+function closeRollenModal() { document.getElementById('rollenOverlay').classList.remove('open'); }
+
+function setRoleTab(key) {
+  activeRoleTab = key;
+  renderRoleTabs();
+  renderEngList();
+  document.getElementById('rollenDelConfirm').classList.remove('show');
+  document.getElementById('rollenInput').value = '';
 }
+
+function renderRoleTabs() {
+  var html = '';
+  ROLE_DEFS.forEach(function(rd) {
+    var count = (ROLE_LISTS[rd.key]||[]).length;
+    var isActive = rd.key === activeRoleTab;
+    html += '<button class="role-tab'+(isActive?' active':'')+'" style="--tab-color:'+rd.color+'" onclick="setRoleTab(\''+rd.key+'\')">'
+      + '<span class="role-tab-dot"></span>'
+      + rd.label
+      + '<span class="role-tab-count">'+count+'</span>'
+      + '</button>';
+  });
+  document.getElementById('roleTabs').innerHTML = html;
+}
+
 function engInitials(name) {
   return name.split(' ').filter(function(w){return w.length>0;})
     .map(function(w){return w[0].toUpperCase();}).join('').slice(0,2);
 }
-function countProjectsForEngineer(name) {
-  return DB_ROWS.filter(function(r){
-    var cd = r.cel_data || {};
-    return cd['8']===name || cd['179']===name || cd['180']===name || cd['181']===name;
-  }).length;
+
+function countRoleUsage(name, col) {
+  return DB_ROWS.filter(function(r){ return r.cel_data && r.cel_data[col]===name; }).length;
 }
+
 function renderEngList() {
+  var rd = getRoleByCol(ROLE_DEFS.filter(function(r){return r.key===activeRoleTab;})[0].col);
+  var list = ROLE_LISTS[activeRoleTab] || [];
   var html = '';
-  if (!ENGINEER_OPTIONS.length) {
-    html = '<div style="font-size:12px;color:var(--text-3);padding:.5rem 0;font-style:italic">Geen engineers gevonden.</div>';
+  if (!list.length) {
+    html = '<div class="eng-empty">Geen personen — voeg er een toe hieronder.</div>';
   } else {
-    ENGINEER_OPTIONS.forEach(function(name) {
-      var count = countProjectsForEngineer(name);
+    list.forEach(function(name) {
+      var count = countRoleUsage(name, rd.col);
       html += '<div class="eng-row">'
-        + '<div class="eng-avatar-sm">'+esc(engInitials(name))+'</div>'
+        + '<div class="eng-avatar-sm" style="background:'+rd.color+'">'+esc(engInitials(name))+'</div>'
         + '<div class="eng-row-name">'+esc(name)+'</div>'
         + '<div class="eng-row-count">'+count+' WP</div>'
-        + '<button class="btn-eng-del" title="Verwijderen" onclick="confirmDeleteEngineer(\''+esc(name).replace(/'/g,"\\'")+'\')"><svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>'
-        + '</div>';
+        + '<button class="btn-eng-del" title="Verwijderen" onclick="confirmDeleteEngineer(\''+esc(name).replace(/'/g,"\\'")+'\',\''+rd.col+'\')">'
+        + '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '</button></div>';
     });
   }
   document.getElementById('engList').innerHTML = html;
   document.getElementById('rollenFooterInfo').textContent =
-    ENGINEER_OPTIONS.length + ' engineer' + (ENGINEER_OPTIONS.length===1?'':'s') + ' · Verwijderen haalt de engineer uit alle projecten.';
+    list.length + ' persoon/personen · Verwijderen haalt de persoon uit de projecten voor deze rol.';
 }
-function confirmDeleteEngineer(name) {
-  var count = countProjectsForEngineer(name);
+
+function confirmDeleteEngineer(name, col) {
+  var rd = getRoleByCol(col);
+  var count = countRoleUsage(name, col);
   var conf = document.getElementById('rollenDelConfirm');
-  conf.innerHTML = '<strong>Verwijder "'+esc(name)+'"?</strong> '
-    + (count>0 ? 'Staat in <strong>'+count+' werkpakket'+(count===1?'':'ten')+'</strong> — wordt daar leeggemaakt.' : 'Geen gekoppelde projecten.')
-    + ' <button onclick="deleteEngineer(\''+esc(name).replace(/'/g,"\\'")+'\');this.closest(\'.rollen-del-confirm\').classList.remove(\'show\')" style="margin-left:8px;padding:3px 10px;font-size:11px;font-weight:600;border:none;border-radius:5px;background:var(--b-fg);color:#fff;cursor:pointer">Bevestigen</button>'
+  conf.innerHTML = '<strong>Verwijder "'+esc(name)+'"</strong> als '+rd.label+'?'
+    + (count>0 ? ' Staat in <strong>'+count+' WP</strong>.' : ' Geen gekoppelde projecten.')
+    + ' <button onclick="deleteEngineer(\''+esc(name).replace(/'/g,"\\'")+'\',\''+col+'\');this.closest(\'.rollen-del-confirm\').classList.remove(\'show\')" style="margin-left:8px;padding:3px 10px;font-size:11px;font-weight:600;border:none;border-radius:5px;background:var(--b-fg);color:#fff;cursor:pointer">Bevestigen</button>'
     + ' <button onclick="document.getElementById(\'rollenDelConfirm\').classList.remove(\'show\')" style="margin-left:4px;padding:3px 10px;font-size:11px;border:1px solid var(--border-md);border-radius:5px;background:transparent;cursor:pointer">Annuleren</button>';
   conf.classList.add('show');
 }
-function deleteEngineer(name) {
-  ENGINEER_OPTIONS = ENGINEER_OPTIONS.filter(function(e){return e!==name;});
-  refreshLoginDropdown();
-  refreshProjectModalSelect();
-  renderEngList();
-  var affected = DB_ROWS.filter(function(r){return r.cel_data&&r.cel_data['8']===name;});
-  var affected = DB_ROWS.filter(function(r){
-    var cd = r.cel_data || {};
-    return cd['8']===name || cd['179']===name || cd['180']===name || cd['181']===name;
-  });
-  if (!affected.length) { showToast('✓ Engineer verwijderd','success'); render(); return; }
+
+function deleteEngineer(name, col) {
+  var rd = getRoleByCol(col);
+  ROLE_LISTS[rd.key] = ROLE_LISTS[rd.key].filter(function(e){return e!==name;});
+  var all = {};
+  Object.keys(ROLE_LISTS).forEach(function(k){ ROLE_LISTS[k].forEach(function(n){all[n]=true;}); });
+  ENGINEER_OPTIONS = Object.keys(all).sort();
+  refreshProjectModalSelect(); renderEngList();
+  var affected = DB_ROWS.filter(function(r){ return r.cel_data && r.cel_data[col]===name; });
+  if (!affected.length) { showToast('✓ Persoon verwijderd','success'); render(); return; }
   showSaving(true);
   Promise.all(affected.map(function(dbRow){
-    var nc = Object.assign({},dbRow.cel_data);
-    if (nc['8']   === name) delete nc['8'];
-    if (nc['179'] === name) delete nc['179'];
-    if (nc['180'] === name) delete nc['180'];
-    if (nc['181'] === name) delete nc['181'];
-    return supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx,{
-      cel_data:nc, engineer: nc['8']||'', updated_by:currentUser, updated_at:new Date().toISOString()
-    }).then(function(){
-      dbRow.cel_data=nc; dbRow.engineer=nc['8']||'';
-      var ri=DB_ROWS.indexOf(dbRow);
-      if(ROWS[ri]){ ROWS[ri][8]=''; ROWS[ri][179]=''; ROWS[ri][180]=''; ROWS[ri][181]=''; }
-    });
+    var nc = Object.assign({},dbRow.cel_data); delete nc[col];
+    var extra = { cel_data:nc, updated_by:currentUser, updated_at:new Date().toISOString() };
+    if (col==='8') extra.engineer='';
+    return supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx, extra)
+      .then(function(){ dbRow.cel_data=nc; if(col==='8')dbRow.engineer='';
+        var ri=DB_ROWS.indexOf(dbRow); if(ROWS[ri]) ROWS[ri][parseInt(col)]=''; });
   })).then(function(){
     showSaving(false);
-    showToast('✓ Verwijderd uit '+affected.length+' werkpakket'+(affected.length===1?'':'ten'),'success');
+    showToast('✓ Verwijderd uit '+affected.length+' WP','success');
     return loadData();
-  }).catch(function(err){
-    showSaving(false); showToast('✗ Fout: '+err.message,'error');
-  });
+  }).catch(function(err){ showSaving(false); showToast('✗ Fout: '+err.message,'error'); });
 }
+
 function addEngineer() {
   var input = document.getElementById('rollenInput');
-  var name = input.value.trim();
-  if (!name) { input.focus(); return; }
-  if (ENGINEER_OPTIONS.indexOf(name)>=0) { showToast('Engineer bestaat al','info'); return; }
-  ENGINEER_OPTIONS.push(name);
+  var name = input.value.trim(); if (!name) { input.focus(); return; }
+  var list = ROLE_LISTS[activeRoleTab];
+  if (list.indexOf(name)>=0) { showToast('Persoon bestaat al in deze rol','info'); return; }
+  list.push(name); list.sort();
+  if (ENGINEER_OPTIONS.indexOf(name)<0){ ENGINEER_OPTIONS.push(name); ENGINEER_OPTIONS.sort(); }
   refreshProjectModalSelect();
-  input.value='';
-  renderEngList();
-  showToast('✓ '+name+' toegevoegd','success');
+  input.value=''; renderEngList();
+  var label = ROLE_DEFS.filter(function(r){return r.key===activeRoleTab;})[0].label;
+  showToast('✓ '+name+' toegevoegd als '+label,'success');
   loadData();
 }
-function refreshLoginDropdown() {
-  // Login is now a free text field — no rebuild needed
-}
+
+function refreshLoginDropdown() { /* free text field */ }
+
 function refreshProjectModalSelect() {
-  var roleSelIds = [{id:'pf8', label:'— Kies een engineer —'}, {id:'pf179', label:'— Kies een persoon —'}, {id:'pf180', label:'— Kies een persoon —'}, {id:'pf181', label:'— Kies een persoon —'}];
-  roleSelIds.forEach(function(rs) {
-    var sel = document.getElementById(rs.id); if (!sel) return;
+  var cfg = [
+    {id:'pf8',   key:'engineer',         label:'— Kies een engineer —'},
+    {id:'pf179', key:'projectleider',    label:'— Kies een projectleider —'},
+    {id:'pf180', key:'uitvoerder',       label:'— Kies een uitvoerder —'},
+    {id:'pf181', key:'werkvoorbereider', label:'— Kies een werkvoorbereider —'}
+  ];
+  cfg.forEach(function(rc) {
+    var sel = document.getElementById(rc.id); if (!sel) return;
     var cur = sel.value;
-    sel.innerHTML = '<option value="">'+rs.label+'</option>';
-    ENGINEER_OPTIONS.forEach(function(e){
-      var o = document.createElement('option'); o.value = e; o.textContent = e;
-      if (e === cur) o.selected = true; sel.appendChild(o);
+    sel.innerHTML = '<option value="">'+rc.label+'</option>';
+    (ROLE_LISTS[rc.key]||[]).forEach(function(e){
+      var o = document.createElement('option'); o.value=e; o.textContent=e;
+      if(e===cur) o.selected=true; sel.appendChild(o);
     });
   });
 }
