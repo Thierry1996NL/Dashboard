@@ -654,6 +654,90 @@
   .archief-banner.show { display:flex; }
 
 
+  /* ══ ROLLEN MODAL ══ */
+  .btn-rollen {
+    display:inline-flex; align-items:center; gap:4px; padding:5px 13px;
+    font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px; font-weight:400;
+    border:none; border-radius:20px;
+    background:rgba(0,0,0,0.05); color:var(--text-2); cursor:pointer; transition:all .12s;
+    white-space:nowrap;
+  }
+  .btn-rollen:hover { background:rgba(0,0,0,0.09); color:var(--text); }
+
+  .rollen-overlay {
+    position:fixed; inset:0; background:rgba(8,13,31,.48); z-index:700;
+    display:flex; align-items:center; justify-content:center; padding:1rem;
+    opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .rollen-overlay.open { opacity:1; pointer-events:all; }
+  .rollen-modal {
+    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:440px;
+    box-shadow:var(--sh-lg); border:1px solid var(--border-md);
+    transform:translateY(8px); transition:transform .15s; display:flex; flex-direction:column; max-height:85vh;
+  }
+  .rollen-overlay.open .rollen-modal { transform:translateY(0); }
+  .rollen-modal-header {
+    padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+  }
+  .rollen-modal-title { font-size:14px; font-weight:600; color:var(--text); }
+  .rollen-modal-sub   { font-size:10px; color:var(--text-3); margin-top:1px; }
+  .rollen-modal-body  { padding:.75rem 1.25rem; overflow-y:auto; flex:1; }
+  .rollen-modal-footer{
+    padding:.625rem 1.25rem; border-top:1px solid var(--border);
+    display:flex; gap:6px; align-items:center; flex-shrink:0;
+  }
+
+  .eng-list { display:flex; flex-direction:column; gap:4px; margin-bottom:.875rem; }
+  .eng-row {
+    display:flex; align-items:center; gap:8px; padding:7px 10px;
+    border-radius:var(--r-md); border:1px solid var(--border); background:var(--surface2);
+    transition:background .08s;
+  }
+  .eng-row:hover { background:var(--surface3); }
+  .eng-avatar-sm {
+    width:28px; height:28px; border-radius:50%; background:var(--accent);
+    display:flex; align-items:center; justify-content:center;
+    font-size:10px; font-weight:700; color:#fff; flex-shrink:0; letter-spacing:.02em;
+  }
+  .eng-row-name { font-size:12px; font-weight:500; flex:1; }
+  .eng-row-count { font-size:10px; color:var(--text-3); font-variant-numeric:tabular-nums; }
+  .btn-eng-del {
+    width:24px; height:24px; border-radius:6px; border:none; cursor:pointer;
+    background:transparent; color:var(--text-3); display:flex; align-items:center; justify-content:center;
+    transition:all .1s; font-size:13px; flex-shrink:0;
+  }
+  .btn-eng-del:hover { background:var(--b-bg); color:var(--b-fg); }
+
+  .rollen-add-row {
+    display:flex; gap:6px; align-items:center; padding-top:.25rem;
+  }
+  .rollen-input {
+    flex:1; padding:7px 10px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r-md);
+    background:var(--surface2); color:var(--text); outline:none; transition:all .1s;
+  }
+  .rollen-input:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .btn-eng-add {
+    padding:7px 14px; font-size:12px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-weight:600;
+    border:none; border-radius:var(--r-md); background:var(--accent); color:#fff; cursor:pointer; transition:all .1s; white-space:nowrap;
+  }
+  .btn-eng-add:hover { background:#0044CC; }
+  .btn-eng-add:disabled { background:#A0C4F8; cursor:not-allowed; }
+
+  .rollen-del-confirm {
+    background:var(--b-bg); border:1px solid var(--b-mid); border-radius:var(--r-md);
+    padding:.625rem .875rem; font-size:12px; color:var(--b-fg); margin-bottom:.75rem; display:none;
+  }
+  .rollen-del-confirm.show { display:block; }
+  .rollen-del-confirm strong { font-weight:600; }
+
+  .btn-rollen-close {
+    background:none; border:none; cursor:pointer; color:var(--text-3); font-size:14px;
+    padding:3px 6px; border-radius:5px; transition:all .1s; line-height:1;
+  }
+  .btn-rollen-close:hover { background:var(--surface2); color:var(--text); }
+
   .btn-planning {
     display:inline-flex; align-items:center; gap:4px; padding:5px 13px;
     font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px; font-weight:400;
@@ -732,6 +816,10 @@
     </div>
     <div class="hdr-sep"></div>
     <button class="btn-add-project editor-only" id="btnAddProject" onclick="openProjectModal(-1)">+ Nieuw project</button>
+    <button class="btn-rollen" id="btnRollen" onclick="openRollenModal()">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 14c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      Rollen
+    </button>
     <button class="btn-back" onclick="doLogout()">&#8617; Uitloggen</button>
   </div>
 </header>
@@ -1002,6 +1090,34 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<!-- ══ ROLLEN MODAL ══ -->
+<div class="rollen-overlay" id="rollenOverlay" onclick="if(event.target===this)closeRollenModal()">
+  <div class="rollen-modal">
+    <div class="rollen-modal-header">
+      <div>
+        <div class="rollen-modal-title">
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="vertical-align:-2px;margin-right:5px"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 14c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          Rollen & Engineers
+        </div>
+        <div class="rollen-modal-sub">Beheer de lijst met engineers</div>
+      </div>
+      <button class="btn-rollen-close" onclick="closeRollenModal()">&#10005;</button>
+    </div>
+    <div class="rollen-modal-body">
+      <div class="rollen-del-confirm" id="rollenDelConfirm"></div>
+      <div class="eng-list" id="engList"></div>
+      <div class="rollen-add-row">
+        <input class="rollen-input" type="text" id="rollenInput" placeholder="Naam nieuwe engineer..." maxlength="60" onkeydown="if(event.key==='Enter')addEngineer()">
+        <button class="btn-eng-add" id="btnEngAdd" onclick="addEngineer()">+ Toevoegen</button>
+      </div>
+    </div>
+    <div class="rollen-modal-footer">
+      <span style="font-size:10px;color:var(--text-3)" id="rollenFooterInfo">Verwijderen haalt de engineer uit alle projecten.</span>
+      <button class="btn-proj-cancel" style="margin-left:auto" onclick="closeRollenModal()">Sluiten</button>
+    </div>
+  </div>
+</div>
 <script>
 // ══ CONFIG ══
 if (window.location.protocol === 'file:') {
@@ -2510,6 +2626,166 @@ function triggerDownload(blob, filename) {
   document.body.appendChild(a); a.click();
   document.body.removeChild(a);
   setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+// ══ ROLLEN MODAL ══════════════════════════════════════════
+
+function openRollenModal() {
+  renderEngList();
+  document.getElementById('rollenOverlay').classList.add('open');
+  document.getElementById('rollenInput').value = '';
+  document.getElementById('rollenDelConfirm').classList.remove('show');
+}
+
+function closeRollenModal() {
+  document.getElementById('rollenOverlay').classList.remove('open');
+}
+
+function engInitials(name) {
+  return name.split(' ').filter(function(w){ return w.length > 0; })
+    .map(function(w){ return w[0].toUpperCase(); }).join('').slice(0,2);
+}
+
+function countProjectsForEngineer(name) {
+  return DB_ROWS.filter(function(r) {
+    return (r.cel_data && r.cel_data['8']) === name;
+  }).length;
+}
+
+function renderEngList() {
+  var html = '';
+  if (!ENGINEER_OPTIONS.length) {
+    html = '<div style="font-size:12px;color:var(--text-3);padding:.5rem 0;font-style:italic">Geen engineers gevonden.</div>';
+  } else {
+    ENGINEER_OPTIONS.forEach(function(name) {
+      var count = countProjectsForEngineer(name);
+      var initials = engInitials(name);
+      html += '<div class="eng-row">'
+        + '<div class="eng-avatar-sm">'+esc(initials)+'</div>'
+        + '<div class="eng-row-name">'+esc(name)+'</div>'
+        + '<div class="eng-row-count">'+count+' project'+(count===1?'':'en')+'</div>'
+        + '<button class="btn-eng-del" title="Engineer verwijderen" onclick="confirmDeleteEngineer(\''+esc(name)+'\')">'
+        + '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+        + '</button>'
+        + '</div>';
+    });
+  }
+  document.getElementById('engList').innerHTML = html;
+  document.getElementById('rollenFooterInfo').textContent =
+    ENGINEER_OPTIONS.length + ' engineer' + (ENGINEER_OPTIONS.length === 1 ? '' : 's') + ' · Verwijderen haalt de engineer uit alle projecten.';
+}
+
+function confirmDeleteEngineer(name) {
+  var count = countProjectsForEngineer(name);
+  var conf = document.getElementById('rollenDelConfirm');
+  conf.innerHTML = '<strong>Verwijder "' + esc(name) + '"?</strong>'
+    + (count > 0 ? ' Deze engineer staat in <strong>' + count + ' werkpakket' + (count===1?'':'ten') + '</strong> en wordt daar leeggemaakt.' : ' Deze engineer heeft geen gekoppelde projecten.')
+    + ' <button onclick="deleteEngineer(\'' + esc(name) + '\')" style="margin-left:8px;padding:3px 10px;font-size:11px;font-weight:600;border:none;border-radius:5px;background:var(--b-fg);color:#fff;cursor:pointer;">Bevestigen</button>'
+    + ' <button onclick="document.getElementById(\'rollenDelConfirm\').classList.remove(\'show\')" style="margin-left:4px;padding:3px 10px;font-size:11px;border:1px solid var(--border-md);border-radius:5px;background:transparent;cursor:pointer;">Annuleren</button>';
+  conf.classList.add('show');
+}
+
+function deleteEngineer(name) {
+  // 1. Remove from ENGINEER_OPTIONS
+  ENGINEER_OPTIONS = ENGINEER_OPTIONS.filter(function(e){ return e !== name; });
+
+  // 2. Update login dropdown
+  refreshLoginDropdown();
+
+  // 3. Update project modal select
+  refreshProjectModalSelect();
+
+  // 4. Hide confirm banner
+  document.getElementById('rollenDelConfirm').classList.remove('show');
+
+  // 5. Re-render list
+  renderEngList();
+
+  // 6. Remove from all DB rows where col 8 = name
+  var affected = DB_ROWS.filter(function(r){ return r.cel_data && r.cel_data['8'] === name; });
+  if (!affected.length) {
+    showToast('✓ Engineer verwijderd', 'success');
+    render();
+    return;
+  }
+
+  showSaving(true);
+  var promises = affected.map(function(dbRow, idx) {
+    var newCelData = Object.assign({}, dbRow.cel_data);
+    delete newCelData['8'];
+    return supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
+      cel_data: newCelData,
+      engineer: '',
+      updated_by: currentUser,
+      updated_at: new Date().toISOString()
+    }).then(function() {
+      dbRow.cel_data = newCelData;
+      dbRow.engineer = '';
+      // Also update ROWS mirror
+      var ri = DB_ROWS.indexOf(dbRow);
+      if (ROWS[ri]) ROWS[ri][8] = '';
+    });
+  });
+
+  Promise.all(promises).then(function() {
+    showSaving(false);
+    showToast('✓ Engineer verwijderd uit ' + affected.length + ' werkpakket' + (affected.length===1?'':'ten'), 'success');
+    render();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Fout bij verwijderen: ' + err.message, 'error');
+  });
+}
+
+function addEngineer() {
+  var input = document.getElementById('rollenInput');
+  var name = input.value.trim();
+  if (!name) { input.focus(); return; }
+  if (ENGINEER_OPTIONS.indexOf(name) >= 0) {
+    showToast('Deze engineer bestaat al', 'info');
+    return;
+  }
+
+  // Add to array
+  ENGINEER_OPTIONS.push(name);
+
+  // Update dropdowns
+  refreshLoginDropdown();
+  refreshProjectModalSelect();
+
+  // Clear input & re-render
+  input.value = '';
+  renderEngList();
+  showToast('✓ ' + name + ' toegevoegd', 'success');
+}
+
+function refreshLoginDropdown() {
+  var sel = document.getElementById('loginEngineer');
+  if (!sel) return;
+  var current = sel.value;
+  sel.innerHTML = '<option value="">— Kies je naam —</option>';
+  ENGINEER_OPTIONS.forEach(function(e) {
+    var opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    if (e === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+  var viewerOpt = document.createElement('option');
+  viewerOpt.value = '__viewer__'; viewerOpt.textContent = 'Viewer (alleen lezen)';
+  sel.appendChild(viewerOpt);
+}
+
+function refreshProjectModalSelect() {
+  var sel = document.getElementById('pf8');
+  if (!sel) return;
+  var current = sel.value;
+  sel.innerHTML = '<option value="">— Kies een engineer —</option>';
+  ENGINEER_OPTIONS.forEach(function(e) {
+    var opt = document.createElement('option');
+    opt.value = e; opt.textContent = e;
+    if (e === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
 }
 
 </script>
