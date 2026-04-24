@@ -1195,8 +1195,9 @@ function supaPost(path, body)  { return supaReq('POST',  path, body); }
 var COLS = [
   {i:0,f:"",n:"Projectnummer intern"},{i:1,f:"",n:"Projectnummer extern"},{i:2,f:"",n:"Projectnaam"},
   {i:3,f:"",n:"APD Bouwdeel"},{i:4,f:"",n:"Liander Tracédeel"},{i:5,f:"",n:"WP nummer"},
-  {i:6,f:"",n:"Tracé start"},{i:7,f:"",n:"Tracé eind"},{i:8,f:"Rollen & Gebruikers",n:"Engineer"},
+  {i:6,f:"",n:"Tracé start"},{i:7,f:"",n:"Tracé eind"},
   {i:9,f:"",n:"Lengte nieuw (m)"},{i:10,f:"",n:"Lengte verwijderen (m)"},{i:11,f:"",n:"Overdracht VO aannemer"},
+  {i:8,f:"Rollen & Gebruikers",n:"Engineer"},
   {i:179,f:"Rollen & Gebruikers",n:"Projectleider"},{i:180,f:"Rollen & Gebruikers",n:"Uitvoerder"},{i:181,f:"Rollen & Gebruikers",n:"Werkvoorbereider"},
   {i:12,f:"Analyse",n:"Stukken VO controleren"},{i:13,f:"Analyse",n:"VO inhoudelijk beoordelen"},
   {i:14,f:"Analyse",n:"Verificatieplan opstellen"},{i:15,f:"Analyse",n:"Eisen importeren Relatics"},
@@ -2617,7 +2618,7 @@ function render() {
       vcols.forEach(function(col, ci) {
         var raw      = r[col.i] !== undefined ? r[col.i] : '';
         var val      = esc(raw);
-        var isBase   = col.f === '' && col.i !== 179 && col.i !== 180 && col.i !== 181 && col.i !== 8;
+        var isBase   = col.f === '';
         var fs       = FASE_STYLE[col.f];
         var isFirst  = ci===0 || vcols[ci-1].f !== col.f;
         var bl       = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
