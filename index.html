@@ -751,19 +751,10 @@
         Dashboard Engineering
       </div>
     <h1 class="login-title">Welkom terug</h1>
-    <p class="login-sub">Selecteer je naam om verder te gaan</p>
+    <p class="login-sub">Vul je naam in om verder te gaan</p>
     <div class="login-field">
       <label class="login-label">Naam</label>
-      <select class="login-input" id="loginEngineer">
-        <option value="">— Kies je naam —</option>
-        <option>Peter Teeninga</option>
-        <option>Lucas van der Cammen</option>
-        <option>Frans Hamelijnck</option>
-        <option>Dennis Verkoeijen</option>
-        <option>Gabor Misic</option>
-        <option>Thierry Papenhuijzen</option>
-        <option value="__viewer__">Viewer (alleen lezen)</option>
-      </select>
+      <input class="login-input" type="text" id="loginEngineer" placeholder="Bijv. Jan de Vries" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
     <div class="login-field">
       <label class="login-label">Rol</label>
@@ -1605,11 +1596,11 @@ function doLogin() {
     showLoginError('Open de app via GitHub Pages, niet als lokaal bestand. Ga naar: thierry1996nl.github.io/engineeringsplanning_TPA/');
     return;
   }
-  var eng  = document.getElementById('loginEngineer').value;
+  var eng  = (document.getElementById('loginEngineer').value || '').trim();
   var role = document.getElementById('loginRole').value;
-  if (!eng) { showLoginError('Kies je naam om verder te gaan.'); return; }
-  currentUser = (eng === '__viewer__') ? 'Viewer' : eng;
-  currentMode = (eng === '__viewer__') ? 'viewer' : role;
+  if (!eng) { showLoginError('Vul je naam in om verder te gaan.'); return; }
+  currentUser = eng;
+  currentMode = role;
   var btn = document.getElementById('loginBtn');
   btn.disabled = true;
   btn.textContent = 'Laden...';
@@ -2684,7 +2675,7 @@ function deleteEngineer(name) {
   })).then(function(){
     showSaving(false);
     showToast('✓ Verwijderd uit '+affected.length+' werkpakket'+(affected.length===1?'':'ten'),'success');
-    render();
+    return loadData();
   }).catch(function(err){
     showSaving(false); showToast('✗ Fout: '+err.message,'error');
   });
@@ -2695,21 +2686,14 @@ function addEngineer() {
   if (!name) { input.focus(); return; }
   if (ENGINEER_OPTIONS.indexOf(name)>=0) { showToast('Engineer bestaat al','info'); return; }
   ENGINEER_OPTIONS.push(name);
-  refreshLoginDropdown();
   refreshProjectModalSelect();
   input.value='';
   renderEngList();
   showToast('✓ '+name+' toegevoegd','success');
+  loadData();
 }
 function refreshLoginDropdown() {
-  var sel=document.getElementById('loginEngineer'); if(!sel)return;
-  var cur=sel.value;
-  sel.innerHTML='<option value="">— Kies je naam —</option>';
-  ENGINEER_OPTIONS.forEach(function(e){
-    var o=document.createElement('option'); o.value=e; o.textContent=e;
-    if(e===cur) o.selected=true; sel.appendChild(o);
-  });
-  var v=document.createElement('option'); v.value='__viewer__'; v.textContent='Viewer (alleen lezen)'; sel.appendChild(v);
+  // Login is now a free text field — no rebuild needed
 }
 function refreshProjectModalSelect() {
   var sel=document.getElementById('pf8'); if(!sel)return;
