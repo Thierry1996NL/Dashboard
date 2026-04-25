@@ -788,6 +788,34 @@
   .btn-rollen-close:hover { background:var(--surface2); color:var(--text); }
   .eng-empty { font-size:12px; color:var(--text-3); padding:.5rem 0; font-style:italic; }
 
+  /* ── TAAKVERDELING ── */
+  .tv-fase-group { margin-bottom:1rem; }
+  .tv-fase-label {
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em;
+    color:var(--text-3); padding:.25rem 0 .375rem; border-bottom:1px solid var(--border);
+    margin-bottom:.375rem; display:flex; align-items:center; gap:5px;
+  }
+  .tv-fase-dot { width:6px; height:6px; border-radius:2px; flex-shrink:0; }
+  .tv-row {
+    display:flex; align-items:center; gap:8px; padding:4px 0;
+    border-bottom:1px solid var(--border); font-size:11px;
+  }
+  .tv-row:last-child { border-bottom:none; }
+  .tv-task-name { flex:1; color:var(--text); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .tv-role-dot  { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .tv-role-sel  {
+    padding:3px 22px 3px 8px; font-family:'Inter',system-ui,sans-serif; font-size:10px; font-weight:600;
+    border:1px solid var(--border-md); border-radius:20px; background:var(--surface2);
+    color:var(--text); outline:none; appearance:none; cursor:pointer; transition:all .1s;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 6px center;
+  }
+  .tv-role-sel:focus { border-color:var(--accent); }
+
+  /* Role dot in taken popup */
+  .tp-role-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; display:inline-block; margin-right:4px; vertical-align:middle; }
+
+
 </style>
 </head>
 <body>
@@ -1773,11 +1801,51 @@ function startApp() {
 // ══ ROLE LIST PERSISTENCE ══
 var CONFIG_ROW_IDX = 9999;
 
+// Default task → role mapping (col index → role key)
+// Engineer=default for most; override per category
+var TASK_ROLE_MAP = {
+  // Analyse
+  12:'engineer',13:'engineer',14:'engineer',15:'engineer',
+  16:'projectleider',17:'projectleider',
+  18:'projectleider',19:'projectleider',20:'projectleider',21:'projectleider',
+  22:'projectleider',23:'engineer',
+  // VO
+  27:'engineer',28:'engineer',29:'projectleider',30:'projectleider',
+  31:'engineer',32:'projectleider',33:'projectleider',34:'engineer',
+  // DO
+  38:'engineer',39:'engineer',40:'werkvoorbereider',41:'werkvoorbereider',
+  42:'werkvoorbereider',43:'werkvoorbereider',44:'werkvoorbereider',
+  45:'uitvoerder',46:'uitvoerder',47:'engineer',48:'uitvoerder',
+  49:'werkvoorbereider',50:'engineer',51:'werkvoorbereider',
+  52:'projectleider',53:'projectleider',54:'uitvoerder',55:'uitvoerder',
+  56:'projectleider',57:'projectleider',
+  // Onderzoek
+  61:'engineer',62:'engineer',63:'engineer',64:'engineer',
+  65:'engineer',66:'engineer',67:'engineer',68:'projectleider',
+  69:'uitvoerder',70:'uitvoerder',71:'werkvoorbereider',72:'projectleider',
+  73:'werkvoorbereider',74:'werkvoorbereider',75:'uitvoerder',76:'uitvoerder',
+  77:'werkvoorbereider',78:'werkvoorbereider',79:'werkvoorbereider',80:'uitvoerder',
+  81:'werkvoorbereider',82:'werkvoorbereider',83:'werkvoorbereider',84:'uitvoerder',
+  85:'engineer',86:'engineer',87:'engineer',88:'engineer',
+  89:'engineer',90:'projectleider',91:'engineer',92:'engineer',
+  93:'werkvoorbereider',94:'engineer',
+  // DO vergunningen
+  98:'werkvoorbereider',99:'werkvoorbereider',
+  100:'engineer',101:'engineer',102:'engineer',103:'engineer',
+  104:'engineer',105:'projectleider',
+  // UO
+  109:'engineer',110:'engineer',111:'werkvoorbereider',112:'werkvoorbereider',
+  113:'engineer',114:'werkvoorbereider',115:'werkvoorbereider',116:'werkvoorbereider',
+  117:'engineer',118:'werkvoorbereider',119:'werkvoorbereider',120:'werkvoorbereider',
+  121:'engineer',122:'engineer'
+};
+
 function loadRoleLists() {
   return supaGet('/rest/v1/werkpakketten?row_idx=eq.' + CONFIG_ROW_IDX + '&select=cel_data')
     .then(function(data) {
       if (Array.isArray(data) && data.length > 0) {
         var cd = data[0].cel_data || {};
+        // Load role lists
         var stored = cd['__roles__'];
         if (stored) {
           try {
@@ -1788,40 +1856,42 @@ function loadRoleLists() {
             ROLE_LISTS.werkvoorbereider = parsed.werkvoorbereider || [];
           } catch(e) {}
         }
+        // Load task-role map
+        var storedTR = cd['__task_roles__'];
+        if (storedTR) {
+          try {
+            var parsedTR = typeof storedTR === 'string' ? JSON.parse(storedTR) : storedTR;
+            Object.keys(parsedTR).forEach(function(k){ TASK_ROLE_MAP[parseInt(k)] = parsedTR[k]; });
+          } catch(e) {}
+        }
       }
     })
     .catch(function() {});
 }
 
-function saveRoleLists() {
-  var payload = {
+function saveConfig() {
+  var rolesPayload = {
     engineer:         ROLE_LISTS.engineer,
     projectleider:    ROLE_LISTS.projectleider,
     uitvoerder:       ROLE_LISTS.uitvoerder,
     werkvoorbereider: ROLE_LISTS.werkvoorbereider
   };
-  var celData = { '__roles__': JSON.stringify(payload) };
-  // Upsert: try patch first, then insert if not exists
+  var celData = {
+    '__roles__':      JSON.stringify(rolesPayload),
+    '__task_roles__': JSON.stringify(TASK_ROLE_MAP)
+  };
   return supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + CONFIG_ROW_IDX, {
-    cel_data: celData,
-    updated_by: currentUser,
-    updated_at: new Date().toISOString()
-  }).then(function() {
-    // Check if row exists, if patch affected 0 rows we need to insert
+    cel_data: celData, updated_by: currentUser, updated_at: new Date().toISOString()
   }).catch(function() {
-    // Row doesn't exist yet — create it
     return supaPost('/rest/v1/werkpakketten', {
-      row_idx:     CONFIG_ROW_IDX,
-      projectnaam: '__config__',
-      werkpakket:  '__roles__',
-      engineer:    '',
-      gearchiveerd: false,
-      cel_data:    celData,
-      updated_by:  currentUser,
-      updated_at:  new Date().toISOString()
+      row_idx:CONFIG_ROW_IDX, projectnaam:'__config__', werkpakket:'__roles__',
+      engineer:'', gearchiveerd:false, cel_data:celData,
+      updated_by:currentUser, updated_at:new Date().toISOString()
     });
   });
 }
+
+function saveRoleLists() { return saveConfig(); }
 
 // ══ DATA ══
 function loadData() {
@@ -2722,7 +2792,15 @@ function render() {
         var isWeek    = col.n.indexOf('Weken resterend') >= 0;
         var cell;
         if (bc) {
-          cell = badgeCell(bc, val);
+          // Add small role dot to status badges
+          var rDot = '';
+          if (TASK_ROLE_MAP && ROLE_COLOR_MAP && col.f !== '') {
+            var rKey = TASK_ROLE_MAP[col.i] || 'engineer';
+            var rCol = ROLE_COLOR_MAP[rKey] || '#999';
+            var rLbl = (ROLE_LABEL_MAP && ROLE_LABEL_MAP[rKey]) || rKey;
+            rDot = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:'+rCol+';margin-right:3px;flex-shrink:0;vertical-align:middle;opacity:.7" title="'+esc(rLbl)+'"></span>';
+          }
+          cell = '<span class="badge '+bc+'" style="display:inline-flex;align-items:center">'+rDot+val+'</span>';
         } else if (isWeek && raw) {
           var wn = parseInt(raw);
           if (!isNaN(wn) && Math.abs(wn) < 1000) {
@@ -2847,7 +2925,8 @@ var ROLE_DEFS = [
   { key:'engineer',        label:'Engineer',         col:'8',   color:'#0071E3' },
   { key:'projectleider',   label:'Projectleider',    col:'179', color:'#1A7F3C' },
   { key:'uitvoerder',      label:'Uitvoerder',       col:'180', color:'#8E6000' },
-  { key:'werkvoorbereider',label:'Werkvoorbereider', col:'181', color:'#6F35CE' }
+  { key:'werkvoorbereider',label:'Werkvoorbereider', col:'181', color:'#6F35CE' },
+  { key:'taakverdeling',   label:'Taakverdeling',    col:null,  color:'#3A3A3C' }
 ];
 
 var ROLE_LISTS    = { engineer:[], projectleider:[], uitvoerder:[], werkvoorbereider:[] };
@@ -2874,17 +2953,36 @@ function setRoleTab(key) {
   renderEngList();
   document.getElementById('rollenDelConfirm').classList.remove('show');
   document.getElementById('rollenInput').value = '';
+  // Hide add row for taakverdeling tab
+  var addRow = document.querySelector('.rollen-add-row');
+  var footer = document.getElementById('rollenFooterInfo');
+  if (addRow) addRow.style.display = key === 'taakverdeling' ? 'none' : 'flex';
+  if (footer) {
+    if (key === 'taakverdeling') {
+      footer.innerHTML = Object.keys(ROLE_COLOR_MAP).map(function(rk){
+        return '<span style="display:inline-flex;align-items:center;gap:3px;margin-right:8px">'
+          +'<span style="width:7px;height:7px;border-radius:50%;background:'+ROLE_COLOR_MAP[rk]+';display:inline-block"></span>'
+          +'<span style="font-size:10px;color:var(--text-2)">'+ROLE_LABEL_MAP[rk]+'</span></span>';
+      }).join('');
+    } else {
+      footer.textContent = '';
+    }
+  }
 }
 
 function renderRoleTabs() {
   var html = '';
   ROLE_DEFS.forEach(function(rd) {
-    var count = (ROLE_LISTS[rd.key]||[]).length;
     var isActive = rd.key === activeRoleTab;
+    var countBadge = '';
+    if (rd.key !== 'taakverdeling') {
+      var count = (ROLE_LISTS[rd.key]||[]).length;
+      countBadge = '<span class="role-tab-count">'+count+'</span>';
+    }
     html += '<button class="role-tab'+(isActive?' active':'')+'" style="--tab-color:'+rd.color+'" onclick="setRoleTab(\''+rd.key+'\')">'
       + '<span class="role-tab-dot"></span>'
       + rd.label
-      + '<span class="role-tab-count">'+count+'</span>'
+      + countBadge
       + '</button>';
   });
   document.getElementById('roleTabs').innerHTML = html;
@@ -2900,6 +2998,7 @@ function countRoleUsage(name, col) {
 }
 
 function renderEngList() {
+  if (activeRoleTab === 'taakverdeling') { renderTaakVerdeling(); return; }
   var rd = getRoleByCol(ROLE_DEFS.filter(function(r){return r.key===activeRoleTab;})[0].col);
   var list = ROLE_LISTS[activeRoleTab] || [];
   var html = '';
@@ -2920,6 +3019,7 @@ function renderEngList() {
   document.getElementById('engList').innerHTML = html;
   document.getElementById('rollenFooterInfo').textContent =
     list.length + ' persoon/personen · Verwijderen haalt de persoon uit de projecten voor deze rol.';
+  renderRoleTabs();
 }
 
 function confirmDeleteEngineer(name, col) {
@@ -2973,7 +3073,98 @@ function addEngineer() {
   loadData();
 }
 
-function refreshLoginDropdown() { /* free text field */ }
+// ── TAAKVERDELING TAB ────────────────────────────────────
+var TASK_NAMES = {
+  12:'Stukken VO controleren',13:'VO inhoudelijk beoordelen',14:'Verificatieplan opstellen',
+  15:'Eisen importeren Relatics',16:'VO QuickScan beoordelen',17:'Taakstellend Budget',
+  18:'Input Startnota (1)',19:'Input Startnota (2)',20:'Input Startnota (3)',21:'Input Startnota (4)',
+  22:'Warme overdracht',23:'Inrichten projectomgeving',
+  27:'Eisen beoordelen projectteam',28:'Eisen verwerken Excel',29:'Kennismaking bevoegd gezag',
+  30:'Periodiek overleg BG',31:'Opvragen raakvlakken',32:"DR's/iMSR's bespreken",
+  33:'Spelregels bevoegd gezag',34:'Schetsontwerp opstellen',
+  38:'Eisen BG in werktekening',39:'CROW-500 invullen',40:'EV-beheerders contacteren',
+  41:'Vitens contacteren',42:'Stakeholders inventariseren',43:'Aantal percelen',
+  44:'Aantal perceeleigenaren',45:'Boorlocaties uitzetten',46:'Aantal boringen',
+  47:'Kabeltrekplan maken',48:'Duikers inmeten',49:'Schouwverslag maken',
+  50:'Boringen uitwerken',51:'Werkterrein-inrichting',52:'Kennismaking ZRO',
+  53:'Principe-akkoord grondeigenaren',54:'Schouwen met realisatie',
+  55:'Opmerkingen schouw realisatie',56:'Schouw bevoegd gezag',57:'Opmerkingen schouw BG',
+  61:'Conditionerende onderzoeken',62:'Beïnvloedingsberekening',63:'Toestemming GasUnie/NEN3654',
+  64:'Belastbaarheidsberekening',65:'Toestemming TenneT',66:"Toetsen met OIV'er",
+  67:'ZRO-tekeningen opstellen',68:'Vervolggesprekken grondeigenaren',
+  69:'Proefsleuflocaties uitzetten',70:'Controle boven/ondergrond',
+  71:'Verkeersplan proefsleuven',72:'Melden grondeigenaren',73:'Melding proefsleuven',
+  74:'Graafmelding KLIC',75:'Inladen Marxact',76:'Graven proefsleuven',
+  77:'Beschoeiing aanvragen',78:'Melding beschoeiing grond.',79:'Melding beschoeiing BG',
+  80:'Beschoeiing inmeten',81:'Sonderingen aanvragen',82:'Melding sonderingen grond.',
+  83:'Melding sonderingen BG',84:'Sonderingen maken',85:'Verwerken in boorplan',
+  86:'Resultaten proefsleuven',87:"Toetsen OIV'er (2)",88:'Meeloopkansen controle',
+  89:"ZRO's afronden",90:'Rentmeesters inplannen',91:'Risicodossier opstellen',
+  92:'Verificatie- en validatieplan',93:'Verkeersplannen opstellen',94:'DO-raming opstellen',
+  98:'AVOI-vergunningen aanvragen',99:'Omgevingsvergunningen',
+  100:'Input Ontwikkelnota (1)',101:'Input Ontwikkelnota (2)',
+  102:'Input Ontwikkelnota (3)',103:'Input Ontwikkelnota (4)',
+  104:'Interne review DO nota',105:'Beoordeling OG',
+  109:'UO-tekeningen (stempel)',110:'UO-kabeltrektekening',111:'Materiaallijst definitief',
+  112:'WBS-tracker opstellen',113:'Verificatierapport',114:'Bemalingsplan',
+  115:'Cultuurtechnisch werkplan',116:'NSA-aanvraag indienen',117:'Keuringsplannen',
+  118:'Capaciteitsaanvraag definitief',119:'Werkplannen/bedieningsplannen',
+  120:'Stappenplan montage',121:'Interne W-formulier',122:'UO begroting opstellen'
+};
+
+var TV_FASEN = [
+  { label:'Analyse',        color:'#0071E3', cols:[12,13,14,15,16,17,18,19,20,21,22,23] },
+  { label:'VO-Fase',        color:'#1A7F3C', cols:[27,28,29,30,31,32,33,34] },
+  { label:'DO-Fase',        color:'#8E6000', cols:[38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,98,99,100,101,102,103,104,105] },
+  { label:'Onderzoeksfase', color:'#6F35CE', cols:[61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94] },
+  { label:'UO-Fase',        color:'#D70015', cols:[109,110,111,112,113,114,115,116,117,118,119,120,121,122] }
+];
+
+var ROLE_COLOR_MAP = { engineer:'#0071E3', projectleider:'#1A7F3C', uitvoerder:'#8E6000', werkvoorbereider:'#6F35CE' };
+var ROLE_LABEL_MAP = { engineer:'Engineer', projectleider:'Projectleider', uitvoerder:'Uitvoerder', werkvoorbereider:'Werkvoorbereider' };
+
+function renderTaakVerdeling() {
+  var html = '';
+  TV_FASEN.forEach(function(fase) {
+    html += '<div class="tv-fase-group">'
+      + '<div class="tv-fase-label"><span class="tv-fase-dot" style="background:'+fase.color+'"></span>'+esc(fase.label)+'</div>';
+    fase.cols.forEach(function(ci) {
+      var name = TASK_NAMES[ci] || 'Taak '+ci;
+      var curRole = TASK_ROLE_MAP[ci] || 'engineer';
+      var dotColor = ROLE_COLOR_MAP[curRole] || '#999';
+      html += '<div class="tv-row">'
+        + '<span class="tv-role-dot" style="background:'+dotColor+'" id="tvdot-'+ci+'"></span>'
+        + '<span class="tv-task-name" title="'+esc(name)+'">'+esc(name)+'</span>'
+        + '<select class="tv-role-sel" data-ci="'+ci+'" onchange="setTaskRole('+ci+',this.value)">';
+      ['engineer','projectleider','uitvoerder','werkvoorbereider'].forEach(function(rk) {
+        html += '<option value="'+rk+'"'+(curRole===rk?' selected':'')+'>'+(ROLE_LABEL_MAP[rk])+'</option>';
+      });
+      html += '</select></div>';
+    });
+    html += '</div>';
+  });
+  document.getElementById('engList').innerHTML = html;
+}
+
+function setTaskRole(colIdx, roleKey) {
+  TASK_ROLE_MAP[colIdx] = roleKey;
+  // Update dot color in the list
+  var dot = document.getElementById('tvdot-'+colIdx);
+  if (dot) dot.style.background = ROLE_COLOR_MAP[roleKey] || '#999';
+  // Save to Supabase and refresh table
+  saveConfig().catch(function(){});
+  render(); // refresh dots in main table
+}
+
+// Helper for role dot HTML in taken popup
+function roleDotHtml(colIdx) {
+  var role = TASK_ROLE_MAP[colIdx] || 'engineer';
+  var color = ROLE_COLOR_MAP[role] || '#999';
+  var label = ROLE_LABEL_MAP[role] || 'Engineer';
+  return '<span class="tp-role-dot" style="background:'+color+'" title="'+esc(label)+'"></span>';
+}
+
+
 
 function refreshProjectModalSelect() {
   var cfg = [
