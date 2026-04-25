@@ -704,7 +704,8 @@ function getDetailExportData() {
     [0,'Projectnummer intern'],[1,'Projectnummer extern'],[2,'Projectnaam'],
     [3,'APD Bouwdeel'],[4,'Liander Tracédeel'],[5,'WP nummer'],
     [6,'Tracé start'],[7,'Tracé eind'],[8,'Engineer'],
-    [9,'Lengte nieuw (m)'],[10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer']
+    [9,'Lengte nieuw (m)'],[10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer'],
+    [179,'Projectleider'],[180,'Uitvoerder'],[181,'Werkvoorbereider']
   ];
   rows.push(['', '', '']); // lege scheidingsregel
   rows.push(['PROJECTINFORMATIE', '', '']);
@@ -785,8 +786,9 @@ function renderPage() {
   // Project info
   html += '<div class="project-info">';
   var infoFields = [
+    [0,'Projectnr. intern'],[1,'Projectnr. extern'],
     [2,'Projectnaam'],[3,'APD Bouwdeel'],[4,'Tracédeel'],[5,'WP nummer'],
-    [6,'Tracé start'],[7,'Tracé eind'],[8,'Engineer'],[9,'Lengte nieuw (m)'],
+    [6,'Tracé start'],[7,'Tracé eind'],[9,'Lengte nieuw (m)'],
     [10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer']
   ];
   infoFields.forEach(function(f) {
@@ -795,8 +797,20 @@ function renderPage() {
   });
   html += '</div>';
 
+  // Rollen & gebruikers
+  var rolFields = [[8,'Engineer'],[179,'Projectleider'],[180,'Uitvoerder'],[181,'Werkvoorbereider']];
+  var hasRol = rolFields.some(function(f){ return ROW_DATA[f[0]] && ROW_DATA[f[0]] !== '—'; });
+  var rolColors = {8:'#0071E3', 179:'#1A7F3C', 180:'#8E6000', 181:'#6F35CE'};
+  html += '<div class="project-info" style="margin-bottom:1.125rem;grid-template-columns:repeat(4,1fr)">';
+  rolFields.forEach(function(f) {
+    var val = ROW_DATA[f[0]] || '—';
+    var dot = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+(rolColors[f[0]]||'#999')+';margin-right:5px;vertical-align:middle"></span>';
+    html += '<div class="info-item"><div class="info-label">'+esc(f[1])+'</div><div class="info-val">'+dot+esc(val)+'</div></div>';
+  });
+  html += '</div>';
+
   // Phase sections
-  var phases = ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch'];
+  var phases = ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch','Vergunningen','Sleufloze technieken'];
   phases.forEach(function(fase) {
     var faseCols = COLS.filter(function(c){ return c.f === fase; });
     if (!faseCols.length) return;
