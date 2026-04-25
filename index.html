@@ -788,7 +788,36 @@
   .btn-rollen-close:hover { background:var(--surface2); color:var(--text); }
   .eng-empty { font-size:12px; color:var(--text-3); padding:.5rem 0; font-style:italic; }
 
-  /* ── TAAKVERDELING ── */
+  /* ── ROL FILTERRIJ ── */
+  .rol-filter-bar {
+    display:flex; gap:5px; align-items:center; padding:.375rem 0 .125rem;
+    flex-wrap:wrap;
+  }
+  .rol-filter-label {
+    font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em;
+    color:var(--text-3); margin-right:3px; white-space:nowrap;
+  }
+  .rol-btn {
+    display:inline-flex; align-items:center; gap:4px; padding:3px 10px;
+    font-size:10px; font-weight:600; border-radius:20px; cursor:pointer;
+    border:1px solid var(--border-md); background:transparent; color:var(--text-2);
+    font-family:'Inter',system-ui,sans-serif; transition:all .12s; white-space:nowrap;
+  }
+  .rol-btn:hover { background:var(--surface3); }
+  .rol-btn .rol-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .rol-btn.active { color:#fff; border-color:transparent; }
+  .rol-btn.active.rb-eng  { background:#0071E3; }
+  .rol-btn.active.rb-pl   { background:#1A7F3C; }
+  .rol-btn.active.rb-uitv { background:#8E6000; }
+  .rol-btn.active.rb-wb   { background:#6F35CE; }
+
+  /* role dot in column header */
+  .col-rol-dot {
+    display:inline-block; width:6px; height:6px; border-radius:50%;
+    margin-left:4px; vertical-align:middle; opacity:.7; flex-shrink:0;
+  }
+
+
   .tv-fase-group { margin-bottom:1rem; }
   .tv-fase-label {
     font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em;
@@ -956,6 +985,13 @@
         </div>
       </div>
       <div class="top-tools">
+        <div class="rol-filter-bar">
+          <span class="rol-filter-label">Rol</span>
+          <button class="rol-btn rb-eng"  id="rbEng"  onclick="toggleRolFilter('engineer')"      title="Filter op Engineer"><span class="rol-dot" style="background:#0071E3"></span>Engineer</button>
+          <button class="rol-btn rb-pl"   id="rbPl"   onclick="toggleRolFilter('projectleider')" title="Filter op Projectleider"><span class="rol-dot" style="background:#1A7F3C"></span>Projectleider</button>
+          <button class="rol-btn rb-uitv" id="rbUitv" onclick="toggleRolFilter('uitvoerder')"    title="Filter op Uitvoerder"><span class="rol-dot" style="background:#8E6000"></span>Uitvoerder</button>
+          <button class="rol-btn rb-wb"   id="rbWb"   onclick="toggleRolFilter('werkvoorbereider')" title="Filter op Werkvoorbereider"><span class="rol-dot" style="background:#6F35CE"></span>Werkvoorbereider</button>
+        </div>
         <input class="search-box" type="text" id="search" placeholder="&#128269; Zoeken..." oninput="debouncedRender()">
         <span class="row-count" id="row-count"></span>
         <div class="export-group" id="exportGroup" style="display:none">
@@ -1443,7 +1479,20 @@ var OPM_VIRT_MAP = {200:'Analyse',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfas
 var OPM_SUB_LABELS = {200:'Analyse-fase',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfase',204:'DO-vergunningen',205:'UO-Fase',206:'Ecologische quickscan',207:'Ecologisch vervolgonderzoek',208:'Natura 2000 / AERIUS',209:'Natuurtoets / voortoets',210:'Bureauonderzoek',211:'Inventariserend veldonderzoek',212:'Proefsleuvenonderzoek',213:'Historisch bodemonderzoek',214:'Verkennend bodemonderzoek',215:'Nader onderzoek / sanering',216:'Explosieven quickscan',217:'NGE detectieonderzoek',218:'NGE begeleiding graafwerk',219:'Geotechnisch onderzoek',220:'Thermische grondweerstand',221:'Grondwateronderzoek',400:'Vergunningen opmerkingen',401:'Sleufloze technieken opmerkingen'};
 
 
-// ══ COLUMN FILTERS ══
+var activeRolFilter = ''; // '' = all, or role key
+
+function toggleRolFilter(roleKey) {
+  activeRolFilter = (activeRolFilter === roleKey) ? '' : roleKey;
+  // Update button states
+  var map = {engineer:'rbEng', projectleider:'rbPl', uitvoerder:'rbUitv', werkvoorbereider:'rbWb'};
+  Object.keys(map).forEach(function(k) {
+    var btn = document.getElementById(map[k]);
+    if (btn) btn.classList.toggle('active', activeRolFilter === k);
+  });
+  render();
+}
+
+
 // activeFilters[colIdx] = array of selected values, or null (= all selected)
 
 function getColValues(colIdx) {
@@ -2658,12 +2707,23 @@ function deleteProject() { archiveProject(); }
 
 // ══ RENDER HELPERS ══
 function visibleCols() {
+  var base;
   if (currentFase === 'alle') {
-    return COLS.filter(function(col) {
+    base = COLS.filter(function(col) {
       return col.f === '' || col.f === 'Rollen & Gebruikers' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(col.f) >= 0;
     });
+  } else {
+    base = COLS.filter(function(col) { return col.f === '' || col.f === 'Rollen & Gebruikers' || col.f === currentFase; });
   }
-  return COLS.filter(function(col) { return col.f === '' || col.f === 'Rollen & Gebruikers' || col.f === currentFase; });
+  // Apply role filter: keep base cols + cols assigned to active role
+  if (activeRolFilter) {
+    base = base.filter(function(col) {
+      if (col.f === '' || col.f === 'Rollen & Gebruikers') return true; // always show projectinfo + roles
+      var assigned = TASK_ROLE_MAP[col.i] || 'engineer';
+      return assigned === activeRolFilter;
+    });
+  }
+  return base;
 }
 function filterRows() {
   var search = document.getElementById('search').value.toLowerCase();
@@ -2747,8 +2807,15 @@ function render() {
     var hasFilter = activeFilters[col.i] && !activeFilters[col.i].allSelected;
     var filterCls = hasFilter ? ' has-filter' : '';
     var minW = Math.max(80, col.n.length * 7) + 'px';
+    // Role dot in header for task cols
+    var rolDotHdr = '';
+    if (col.f !== '' && col.f !== 'Rollen & Gebruikers' && TASK_ROLE_MAP && ROLE_COLOR_MAP) {
+      var rKey = TASK_ROLE_MAP[col.i] || 'engineer';
+      var rColor = ROLE_COLOR_MAP[rKey] || '#999';
+      rolDotHdr = '<span class="col-rol-dot" style="background:'+rColor+'" title="'+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"></span>';
+    }
     html += '<th class="'+filterCls+'" style="'+bl+';min-width:'+minW+'" title="'+esc(col.n)+'">'
-      + '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+'</span>'
+      + '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'
       + ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>'
       + '</th>';
   });
@@ -2792,15 +2859,7 @@ function render() {
         var isWeek    = col.n.indexOf('Weken resterend') >= 0;
         var cell;
         if (bc) {
-          // Add small role dot to status badges
-          var rDot = '';
-          if (TASK_ROLE_MAP && ROLE_COLOR_MAP && col.f !== '') {
-            var rKey = TASK_ROLE_MAP[col.i] || 'engineer';
-            var rCol = ROLE_COLOR_MAP[rKey] || '#999';
-            var rLbl = (ROLE_LABEL_MAP && ROLE_LABEL_MAP[rKey]) || rKey;
-            rDot = '<span style="display:inline-block;width:5px;height:5px;border-radius:50%;background:'+rCol+';margin-right:3px;flex-shrink:0;vertical-align:middle;opacity:.7" title="'+esc(rLbl)+'"></span>';
-          }
-          cell = '<span class="badge '+bc+'" style="display:inline-flex;align-items:center">'+rDot+val+'</span>';
+          cell = badgeCell(bc, val);
         } else if (isWeek && raw) {
           var wn = parseInt(raw);
           if (!isNaN(wn) && Math.abs(wn) < 1000) {
