@@ -188,7 +188,24 @@
   .toggle-empty { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--text-2); cursor:pointer; user-select:none; white-space:nowrap; }
   .toggle-empty input { accent-color:var(--accent); cursor:pointer; }
 
-  /* hide fase sections when all fields filtered out */
+  /* ── INLINE FASE NAVIGATOR ── */
+  .fase-nav {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:.5rem .875rem; margin-bottom:.75rem;
+    display:flex; flex-direction:column; gap:0;
+  }
+  .fase-nav-row {
+    display:flex; gap:3px; align-items:center;
+    padding:4px 0; border-bottom:1px solid var(--border);
+  }
+  .fase-nav-row:last-child { border-bottom:none; }
+  .fase-nav-row:first-child { padding-top:0; }
+  .fase-nav-label {
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
+    color:var(--text-3); width:145px; flex-shrink:0;
+  }
+
+
   .fase-section.all-hidden { display:none; }
   .field-row.df-hidden { display:none; }
 
@@ -253,40 +270,8 @@
 </header>
 
 
-<!-- Detail controls -->
+<!-- Detail controls: only search + status filters -->
 <div class="detail-controls" id="detailControls" style="display:none">
-  <!-- Row 0: Alle fases -->
-  <div class="detail-fase-row" style="border-bottom:1px solid var(--border);padding-bottom:5px">
-    <button class="dtab active" onclick="setDetailFase('alle',this)">Alle fases</button>
-  </div>
-  <!-- Row 1: Fasering -->
-  <div class="detail-fase-row">
-    <span class="detail-fase-label">Fasering</span>
-    <button class="dtab" onclick="setDetailFase('Analyse',this)">Analyse</button>
-    <button class="dtab" onclick="setDetailFase('VO-Fase',this)">VO-Fase</button>
-    <button class="dtab" onclick="setDetailFase('DO-Fase',this)">DO-Fase</button>
-    <button class="dtab" onclick="setDetailFase('Onderzoeksfase',this)">Onderzoeksfase</button>
-    <button class="dtab" onclick="setDetailFase('UO-Fase',this)">UO-Fase</button>
-  </div>
-  <!-- Row 2: Omgevingsmanagement -->
-  <div class="detail-fase-row">
-    <span class="detail-fase-label">Omgevingsmanagement</span>
-    <button class="dtab" onclick="setDetailFase('Natuurtoets',this)">Natuurtoets</button>
-    <button class="dtab" onclick="setDetailFase('Archeologie',this)">Archeologie</button>
-    <button class="dtab" onclick="setDetailFase('Bodem',this)">Bodem</button>
-    <button class="dtab" onclick="setDetailFase('NGE/OO',this)">NGE/OO</button>
-    <button class="dtab" onclick="setDetailFase('Geotechnisch',this)">Geotechnisch</button>
-  </div>
-  <!-- Row 3: Vergunningen -->
-  <div class="detail-fase-row">
-    <span class="detail-fase-label">Vergunningen</span>
-    <button class="dtab" onclick="setDetailFase('Vergunningen',this)">Vergunningen</button>
-  </div>
-  <!-- Row 4: Sleufloze technieken -->
-  <div class="detail-fase-row">
-    <span class="detail-fase-label">Sleufloze technieken</span>
-    <button class="dtab" onclick="setDetailFase('Sleufloze technieken',this)">Sleufloze technieken</button>
-  </div>
   <div class="detail-filter-row">
     <input class="detail-search" type="text" id="detailSearch" placeholder="&#128269; Zoek veldnaam..." oninput="applyDetailFilters()">
     <div class="filter-status-btns">
@@ -627,8 +612,12 @@ var currentDetailFase  = 'alle';
 
 function setDetailFase(fase, btn) {
   currentDetailFase = fase;
+  // Sync ALL dtab buttons (both top and inline navigator)
   document.querySelectorAll('.dtab').forEach(function(b) { b.classList.remove('active'); });
-  btn.classList.add('active');
+  // Activate all buttons matching this fase
+  document.querySelectorAll('.dtab').forEach(function(b) {
+    if (b.getAttribute('onclick') === "setDetailFase('"+fase+"',this)") b.classList.add('active');
+  });
 
   // Show/hide fase sections
   document.querySelectorAll('.fase-section').forEach(function(sec) {
@@ -636,12 +625,10 @@ function setDetailFase(fase, btn) {
     if (fase === 'alle' || secFase === fase) {
       sec.style.display = '';
       // Auto-expand selected fase
-      if (fase !== 'alle') {
-        var body = sec.querySelector('.fase-section-body');
-        var hdr  = sec.querySelector('.fase-section-header');
-        if (body) body.classList.remove('collapsed');
-        if (hdr)  hdr.classList.remove('collapsed');
-      }
+      var body = sec.querySelector('.fase-section-body');
+      var hdr  = sec.querySelector('.fase-section-header');
+      if (body) body.classList.remove('collapsed');
+      if (hdr)  hdr.classList.remove('collapsed');
     } else {
       sec.style.display = 'none';
     }
@@ -809,7 +796,27 @@ function renderPage() {
   });
   html += '</div>';
 
-  // Phase sections
+  // ── Inline fase navigator ──
+  html += '<div class="fase-nav">';
+  html += '<div class="fase-nav-row" style="padding-top:0"><button class="dtab active" onclick="setDetailFase(\'alle\',this)">Alle fases</button></div>';
+  html += '<div class="fase-nav-row"><span class="fase-nav-label">Fasering</span>';
+  ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].forEach(function(f){
+    html += '<button class="dtab" onclick="setDetailFase(\''+esc(f)+'\',this)">'+esc(f)+'</button>';
+  });
+  html += '</div>';
+  html += '<div class="fase-nav-row"><span class="fase-nav-label">Omgevingsmanagement</span>';
+  ['Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch'].forEach(function(f){
+    html += '<button class="dtab" onclick="setDetailFase(\''+esc(f)+'\',this)">'+esc(f)+'</button>';
+  });
+  html += '</div>';
+  html += '<div class="fase-nav-row"><span class="fase-nav-label">Vergunningen</span>';
+  html += '<button class="dtab" onclick="setDetailFase(\'Vergunningen\',this)">Vergunningen</button>';
+  html += '</div>';
+  html += '<div class="fase-nav-row"><span class="fase-nav-label">Sleufloze technieken</span>';
+  html += '<button class="dtab" onclick="setDetailFase(\'Sleufloze technieken\',this)">Sleufloze technieken</button>';
+  html += '</div></div>';
+
+  // Phase sections — start with Analyse visible, rest hidden
   var phases = ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch','Vergunningen','Sleufloze technieken'];
   phases.forEach(function(fase) {
     var faseCols = COLS.filter(function(c){ return c.f === fase; });
@@ -890,6 +897,8 @@ function renderPage() {
   document.getElementById('mainContent').innerHTML = html;
   document.getElementById('detailControls').style.display = 'flex';
   document.getElementById('detailExportRow').style.display = 'flex';
+  // Default: show only Analyse
+  setDetailFase('Analyse', null);
   applyDetailFilters();
 }
 
