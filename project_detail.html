@@ -206,7 +206,61 @@
   }
 
 
-  /* ── ROL FILTER ── */
+  /* ── OPMERKINGEN SECTIE ── */
+  .comments-section {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
+    margin-top:1.125rem; overflow:hidden; box-shadow:var(--sh-sm);
+  }
+  .comments-header {
+    padding:.75rem 1.25rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between;
+  }
+  .comments-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); display:flex; align-items:center; gap:7px; }
+  .comments-count { font-size:10px; font-weight:600; padding:1px 7px; border-radius:20px; background:var(--surface2); color:var(--text-3); font-variant-numeric:tabular-nums; }
+  .comments-list { padding:.625rem .875rem; display:flex; flex-direction:column; gap:.625rem; max-height:400px; overflow-y:auto; }
+  .comments-list::-webkit-scrollbar { width:4px; }
+  .comments-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .comments-empty { font-size:12px; color:var(--text-3); font-style:italic; padding:.5rem 0; text-align:center; }
+  .comment-item {
+    display:flex; gap:.625rem; align-items:flex-start;
+  }
+  .comment-avatar {
+    width:28px; height:28px; border-radius:50%; background:var(--accent); flex-shrink:0;
+    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff;
+    margin-top:1px;
+  }
+  .comment-bubble {
+    flex:1; background:var(--surface2); border-radius:var(--r-md); padding:.5rem .75rem;
+    border:1px solid var(--border);
+  }
+  .comment-bubble.own { background:var(--l-bg); border-color:var(--l-mid); }
+  .comment-meta { display:flex; align-items:baseline; gap:6px; margin-bottom:3px; }
+  .comment-author { font-size:11px; font-weight:600; color:var(--text); }
+  .comment-time { font-size:9px; color:var(--text-3); font-variant-numeric:tabular-nums; }
+  .comment-text { font-size:12px; color:var(--text); line-height:1.55; white-space:pre-wrap; }
+  .comment-del { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:11px; padding:0 3px; line-height:1; margin-left:auto; transition:color .1s; }
+  .comment-del:hover { color:var(--b-fg); }
+  .comments-input-row {
+    padding:.625rem .875rem; border-top:1px solid var(--border);
+    display:flex; gap:.5rem; align-items:flex-end;
+  }
+  .comments-textarea {
+    flex:1; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r-md); background:var(--surface2);
+    color:var(--text); outline:none; resize:none; min-height:36px; max-height:120px;
+    line-height:1.5; transition:all .1s; overflow-y:auto;
+  }
+  .comments-textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .comments-textarea::placeholder { color:var(--text-3); }
+  .btn-comment-post {
+    padding:8px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600;
+    border:none; border-radius:var(--r-md); background:var(--accent); color:#fff;
+    cursor:pointer; transition:all .1s; white-space:nowrap; flex-shrink:0;
+  }
+  .btn-comment-post:hover { background:#0044CC; }
+  .btn-comment-post:disabled { background:#A0C4F8; cursor:not-allowed; }
+
+
   .rol-filter-row { display:flex; gap:4px; align-items:center; flex-wrap:wrap; padding-bottom:.375rem; border-bottom:1px solid var(--border); margin-bottom:.25rem; }
   .rol-filter-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); margin-right:2px; white-space:nowrap; }
   .rolf-btn { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; font-size:10px; font-weight:600; border-radius:20px; cursor:pointer; border:1px solid var(--border-md); background:transparent; color:var(--text-2); font-family:'DM Sans',sans-serif; transition:all .12s; white-space:nowrap; }
@@ -318,6 +372,26 @@
     <div>Project laden...</div>
   </div>
 </main>
+
+<!-- Opmerkingen sectie -->
+<div class="comments-section" id="commentsSection" style="display:none;max-width:900px;margin:1.125rem auto 0">
+  <div class="comments-header">
+    <div class="comments-title">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 2H2a1 1 0 00-1 1v8a1 1 0 001 1h2v3l3-3h7a1 1 0 001-1V3a1 1 0 00-1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
+      Opmerkingen
+      <span class="comments-count" id="commentsCount">0</span>
+    </div>
+  </div>
+  <div class="comments-list" id="commentsList">
+    <div class="comments-empty">Nog geen opmerkingen.</div>
+  </div>
+  <div class="comments-input-row">
+    <textarea class="comments-textarea" id="commentInput" placeholder="Schrijf een opmerking..." rows="1"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
+      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postComment()}"></textarea>
+    <button class="btn-comment-post" id="btnPostComment" onclick="postComment()">Plaatsen</button>
+  </div>
+</div>
 
 <!-- Status picker -->
 <div class="status-picker" id="statusPicker">
@@ -640,6 +714,7 @@ window.addEventListener('load', async function() {
   } catch(e) {}
 
   await loadProject();
+  await loadComments();
 });
 
 function toggleDetailRol(roleKey) {
@@ -1125,7 +1200,111 @@ async function saveOpmerking() {
   } finally { showSaving(false); }
 }
 
-// ══ SAVE HELPERS ══
+// ══ OPMERKINGEN (PROJECT COMMENTS) ══════════════════════
+
+var PROJECT_COMMENTS = []; // array of {id, tekst, updated_by, updated_at}
+var COMMENTS_FASE_KEY = 'project-comment'; // prefix in opmerkingen table
+
+function fmtCommentTime(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  var now = new Date();
+  var diff = Math.floor((now - d) / 1000);
+  if (diff < 60) return 'zojuist';
+  if (diff < 3600) return Math.floor(diff/60) + ' min geleden';
+  if (diff < 86400) return Math.floor(diff/3600) + ' uur geleden';
+  return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear()
+    +' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+}
+
+function commentInitials(name) {
+  return (name||'?').split(' ').filter(function(w){return w.length>0;})
+    .map(function(w){return w[0].toUpperCase();}).join('').slice(0,2);
+}
+
+async function loadComments() {
+  try {
+    var data = await supa.get('/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=like.'+COMMENTS_FASE_KEY+'*&select=id,fase,tekst,updated_by,updated_at&order=updated_at.asc');
+    PROJECT_COMMENTS = Array.isArray(data) ? data : [];
+    renderComments();
+    document.getElementById('commentsSection').style.display = 'block';
+  } catch(e) {
+    console.warn('Comments laden mislukt', e);
+  }
+}
+
+function renderComments() {
+  var list = document.getElementById('commentsList');
+  var countEl = document.getElementById('commentsCount');
+  if (!list) return;
+  if (countEl) countEl.textContent = PROJECT_COMMENTS.length;
+
+  if (!PROJECT_COMMENTS.length) {
+    list.innerHTML = '<div class="comments-empty">Nog geen opmerkingen. Schrijf de eerste!</div>';
+    return;
+  }
+
+  var html = '';
+  PROJECT_COMMENTS.forEach(function(c) {
+    var isOwn = c.updated_by === currentUser;
+    var initials = commentInitials(c.updated_by);
+    html += '<div class="comment-item" data-id="'+esc(c.fase)+'">'
+      + '<div class="comment-avatar" title="'+esc(c.updated_by)+'">'+esc(initials)+'</div>'
+      + '<div class="comment-bubble'+(isOwn?' own':'')+'">'
+        + '<div class="comment-meta">'
+          + '<span class="comment-author">'+esc(c.updated_by)+'</span>'
+          + '<span class="comment-time">'+esc(fmtCommentTime(c.updated_at))+'</span>'
+          + (isOwn ? '<button class="comment-del" onclick="deleteComment(\''+esc(c.fase)+'\')" title="Verwijderen">✕</button>' : '')
+        + '</div>'
+        + '<div class="comment-text">'+esc(c.tekst)+'</div>'
+      + '</div></div>';
+  });
+  list.innerHTML = html;
+  // Scroll to bottom
+  list.scrollTop = list.scrollHeight;
+}
+
+async function postComment() {
+  var input = document.getElementById('commentInput');
+  var tekst = (input.value || '').trim();
+  if (!tekst) { input.focus(); return; }
+
+  var btn = document.getElementById('btnPostComment');
+  btn.disabled = true;
+
+  // Unique fase key using timestamp
+  var faseKey = COMMENTS_FASE_KEY + '-' + Date.now();
+
+  try {
+    await supa.post('/rest/v1/opmerkingen', {
+      row_idx:    ROW_IDX,
+      fase:       faseKey,
+      tekst:      tekst,
+      updated_by: currentUser,
+      updated_at: new Date().toISOString()
+    });
+    input.value = '';
+    input.style.height = 'auto';
+    await loadComments();
+  } catch(e) {
+    showToast('✗ Opslaan mislukt: ' + e.message, 'error');
+  } finally {
+    btn.disabled = false;
+    input.focus();
+  }
+}
+
+async function deleteComment(faseKey) {
+  if (!confirm('Opmerking verwijderen?')) return;
+  try {
+    await supa.req('DELETE', '/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.'+encodeURIComponent(faseKey));
+    await loadComments();
+  } catch(e) {
+    showToast('✗ Verwijderen mislukt: ' + e.message, 'error');
+  }
+}
+
+
 async function saveCell(ci, newVal, oldVal) {
   showSaving(true);
   try {
