@@ -156,181 +156,6 @@
 
   @media(max-width:600px) { .main{padding:1rem;} .fase-section-body{grid-template-columns:1fr;} .project-info{grid-template-columns:1fr 1fr;} }
 
-  /* ══ BORINGEN SECTIE ══ */
-  .bor-section {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
-    margin-bottom:.875rem; box-shadow:var(--sh-sm); overflow:hidden;
-  }
-  .bor-section-hdr {
-    display:flex; align-items:center; gap:.625rem; padding:.625rem 1.25rem;
-    border-bottom:1px solid var(--border); cursor:pointer; user-select:none;
-    background:linear-gradient(135deg,rgba(0,87,255,0.04),rgba(0,87,255,0.02));
-    transition:background .08s;
-  }
-  .bor-section-hdr:hover { background:linear-gradient(135deg,rgba(0,87,255,0.07),rgba(0,87,255,0.04)); }
-  .bor-section-icon {
-    width:28px; height:28px; border-radius:8px; flex-shrink:0;
-    background:linear-gradient(135deg,#003FCC,#0057FF);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .bor-section-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); flex:1; }
-  .bor-section-count { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--l-bg); color:var(--l-fg); }
-  .btn-bor-new {
-    display:inline-flex; align-items:center; gap:3px; padding:4px 11px; font-size:11px; font-weight:600;
-    border:none; border-radius:20px; background:var(--navy); color:#fff;
-    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
-  }
-  .btn-bor-new:hover { background:var(--navy-3); }
-  .bor-chevron { font-size:9px; color:var(--text-3); transition:transform .18s; }
-  .bor-section.collapsed .bor-chevron { transform:rotate(-90deg); }
-  .bor-section.collapsed .bor-section-body { display:none; }
-
-  /* Progress */
-  .bor-prog-row {
-    display:flex; align-items:center; gap:.75rem; padding:.5rem 1.25rem;
-    border-bottom:1px solid var(--border); background:var(--surface2);
-  }
-  .bor-prog-label { font-size:11px; color:var(--text-2); white-space:nowrap; }
-  .bor-prog-wrap { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
-  .bor-prog-fill { height:100%; border-radius:3px; transition:width .3s ease; }
-  .bor-prog-pct { font-size:11px; font-weight:700; color:var(--l-fg); white-space:nowrap; font-family:'DM Mono',monospace; }
-
-  /* Cards grid */
-  .bor-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(250px,1fr)); gap:.625rem; padding:1rem 1.25rem; }
-  .bor-card {
-    background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg);
-    padding:.75rem .875rem; transition:all .1s; position:relative;
-  }
-  .bor-card:hover { border-color:var(--border-strong); background:#fff; box-shadow:var(--sh-sm); }
-  .bor-card-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
-  .bor-nr {
-    width:30px; height:30px; border-radius:7px; background:var(--navy); color:#fff;
-    font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; font-family:'DM Mono',monospace;
-  }
-  .bor-type { font-size:12px; font-weight:600; color:var(--text); flex:1; }
-  .bor-loc { font-size:10px; color:var(--text-3); margin-bottom:.5rem; display:flex; align-items:center; gap:3px; }
-  .bor-specs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:.5rem; }
-  .bor-spec-item { display:flex; flex-direction:column; gap:1px; }
-  .bor-spec-lbl { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
-  .bor-spec-val { font-size:11px; color:var(--text); font-family:'DM Mono',monospace; }
-  .bor-card-foot {
-    display:flex; align-items:center; gap:.5rem; padding-top:.375rem;
-    border-top:1px solid var(--border); margin-top:.125rem;
-  }
-  .bor-aannemer { font-size:10px; color:var(--text-3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .bor-verg { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:600; padding:1px 6px; border-radius:20px; background:var(--r-bg); color:var(--r-fg); }
-  .bor-opm { margin-top:.375rem; font-size:10px; color:var(--text-2); background:#FFFBEB; border-radius:3px; padding:3px 7px; border-left:2px solid #D4880A; }
-  .bor-edit-btn {
-    display:none; position:absolute; top:7px; right:7px; width:24px; height:24px;
-    border:1px solid var(--border-md); border-radius:5px; background:var(--surface);
-    color:var(--text-3); cursor:pointer; font-size:11px;
-    align-items:center; justify-content:center; transition:all .1s;
-  }
-  .mode-editor .bor-card:hover .bor-edit-btn { display:flex; }
-  .bor-edit-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
-  .bor-empty-state { padding:2rem 1.25rem; text-align:center; color:var(--text-3); font-size:12px; }
-  .bor-empty-icon { font-size:30px; margin-bottom:.5rem; display:block; }
-  .btn-bor-first {
-    display:inline-flex; align-items:center; gap:4px; margin-top:.75rem;
-    padding:6px 16px; font-size:12px; font-weight:600; border:none; border-radius:20px;
-    background:var(--navy); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
-  }
-  .btn-bor-first:hover { background:var(--navy-3); }
-  .bor-summary { display:flex; gap:1.5rem; padding:.5rem 1.25rem; border-top:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
-  .bor-sum-item { display:flex; align-items:baseline; gap:5px; }
-  .bor-sum-num { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; letter-spacing:-.02em; }
-  .bor-sum-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
-
-  /* ── BORINGEN MODAL ── */
-  .bor-overlay {
-    position:fixed; inset:0; background:rgba(10,15,46,.52); z-index:800;
-    display:flex; align-items:center; justify-content:center; padding:1rem;
-    opacity:0; pointer-events:none; transition:opacity .15s;
-  }
-  .bor-overlay.open { opacity:1; pointer-events:all; }
-  .bor-modal {
-    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:880px;
-    max-height:92vh; display:flex; flex-direction:column;
-    box-shadow:0 24px 64px rgba(10,15,46,0.22), 0 6px 20px rgba(10,15,46,0.12);
-    border:1px solid var(--border-md);
-    transform:translateY(10px); transition:transform .18s cubic-bezier(.34,1.2,.64,1);
-  }
-  .bor-overlay.open .bor-modal { transform:translateY(0); }
-  .bor-modal-hdr {
-    padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; gap:.75rem; flex-shrink:0;
-  }
-  .bor-modal-icon { width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#003FCC,#0057FF); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .bor-modal-title { font-size:13px; font-weight:600; color:var(--text); }
-  .bor-modal-sub   { font-size:10px; color:var(--text-3); margin-top:1px; }
-  .bor-mclose { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:14px; padding:3px 6px; border-radius:var(--r); line-height:1; }
-  .bor-mclose:hover { background:var(--surface2); color:var(--text); }
-  .bor-modal-prog { padding:.4rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; background:var(--surface2); }
-  .bor-modal-body { display:flex; flex:1; overflow:hidden; }
-
-  /* Lijst pane */
-  .bm-list-pane { width:280px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
-  .bm-list-head { padding:.5rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); flex-shrink:0; }
-  .btn-bm-add { display:inline-flex; align-items:center; gap:3px; padding:3px 9px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--navy); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; }
-  .btn-bm-add:hover { background:var(--navy-3); }
-  .btn-bm-add:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
-  .bm-list { flex:1; overflow-y:auto; padding:4px 0; }
-  .bm-list::-webkit-scrollbar { width:3px; }
-  .bm-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
-  .bm-item { display:flex; align-items:center; gap:7px; padding:6px 10px; margin:2px 5px; border-radius:var(--r-md); cursor:pointer; border:1px solid transparent; transition:all .08s; }
-  .bm-item:hover { background:var(--surface2); border-color:var(--border); }
-  .bm-item.active { background:var(--l-bg); border-color:var(--l-fg); }
-  .bm-item-nr { width:30px; height:30px; border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--surface3); color:var(--text-2); font-family:'DM Mono',monospace; }
-  .bm-item.active .bm-item-nr { background:var(--navy); color:#fff; }
-  .bm-item-info { flex:1; min-width:0; }
-  .bm-item-name { font-size:12px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .bm-item-meta { font-size:10px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .bm-sdot { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
-  .bm-empty { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
-
-  /* Form pane */
-  .bm-form-pane { flex:1; overflow-y:auto; padding:1rem 1.25rem; display:flex; flex-direction:column; gap:.75rem; }
-  .bm-form-pane::-webkit-scrollbar { width:3px; }
-  .bm-form-pane::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
-  .bm-placeholder { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--text-3); font-size:12px; }
-  .bm-form-section { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); padding-bottom:.25rem; border-bottom:1px solid var(--border); }
-  .bm-grid { display:grid; grid-template-columns:1fr 1fr; gap:.4rem .75rem; }
-  .bm-grid.g3 { grid-template-columns:1fr 1fr 1fr; }
-  .bm-field { display:flex; flex-direction:column; gap:3px; }
-  .bm-field.full { grid-column:1/-1; }
-  .bm-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
-  .bm-input, .bm-select, .bm-textarea {
-    padding:6px 9px; font-family:'DM Sans',sans-serif; font-size:12px;
-    border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2);
-    color:var(--text); outline:none; transition:all .1s; width:100%;
-  }
-  .bm-input:focus, .bm-select:focus, .bm-textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
-  .bm-textarea { min-height:58px; resize:vertical; line-height:1.5; }
-  .bm-select { padding-right:22px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 7px center; }
-  .bm-check-row { display:flex; align-items:center; gap:6px; cursor:pointer; padding:3px 0; }
-  .bm-check-row input { accent-color:var(--accent); cursor:pointer; width:13px; height:13px; }
-  .bm-check-lbl { font-size:12px; color:var(--text-2); user-select:none; }
-  .bm-status-row { display:flex; gap:4px; flex-wrap:wrap; }
-  .bm-sbtn {
-    display:inline-flex; align-items:center; gap:3px; padding:3px 9px; font-size:10px; font-weight:600;
-    border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2);
-    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s;
-  }
-  .bm-sbtn.on-G { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-mid); }
-  .bm-sbtn.on-L { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-mid); }
-  .bm-sbtn.on-R { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-mid); }
-  .bm-sbtn.on-B { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-mid); }
-  .bm-sbtn.on-N { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-mid); }
-  .bm-modal-foot { padding:.625rem 1.25rem; border-top:1px solid var(--border); display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
-  .btn-bm-del { padding:5px 12px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; transition:all .1s; }
-  .btn-bm-del:hover { background:var(--b-fg); color:#fff; }
-  .btn-bm-cancel { padding:5px 12px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
-  .btn-bm-cancel:hover { background:var(--surface2); }
-  .btn-bm-save { padding:5px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--navy); color:#fff; cursor:pointer; margin-left:auto; transition:all .1s; }
-  .btn-bm-save:hover { background:var(--navy-3); }
-  .btn-bm-save:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
-
   /* ── DETAIL FILTERS ── */
   .detail-filter-bar {
     background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
@@ -534,7 +359,155 @@
   .btn-det-export.xlsx:hover { background:#00523A; }
   .export-fase-note { font-size:10px; color:var(--text-3); margin-left:auto; }
 
-</style>
+  /* ══ BORINGEN ══ */
+  .bor-section {
+    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
+    margin:0 auto 1rem; max-width:900px; box-shadow:var(--sh-sm); overflow:hidden;
+  }
+  .bor-hdr {
+    display:flex; align-items:center; gap:.625rem; padding:.625rem 1.25rem;
+    background:linear-gradient(135deg,rgba(0,87,255,0.05),rgba(0,87,255,0.02));
+    border-bottom:1px solid var(--border); cursor:pointer; user-select:none; transition:background .08s;
+  }
+  .bor-hdr:hover { background:linear-gradient(135deg,rgba(0,87,255,0.09),rgba(0,87,255,0.05)); }
+  .bor-hdr-icon { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#003FCC,#0057FF); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .bor-hdr-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); flex:1; }
+  .bor-hdr-count { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--l-bg); color:var(--l-fg); }
+  .btn-bor-add {
+    display:inline-flex; align-items:center; gap:3px; padding:4px 12px; font-size:11px; font-weight:600;
+    border:none; border-radius:20px; background:var(--navy); color:#fff;
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
+  }
+  .btn-bor-add:hover { background:var(--accent); }
+  .bor-chevron { font-size:9px; color:var(--text-3); transition:transform .18s; margin-left:.25rem; }
+  .bor-section.collapsed .bor-chevron { transform:rotate(-90deg); }
+  .bor-section.collapsed .bor-body { display:none; }
+
+  .bor-prog {
+    display:flex; align-items:center; gap:.75rem; padding:.4rem 1.25rem;
+    border-bottom:1px solid var(--border); background:var(--surface2);
+  }
+  .bor-prog-lbl { font-size:11px; color:var(--text-2); white-space:nowrap; }
+  .bor-prog-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .bor-prog-fill { height:100%; border-radius:3px; transition:width .3s; }
+  .bor-prog-pct { font-size:11px; font-weight:700; color:var(--l-fg); white-space:nowrap; font-family:'DM Mono',monospace; }
+
+  .bor-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(255px,1fr)); gap:.625rem; padding:1rem 1.25rem; }
+  .bor-card {
+    background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg);
+    padding:.75rem .875rem; transition:all .1s; position:relative;
+  }
+  .bor-card:hover { border-color:var(--border-strong); background:#fff; box-shadow:var(--sh-sm); }
+  .bor-card-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .bor-nr { width:30px; height:30px; border-radius:7px; background:var(--navy); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'DM Mono',monospace; }
+  .bor-type { font-size:12px; font-weight:600; color:var(--text); flex:1; }
+  .bor-loc { font-size:10px; color:var(--text-3); margin-bottom:.5rem; }
+  .bor-specs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:.5rem; }
+  .bor-spec-lbl { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+  .bor-spec-val { font-size:11px; color:var(--text); font-family:'DM Mono',monospace; }
+  .bor-foot { display:flex; align-items:center; gap:.5rem; padding-top:.375rem; border-top:1px solid var(--border); }
+  .bor-aannemer { font-size:10px; color:var(--text-3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .bor-verg { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:600; padding:1px 6px; border-radius:20px; background:var(--r-bg); color:var(--r-fg); }
+  .bor-opm { margin-top:.375rem; font-size:10px; color:var(--text-2); background:#FFFBEB; border-radius:3px; padding:3px 7px; border-left:2px solid #D4880A; }
+  .bor-card-btn {
+    position:absolute; top:7px; right:7px; width:24px; height:24px;
+    border:1px solid var(--border-md); border-radius:5px; background:var(--surface);
+    color:var(--text-3); cursor:pointer; font-size:11px;
+    display:flex; align-items:center; justify-content:center; transition:all .1s;
+    opacity:0;
+  }
+  .bor-card:hover .bor-card-btn { opacity:1; }
+  .bor-card-btn:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .bor-empty { padding:2rem 1.25rem; text-align:center; color:var(--text-3); font-size:12px; }
+  .bor-empty-icon { font-size:30px; margin-bottom:.5rem; display:block; }
+  .btn-bor-first { display:inline-flex; align-items:center; gap:4px; margin-top:.75rem; padding:6px 16px; font-size:12px; font-weight:600; border:none; border-radius:20px; background:var(--navy); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s; }
+  .btn-bor-first:hover { background:var(--accent); }
+  .bor-summary { display:flex; gap:1.5rem; padding:.5rem 1.25rem; border-top:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
+  .bor-sum-n { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; }
+  .bor-sum-l { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+
+  /* BORINGEN MODAL */
+  .borm-overlay {
+    position:fixed; inset:0; background:rgba(10,15,46,.52); z-index:900;
+    display:flex; align-items:center; justify-content:center; padding:1rem;
+    opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .borm-overlay.open { opacity:1; pointer-events:all; }
+  .borm-modal {
+    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:860px;
+    max-height:90vh; display:flex; flex-direction:column;
+    box-shadow:0 24px 64px rgba(10,15,46,0.22); border:1px solid var(--border-md);
+    transform:translateY(10px); transition:transform .18s cubic-bezier(.34,1.2,.64,1);
+  }
+  .borm-overlay.open .borm-modal { transform:translateY(0); }
+  .borm-mhdr { padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; }
+  .borm-micon { width:32px; height:32px; border-radius:9px; background:linear-gradient(135deg,#003FCC,#0057FF); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .borm-mtitle { font-size:13px; font-weight:600; color:var(--text); }
+  .borm-msub   { font-size:10px; color:var(--text-3); margin-top:1px; }
+  .borm-mclose { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:14px; padding:3px 6px; border-radius:var(--r); line-height:1; }
+  .borm-mclose:hover { background:var(--surface2); color:var(--text); }
+  .borm-mprog { padding:.4rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; background:var(--surface2); }
+  .borm-body { display:flex; flex:1; overflow:hidden; }
+  /* List pane */
+  .borm-list-pane { width:270px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+  .borm-list-hdr { padding:.5rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); flex-shrink:0; }
+  .btn-borm-new { display:inline-flex; align-items:center; gap:3px; padding:3px 9px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--navy); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-borm-new:hover { background:var(--accent); }
+  .btn-borm-new:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
+  .borm-list { flex:1; overflow-y:auto; padding:4px 0; }
+  .borm-list::-webkit-scrollbar { width:3px; }
+  .borm-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .borm-item { display:flex; align-items:center; gap:7px; padding:6px 10px; margin:2px 5px; border-radius:var(--r-md); cursor:pointer; border:1px solid transparent; transition:all .08s; }
+  .borm-item:hover { background:var(--surface2); border-color:var(--border); }
+  .borm-item.sel { background:var(--l-bg); border-color:var(--l-fg); }
+  .borm-item-nr { width:30px; height:30px; border-radius:7px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--surface3); color:var(--text-2); font-family:'DM Mono',monospace; }
+  .borm-item.sel .borm-item-nr { background:var(--navy); color:#fff; }
+  .borm-item-info { flex:1; min-width:0; }
+  .borm-item-name { font-size:12px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .borm-item-meta { font-size:10px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .borm-sdot { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+  .borm-empty-list { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
+  /* Form pane */
+  .borm-form-pane { flex:1; overflow-y:auto; padding:1rem 1.25rem; display:flex; flex-direction:column; gap:.625rem; }
+  .borm-form-pane::-webkit-scrollbar { width:3px; }
+  .borm-form-pane::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .borm-ph { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--text-3); font-size:12px; }
+  .borm-fsec { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); padding-bottom:.25rem; border-bottom:1px solid var(--border); }
+  .borm-grid { display:grid; grid-template-columns:1fr 1fr; gap:.375rem .75rem; }
+  .borm-grid.g3 { grid-template-columns:1fr 1fr 1fr; }
+  .borm-field { display:flex; flex-direction:column; gap:3px; }
+  .borm-field.full { grid-column:1/-1; }
+  .borm-lbl { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
+  .borm-inp, .borm-sel, .borm-ta {
+    padding:6px 9px; font-family:'DM Sans',sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2);
+    color:var(--text); outline:none; transition:all .1s; width:100%;
+  }
+  .borm-inp:focus, .borm-sel:focus, .borm-ta:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .borm-ta { min-height:56px; resize:vertical; line-height:1.5; }
+  .borm-sel { padding-right:22px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 7px center; }
+  .borm-check { display:flex; align-items:center; gap:6px; cursor:pointer; padding:2px 0; }
+  .borm-check input { accent-color:var(--accent); cursor:pointer; width:13px; height:13px; }
+  .borm-check-lbl { font-size:12px; color:var(--text-2); user-select:none; }
+  .borm-stat-row { display:flex; gap:4px; flex-wrap:wrap; }
+  .borm-sbtn {
+    display:inline-flex; align-items:center; gap:3px; padding:3px 9px; font-size:10px; font-weight:600;
+    border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2);
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s;
+  }
+  .borm-sbtn.on-G { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-mid); }
+  .borm-sbtn.on-L { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-mid); }
+  .borm-sbtn.on-R { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-mid); }
+  .borm-sbtn.on-B { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-mid); }
+  .borm-sbtn.on-N { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-mid); }
+  .borm-mfoot { padding:.625rem 1.25rem; border-top:1px solid var(--border); display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
+  .btn-borm-del { padding:5px 12px; font-size:12px; font-family:'DM Sans',sans-serif; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; transition:all .1s; }
+  .btn-borm-del:hover { background:var(--b-fg); color:#fff; }
+  .btn-borm-cancel { padding:5px 12px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
+  .btn-borm-cancel:hover { background:var(--surface2); }
+  .btn-borm-save { padding:5px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--navy); color:#fff; cursor:pointer; margin-left:auto; transition:all .1s; }
+  .btn-borm-save:hover { background:var(--accent); }
+  .btn-borm-save:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
 </head>
 <body>
 
@@ -962,9 +935,8 @@ async function loadProject() {
     opms.forEach(function(o){ OPMERKINGEN[ROW_IDX+'-'+o.fase] = o.tekst||''; });
 
     // Load boringen
-    try {
-      BOR_DATA = await supa.get('/rest/v1/boringen?werkpakket_id=eq.'+ROW_IDX+'&order=boring_nr.asc&select=*');
-    } catch(e) { BOR_DATA = []; }
+    try { BOR_DATA = await supa.get('/rest/v1/boringen?werkpakket_id=eq.'+ROW_IDX+'&order=boring_nr.asc&select=*'); }
+    catch(e) { BOR_DATA = []; }
 
     renderPage();
   } catch(e) {
@@ -1271,11 +1243,17 @@ function renderPage() {
   });
 
   html += '</div>'; // app-wrapper
-
-  // ── Boringen sectie (buiten app-wrapper zodat filters hem niet raken) ──
-  html += buildBoringenHTML();
-
   document.getElementById('mainContent').innerHTML = html;
+
+  // Boringen sectie (apart, buiten filters)
+  var borEl = document.getElementById('boringenSection');
+  if (!borEl) {
+    borEl = document.createElement('div');
+    borEl.id = 'boringenSection';
+    borEl.style.cssText = 'max-width:900px;margin:.875rem auto 0;padding:0 0 3rem';
+    document.getElementById('mainContent').after(borEl);
+  }
+  borEl.innerHTML = buildBoringenHTML();
   document.getElementById('detailControls').style.display = 'flex';
   document.getElementById('detailExportRow').style.display = 'flex';
   // Default: show Analyse, all roles
@@ -1762,259 +1740,6 @@ function showSaving(on) {
   if (el) el.classList.toggle('show', on);
 }
 
-// ══ BORINGEN STATE & HELPERS ══
-var BOR_DATA   = [];
-var BOR_MAX    = 20;
-var borSelId   = null;
-var borStatus  = 'Nog te starten';
-var BOR_STATUS_CLS = {'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
-
-function borBadgeCls(s){ return BOR_STATUS_CLS[s]||'N'; }
-function borDotColor(s){ return {G:'#006B47',L:'#004FCC',R:'#7A4800',B:'#B81518',N:'#44496A'}[borBadgeCls(s)]||'#ccc'; }
-
-// ── Bouw boringen sectie HTML ──
-function buildBoringenHTML() {
-  var n   = BOR_DATA.length;
-  var pct = Math.round(n/BOR_MAX*100);
-  var totalLen=0, gereed=0, vergN=0;
-  BOR_DATA.forEach(function(b){
-    if(b.lengte_m) totalLen += parseFloat(b.lengte_m);
-    if(b.status==='Gereed') gereed++;
-    if(b.vergunning_nodig) vergN++;
-  });
-  totalLen = Math.round(totalLen*10)/10;
-  var canEdit = currentMode==='editor';
-  var barColor = pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0057FF,#34C759)';
-
-  var h = '<div class="bor-section" id="borSection">';
-
-  // Header
-  h += '<div class="bor-section-hdr" onclick="toggleBorSection()">'
-    + '<div class="bor-section-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
-    + '<span class="bor-section-label">Sleufloze technieken — Boringen</span>'
-    + (n>0 ? '<span class="bor-section-count">'+n+' / '+BOR_MAX+'</span>' : '')
-    + (canEdit ? '<button class="btn-bor-new" onclick="event.stopPropagation();openBorModal()">+ Toevoegen</button>' : '')
-    + '<span class="bor-chevron">▾</span>'
-    + '</div>';
-
-  // Progress
-  h += '<div class="bor-prog-row">'
-    + '<span class="bor-prog-label">'+n+' van '+BOR_MAX+' boringen</span>'
-    + '<div class="bor-prog-wrap"><div class="bor-prog-fill" style="width:'+pct+'%;background:'+barColor+'"></div></div>'
-    + '<span class="bor-prog-pct">'+pct+'%</span>'
-    + '</div>';
-
-  h += '<div class="bor-section-body">';
-
-  if(!n) {
-    h += '<div class="bor-empty-state"><span class="bor-empty-icon">⚡</span>Nog geen boringen geregistreerd.'
-      + (canEdit ? '<br><button class="btn-bor-first" onclick="openBorModal()">+ Eerste boring toevoegen</button>' : '')
-      + '</div>';
-  } else {
-    h += '<div class="bor-cards">';
-    BOR_DATA.forEach(function(b){
-      var bc = borBadgeCls(b.status);
-      h += '<div class="bor-card">'
-        + (canEdit ? '<button class="bor-edit-btn" onclick="openBorModal();setTimeout(function(){selectBoring('+b.id+')},350)" title="Bewerken">✎</button>' : '')
-        + '<div class="bor-card-head">'
-        + '<div class="bor-nr">'+esc(b.boring_nr||'?')+'</div>'
-        + '<div class="bor-type">'+esc(b.type_boring||'Boring')+'</div>'
-        + (bc ? '<span class="badge '+bc+'">'+esc(b.status)+'</span>' : '')
-        + '</div>'
-        + (b.locatie ? '<div class="bor-loc">📍 '+esc(b.locatie)+'</div>' : '')
-        + '<div class="bor-specs">'
-        + '<div class="bor-spec-item"><span class="bor-spec-lbl">Lengte</span><span class="bor-spec-val">'+(b.lengte_m!=null?b.lengte_m+' m':'—')+'</span></div>'
-        + '<div class="bor-spec-item"><span class="bor-spec-lbl">Ø</span><span class="bor-spec-val">'+(b.diameter_mm!=null?b.diameter_mm+' mm':'—')+'</span></div>'
-        + '<div class="bor-spec-item"><span class="bor-spec-lbl">Diepte</span><span class="bor-spec-val">'+(b.diepte_m!=null?b.diepte_m+' m NAP':'—')+'</span></div>'
-        + '</div>'
-        + '<div class="bor-card-foot">'
-        + '<span class="bor-aannemer">'+(b.aannemer?'🏗 '+esc(b.aannemer):'')+'</span>'
-        + (b.vergunning_nodig ? '<span class="bor-verg">⚠ Vergunning</span>' : '')
-        + '</div>'
-        + (b.opmerkingen ? '<div class="bor-opm">'+esc(b.opmerkingen)+'</div>' : '')
-        + '</div>';
-    });
-    h += '</div>';
-
-    // Summary
-    h += '<div class="bor-summary">'
-      + '<div class="bor-sum-item"><span class="bor-sum-num">'+n+'</span><span class="bor-sum-lbl">Boringen</span></div>'
-      + (totalLen ? '<div class="bor-sum-item"><span class="bor-sum-num">'+totalLen+'</span><span class="bor-sum-lbl">m totaal</span></div>' : '')
-      + '<div class="bor-sum-item"><span class="bor-sum-num">'+gereed+'</span><span class="bor-sum-lbl">Gereed</span></div>'
-      + (vergN ? '<div class="bor-sum-item"><span class="bor-sum-num">'+vergN+'</span><span class="bor-sum-lbl">Vergunning</span></div>' : '')
-      + '</div>';
-  }
-
-  h += '</div></div>'; // bor-section-body + bor-section
-  return h;
-}
-
-function toggleBorSection() {
-  var sec = document.getElementById('borSection');
-  if (sec) sec.classList.toggle('collapsed');
-}
-
-// ── Supabase boringen CRUD ──
-function borGet()     { return supa.get('/rest/v1/boringen?werkpakket_id=eq.'+ROW_IDX+'&order=boring_nr.asc&select=*'); }
-function borInsert(o) { return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();}); }
-function borPatch(id,o){ return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){return r.ok?null:Promise.reject(new Error('Patch mislukt'));}); }
-function borDel(id)   { return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete mislukt'));}); }
-
-// ── Modal open / close ──
-function openBorModal() {
-  borSelId = null; borStatus = 'Nog te starten';
-  document.getElementById('borModalTitle').textContent = 'Boringen — ' + (ROW_DATA[2]||'Project');
-  document.getElementById('borOverlay').classList.add('open');
-  hideBmForm(); renderBmList(); updateBmProg();
-}
-function closeBorModal() {
-  document.getElementById('borOverlay').classList.remove('open');
-  borSelId = null;
-  // Refresh inline sectie
-  var sec = document.getElementById('borSection');
-  if (sec) { var tmp=document.createElement('div'); tmp.innerHTML=buildBoringenHTML(); sec.replaceWith(tmp.firstChild); }
-}
-
-// ── Lijst ──
-function renderBmList() {
-  var list = document.getElementById('bmList');
-  if (!BOR_DATA.length) {
-    list.innerHTML = '<div class="bm-empty">⚡ Nog geen boringen.<br>Klik Toevoegen.</div>';
-    document.getElementById('btnBmAdd').disabled = false;
-    return;
-  }
-  var h = '';
-  BOR_DATA.forEach(function(b){
-    var dc = borDotColor(b.status);
-    var meta = [b.type_boring, b.lengte_m?b.lengte_m+' m':'', b.locatie].filter(Boolean).join(' · ');
-    h += '<div class="bm-item'+(b.id===borSelId?' active':'')+'" onclick="selectBoring('+b.id+')">'
-      + '<div class="bm-item-nr">'+esc(b.boring_nr||'?')+'</div>'
-      + '<div class="bm-item-info">'
-      + '<div class="bm-item-name">'+esc(b.type_boring||'Boring')+(b.locatie?' — '+esc(b.locatie):'')+'</div>'
-      + '<div class="bm-item-meta">'+esc(meta)+'</div>'
-      + '</div>'
-      + '<span class="bm-sdot" style="background:'+dc+'"></span>'
-      + '</div>';
-  });
-  list.innerHTML = h;
-  var ab = document.getElementById('btnBmAdd');
-  ab.disabled = BOR_DATA.length >= BOR_MAX;
-  ab.title    = BOR_DATA.length >= BOR_MAX ? 'Maximum van '+BOR_MAX+' bereikt' : '';
-}
-
-function updateBmProg() {
-  var n=BOR_DATA.length, pct=Math.round(n/BOR_MAX*100);
-  var pl = document.getElementById('bmProgLabel'); if(pl) pl.textContent = n+' van '+BOR_MAX;
-  var pb = document.getElementById('bmProgBar');
-  if(pb){ pb.style.width=pct+'%'; pb.style.background=pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0057FF,#34C759)'; }
-  var pp = document.getElementById('bmProgPct'); if(pp) pp.textContent=pct+'%';
-}
-
-// ── Select / new ──
-function selectBoring(id){
-  borSelId=id;
-  var b=BOR_DATA.find(function(x){return x.id===id;});
-  if(!b)return;
-  fillBmForm(b); renderBmList();
-}
-function newBoring(){
-  if(BOR_DATA.length>=BOR_MAX){showToast('Maximum van '+BOR_MAX+' bereikt','error');return;}
-  borSelId=null;
-  fillBmForm({boring_nr:'B-'+String(BOR_DATA.length+1).padStart(2,'0'),type_boring:'HDD',locatie:'',lengte_m:'',diameter_mm:'',diepte_m:'',aannemer:'',startdatum:'',einddatum:'',status:'Nog te starten',vergunning_nodig:false,vergunning_datum:'',opmerkingen:''});
-  renderBmList();
-}
-function fillBmForm(b){
-  document.getElementById('bfNr').value       = b.boring_nr||'';
-  document.getElementById('bfType').value     = b.type_boring||'HDD';
-  document.getElementById('bfLocatie').value  = b.locatie||'';
-  document.getElementById('bfLengte').value   = b.lengte_m!=null?b.lengte_m:'';
-  document.getElementById('bfDiameter').value = b.diameter_mm!=null?b.diameter_mm:'';
-  document.getElementById('bfDiepte').value   = b.diepte_m!=null?b.diepte_m:'';
-  document.getElementById('bfAannemer').value = b.aannemer||'';
-  document.getElementById('bfStart').value    = b.startdatum||'';
-  document.getElementById('bfEind').value     = b.einddatum||'';
-  document.getElementById('bfVergNodig').checked = !!b.vergunning_nodig;
-  document.getElementById('bfVergDatum').value   = b.vergunning_datum||'';
-  document.getElementById('bfOpm').value      = b.opmerkingen||'';
-  borStatus = b.status||'Nog te starten';
-  toggleBmVerg(); renderBmStatusBtns(); showBmForm();
-}
-function showBmForm(){
-  document.getElementById('bmPlaceholder').style.display='none';
-  document.getElementById('bmForm').style.display='';
-  document.getElementById('btnBmSave').style.display='';
-  document.getElementById('btnBmDel').style.display = borSelId!==null ? '' : 'none';
-}
-function hideBmForm(){
-  document.getElementById('bmPlaceholder').style.display='';
-  document.getElementById('bmForm').style.display='none';
-  document.getElementById('btnBmSave').style.display='none';
-  document.getElementById('btnBmDel').style.display='none';
-}
-function setBmStatus(btn){ borStatus=btn.getAttribute('data-s'); renderBmStatusBtns(); }
-function renderBmStatusBtns(){
-  document.querySelectorAll('.bm-sbtn').forEach(function(btn){
-    var s=btn.getAttribute('data-s'), bc=borBadgeCls(s);
-    btn.className='bm-sbtn'+(s===borStatus?' on-'+bc:'');
-  });
-}
-function toggleBmVerg(){ document.getElementById('bfVergDatumWrap').style.display=document.getElementById('bfVergNodig').checked?'':'none'; }
-
-// ── Save ──
-async function saveBoring(){
-  var nr=(document.getElementById('bfNr').value||'').trim();
-  if(!nr){showToast('✗ Boring nr. is verplicht','error');return;}
-  var dup=BOR_DATA.find(function(b){return b.boring_nr===nr&&b.id!==borSelId;});
-  if(dup){showToast('✗ Boring nr. "'+nr+'" bestaat al','error');return;}
-  var payload={
-    werkpakket_id:ROW_IDX, boring_nr:nr,
-    type_boring:document.getElementById('bfType').value||'HDD',
-    locatie:document.getElementById('bfLocatie').value||null,
-    lengte_m:parseFloat(document.getElementById('bfLengte').value)||null,
-    diameter_mm:parseInt(document.getElementById('bfDiameter').value)||null,
-    diepte_m:parseFloat(document.getElementById('bfDiepte').value)||null,
-    aannemer:document.getElementById('bfAannemer').value||null,
-    startdatum:document.getElementById('bfStart').value||null,
-    einddatum:document.getElementById('bfEind').value||null,
-    status:borStatus,
-    vergunning_nodig:document.getElementById('bfVergNodig').checked,
-    vergunning_datum:document.getElementById('bfVergDatum').value||null,
-    opmerkingen:document.getElementById('bfOpm').value||null,
-    updated_by:currentUser, updated_at:new Date().toISOString()
-  };
-  document.getElementById('btnBmSave').disabled=true;
-  try {
-    if(borSelId!==null){
-      await borPatch(borSelId,payload);
-      var idx=BOR_DATA.findIndex(function(b){return b.id===borSelId;});
-      if(idx>=0) BOR_DATA[idx]=Object.assign(BOR_DATA[idx],payload);
-      showToast('✓ Boring opgeslagen','success');
-    } else {
-      payload.created_by=currentUser; payload.created_at=new Date().toISOString();
-      var ins=await borInsert(payload);
-      var nb=Array.isArray(ins)?ins[0]:ins;
-      BOR_DATA.push(nb); borSelId=nb.id;
-      showToast('✓ Boring toegevoegd','success');
-    }
-    renderBmList(); updateBmProg(); showBmForm();
-  } catch(err){ showToast('✗ '+err.message,'error'); }
-  finally { document.getElementById('btnBmSave').disabled=false; }
-}
-
-// ── Delete ──
-async function deleteBoring(){
-  if(borSelId===null)return;
-  var b=BOR_DATA.find(function(x){return x.id===borSelId;});
-  if(!confirm('Verwijder '+(b?'"'+b.boring_nr+'"':'deze boring')+'?'))return;
-  try {
-    await borDel(borSelId);
-    BOR_DATA=BOR_DATA.filter(function(x){return x.id!==borSelId;});
-    borSelId=null;
-    showToast('✓ Boring verwijderd','success');
-    renderBmList(); updateBmProg(); hideBmForm();
-  } catch(err){ showToast('✗ '+err.message,'error'); }
-}
-
 // ══ UTILS ══
 function positionPopup(el, e, w, h) {
   var rect = e.currentTarget.getBoundingClientRect();
@@ -2030,75 +1755,326 @@ function showToast(msg, type) {
   clearTimeout(toastTimer);
   toastTimer=setTimeout(function(){ t.className='toast '+(type||''); },2500);
 }
+
+// ══════════════════════════════════════════
+// BORINGEN MODULE
+// ══════════════════════════════════════════
+var BOR_DATA   = [];
+var BOR_MAX    = 20;
+var borSelId   = null;
+var borNewMode = false;
+var borStatus  = 'Nog te starten';
+var BOR_SC = {'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
+function borBC(s){ return BOR_SC[s]||'N'; }
+function borDot(s){ return {G:'#006B47',L:'#004FCC',R:'#7A4800',B:'#B81518',N:'#44496A'}[borBC(s)]||'#ccc'; }
+
+// ── Render kaarten ──
+function buildBoringenHTML() {
+  var n   = BOR_DATA.length;
+  var pct = Math.round(n/BOR_MAX*100);
+  var tot=0, ger=0, verg=0;
+  BOR_DATA.forEach(function(b){
+    if(b.lengte_m) tot+=parseFloat(b.lengte_m);
+    if(b.status==='Gereed') ger++;
+    if(b.vergunning_nodig) verg++;
+  });
+  tot = Math.round(tot*10)/10;
+  var barCol = pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0057FF,#34C759)';
+
+  var h = '<div class="bor-section" id="borSec">';
+  // Header — altijd Toevoegen knop tonen
+  h += '<div class="bor-hdr" onclick="toggleBorSec()">'
+    +'<div class="bor-hdr-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+    +'<span class="bor-hdr-title">Sleufloze technieken — Boringen</span>'
+    +(n?'<span class="bor-hdr-count">'+n+' / '+BOR_MAX+'</span>':'')
+    +'<button class="btn-bor-add" onclick="event.stopPropagation();openBorModal(null)">+ Toevoegen</button>'
+    +'<span class="bor-chevron">▾</span>'
+    +'</div>';
+  // Progressbalk
+  h += '<div class="bor-prog">'
+    +'<span class="bor-prog-lbl">'+n+' van '+BOR_MAX+' boringen</span>'
+    +'<div class="bor-prog-track"><div class="bor-prog-fill" style="width:'+pct+'%;background:'+barCol+'"></div></div>'
+    +'<span class="bor-prog-pct">'+pct+'%</span>'
+    +'</div>';
+  h += '<div class="bor-body">';
+  if(!n){
+    h += '<div class="bor-empty"><span class="bor-empty-icon">⚡</span>Nog geen boringen geregistreerd.'
+      +'<br><button class="btn-bor-first" onclick="openBorModal(null)">+ Eerste boring toevoegen</button></div>';
+  } else {
+    h += '<div class="bor-cards">';
+    BOR_DATA.forEach(function(b){
+      var bc=borBC(b.status);
+      h += '<div class="bor-card">'
+        +'<button class="bor-card-btn" onclick="openBorModal('+b.id+')" title="Bewerken / verwijderen">✎</button>'
+        +'<div class="bor-card-head"><div class="bor-nr">'+esc(b.boring_nr||'?')+'</div>'
+        +'<div class="bor-type">'+esc(b.type_boring||'Boring')+'</div>'
+        +(bc?'<span class="badge '+bc+'">'+esc(b.status)+'</span>':'')+'</div>'
+        +(b.locatie?'<div class="bor-loc">📍 '+esc(b.locatie)+'</div>':'')
+        +'<div class="bor-specs">'
+        +'<div><div class="bor-spec-lbl">Lengte</div><div class="bor-spec-val">'+(b.lengte_m!=null?b.lengte_m+' m':'—')+'</div></div>'
+        +'<div><div class="bor-spec-lbl">Ø</div><div class="bor-spec-val">'+(b.diameter_mm!=null?b.diameter_mm+' mm':'—')+'</div></div>'
+        +'<div><div class="bor-spec-lbl">Diepte</div><div class="bor-spec-val">'+(b.diepte_m!=null?b.diepte_m+' m':'—')+'</div></div>'
+        +'</div>'
+        +'<div class="bor-foot"><span class="bor-aannemer">'+(b.aannemer?'🏗 '+esc(b.aannemer):'')+'</span>'
+        +(b.vergunning_nodig?'<span class="bor-verg">⚠ Vergunning</span>':'')+'</div>'
+        +(b.opmerkingen?'<div class="bor-opm">'+esc(b.opmerkingen)+'</div>':'')
+        +'</div>';
+    });
+    h += '</div>';
+    h += '<div class="bor-summary">'
+      +'<div class="bor-sum-item"><span class="bor-sum-n">'+n+'</span> <span class="bor-sum-l">Boringen</span></div>'
+      +(tot?'<div class="bor-sum-item"><span class="bor-sum-n">'+tot+'</span> <span class="bor-sum-l">m totaal</span></div>':'')
+      +'<div class="bor-sum-item"><span class="bor-sum-n">'+ger+'</span> <span class="bor-sum-l">Gereed</span></div>'
+      +(verg?'<div class="bor-sum-item"><span class="bor-sum-n">'+verg+'</span> <span class="bor-sum-l">Vergunning</span></div>':'')
+      +'</div>';
+  }
+  h += '</div></div>';
+  return h;
+}
+
+function toggleBorSec(){
+  var s=document.getElementById('borSec');
+  if(s) s.classList.toggle('collapsed');
+}
+
+function refreshBorSection(){
+  var el=document.getElementById('boringenSection');
+  if(el) el.innerHTML=buildBoringenHTML();
+}
+
+// ── Supabase helpers ──
+function borInsert(o){ return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();}); }
+function borPatch(id,o){ return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw new Error('Opslaan mislukt');}); }
+function borDel(id){ return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');}); }
+
+// ── Modal ──
+function openBorModal(editId) {
+  borSelId = editId;
+  document.getElementById('bormOverlay').classList.add('open');
+  document.getElementById('bormTitle').textContent = 'Boringen — ' + (ROW_DATA[2]||'Project');
+  renderBormList();
+  updateBormProg();
+  if(editId !== null) {
+    var b = BOR_DATA.find(function(x){return x.id===editId;});
+    if(b) fillBormForm(b);
+  } else {
+    hideBormForm();
+  }
+}
+
+function closeBorModal(){
+  document.getElementById('bormOverlay').classList.remove('open');
+  borSelId=null;
+  refreshBorSection();
+}
+
+function renderBormList(){
+  var list=document.getElementById('bormList');
+  if(!BOR_DATA.length){
+    list.innerHTML='<div class="borm-empty-list">⚡ Nog geen boringen.<br>Klik Toevoegen.</div>';
+    document.getElementById('btnBormNew').disabled=false;
+    return;
+  }
+  var h='';
+  BOR_DATA.forEach(function(b){
+    var dc=borDot(b.status);
+    var meta=[b.type_boring,b.lengte_m?b.lengte_m+' m':'',b.locatie].filter(Boolean).join(' · ');
+    h+='<div class="borm-item'+(b.id===borSelId?' sel':'')+'" onclick="selectBorm('+b.id+')">'
+      +'<div class="borm-item-nr">'+esc(b.boring_nr||'?')+'</div>'
+      +'<div class="borm-item-info"><div class="borm-item-name">'+esc(b.type_boring||'Boring')+(b.locatie?' — '+esc(b.locatie):'')+'</div>'
+      +'<div class="borm-item-meta">'+esc(meta)+'</div></div>'
+      +'<span class="borm-sdot" style="background:'+dc+'"></span></div>';
+  });
+  list.innerHTML=h;
+  var ab=document.getElementById('btnBormNew');
+  ab.disabled=BOR_DATA.length>=BOR_MAX;
+  ab.title=BOR_DATA.length>=BOR_MAX?'Maximum van '+BOR_MAX+' bereikt':'';
+}
+
+function updateBormProg(){
+  var n=BOR_DATA.length,pct=Math.round(n/BOR_MAX*100);
+  var pl=document.getElementById('bormProgLbl'); if(pl)pl.textContent=n+' van '+BOR_MAX;
+  var pb=document.getElementById('bormProgFill');
+  if(pb){pb.style.width=pct+'%';pb.style.background=pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0057FF,#34C759)';}
+  var pp=document.getElementById('bormProgPct'); if(pp)pp.textContent=pct+'%';
+}
+
+function selectBorm(id){
+  borSelId=id;
+  var b=BOR_DATA.find(function(x){return x.id===id;});
+  if(!b)return;
+  fillBormForm(b); renderBormList();
+}
+
+function newBorm(){
+  if(BOR_DATA.length>=BOR_MAX){showToast('Maximum van '+BOR_MAX+' bereikt','error');return;}
+  borSelId=null;
+  fillBormForm({boring_nr:'B-'+String(BOR_DATA.length+1).padStart(2,'0'),type_boring:'HDD',locatie:'',lengte_m:'',diameter_mm:'',diepte_m:'',aannemer:'',startdatum:'',einddatum:'',status:'Nog te starten',vergunning_nodig:false,vergunning_datum:'',opmerkingen:''});
+  renderBormList();
+}
+
+function fillBormForm(b){
+  document.getElementById('bfNr').value       = b.boring_nr||'';
+  document.getElementById('bfType').value     = b.type_boring||'HDD';
+  document.getElementById('bfLocatie').value  = b.locatie||'';
+  document.getElementById('bfLengte').value   = b.lengte_m!=null?b.lengte_m:'';
+  document.getElementById('bfDiam').value     = b.diameter_mm!=null?b.diameter_mm:'';
+  document.getElementById('bfDiepte').value   = b.diepte_m!=null?b.diepte_m:'';
+  document.getElementById('bfAannemer').value = b.aannemer||'';
+  document.getElementById('bfStart').value    = b.startdatum||'';
+  document.getElementById('bfEind').value     = b.einddatum||'';
+  document.getElementById('bfVerg').checked   = !!b.vergunning_nodig;
+  document.getElementById('bfVergDatum').value= b.vergunning_datum||'';
+  document.getElementById('bfOpm').value      = b.opmerkingen||'';
+  borStatus = b.status||'Nog te starten';
+  toggleBfVerg(); renderBormStatBtns(); showBormForm();
+}
+
+function showBormForm(){
+  document.getElementById('bormPh').style.display='none';
+  document.getElementById('bormForm').style.display='';
+  document.getElementById('btnBormSave').style.display='';
+  document.getElementById('btnBormDel').style.display=borSelId!==null?'':'none';
+}
+function hideBormForm(){
+  document.getElementById('bormPh').style.display='';
+  document.getElementById('bormForm').style.display='none';
+  document.getElementById('btnBormSave').style.display='none';
+  document.getElementById('btnBormDel').style.display='none';
+}
+
+function setBormStat(btn){ borStatus=btn.getAttribute('data-s'); renderBormStatBtns(); }
+function renderBormStatBtns(){
+  document.querySelectorAll('.borm-sbtn').forEach(function(btn){
+    var s=btn.getAttribute('data-s'), bc=borBC(s);
+    btn.className='borm-sbtn'+(s===borStatus?' on-'+bc:'');
+  });
+}
+function toggleBfVerg(){
+  document.getElementById('bfVergDatumWrap').style.display=document.getElementById('bfVerg').checked?'':'none';
+}
+
+async function saveBorm(){
+  var nr=(document.getElementById('bfNr').value||'').trim();
+  if(!nr){showToast('✗ Boring nr. is verplicht','error');document.getElementById('bfNr').focus();return;}
+  var dup=BOR_DATA.find(function(b){return b.boring_nr===nr&&b.id!==borSelId;});
+  if(dup){showToast('✗ "'+nr+'" bestaat al','error');return;}
+  var payload={
+    werkpakket_id:ROW_IDX, boring_nr:nr,
+    type_boring:document.getElementById('bfType').value||'HDD',
+    locatie:document.getElementById('bfLocatie').value||null,
+    lengte_m:parseFloat(document.getElementById('bfLengte').value)||null,
+    diameter_mm:parseInt(document.getElementById('bfDiam').value)||null,
+    diepte_m:parseFloat(document.getElementById('bfDiepte').value)||null,
+    aannemer:document.getElementById('bfAannemer').value||null,
+    startdatum:document.getElementById('bfStart').value||null,
+    einddatum:document.getElementById('bfEind').value||null,
+    status:borStatus,
+    vergunning_nodig:document.getElementById('bfVerg').checked,
+    vergunning_datum:document.getElementById('bfVergDatum').value||null,
+    opmerkingen:document.getElementById('bfOpm').value||null,
+    updated_by:currentUser, updated_at:new Date().toISOString()
+  };
+  document.getElementById('btnBormSave').disabled=true;
+  try {
+    if(borSelId!==null){
+      await borPatch(borSelId,payload);
+      var idx=BOR_DATA.findIndex(function(b){return b.id===borSelId;});
+      if(idx>=0) BOR_DATA[idx]=Object.assign(BOR_DATA[idx],payload);
+      showToast('✓ Boring opgeslagen','success');
+    } else {
+      payload.created_by=currentUser; payload.created_at=new Date().toISOString();
+      var ins=await borInsert(payload);
+      var nb=Array.isArray(ins)?ins[0]:ins;
+      BOR_DATA.push(nb); borSelId=nb.id;
+      showToast('✓ Boring toegevoegd','success');
+    }
+    renderBormList(); updateBormProg(); showBormForm();
+  } catch(err){ showToast('✗ '+err.message,'error'); }
+  finally{ document.getElementById('btnBormSave').disabled=false; }
+}
+
+async function deleteBorm(){
+  if(borSelId===null)return;
+  var b=BOR_DATA.find(function(x){return x.id===borSelId;});
+  if(!confirm('Weet je zeker dat je "'+(b?b.boring_nr:'deze boring')+'" wilt verwijderen?'))return;
+  try {
+    await borDel(borSelId);
+    BOR_DATA=BOR_DATA.filter(function(x){return x.id!==borSelId;});
+    borSelId=null;
+    showToast('✓ Boring verwijderd','success');
+    renderBormList(); updateBormProg(); hideBormForm();
+  } catch(err){ showToast('✗ '+err.message,'error'); }
+}
 </script>
 <!-- ══ BORINGEN MODAL ══ -->
-<div class="bor-overlay" id="borOverlay" onclick="if(event.target===this)closeBorModal()">
-  <div class="bor-modal">
-    <div class="bor-modal-hdr">
-      <div class="bor-modal-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-      <div><div class="bor-modal-title" id="borModalTitle">Boringen</div><div class="bor-modal-sub">Sleufloze technieken · max. 20 boringen</div></div>
-      <button class="bor-mclose" onclick="closeBorModal()">✕</button>
+<div class="borm-overlay" id="bormOverlay" onclick="if(event.target===this)closeBorModal()">
+  <div class="borm-modal">
+    <div class="borm-mhdr">
+      <div class="borm-micon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <div><div class="borm-mtitle" id="bormTitle">Boringen</div><div class="borm-msub">Sleufloze technieken · max. 20 boringen per project</div></div>
+      <button class="borm-mclose" onclick="closeBorModal()">✕</button>
     </div>
-    <div class="bor-modal-prog">
-      <span class="bor-prog-label" id="bmProgLabel">0 van 20</span>
-      <div class="bor-prog-wrap" style="flex:1"><div class="bor-prog-fill" id="bmProgBar" style="width:0%"></div></div>
-      <span class="bor-prog-pct" id="bmProgPct">0%</span>
+    <div class="borm-mprog">
+      <span class="bor-prog-lbl" id="bormProgLbl">0 van 20</span>
+      <div class="bor-prog-track" style="flex:1"><div class="bor-prog-fill" id="bormProgFill" style="width:0%"></div></div>
+      <span class="bor-prog-pct" id="bormProgPct">0%</span>
     </div>
-    <div class="bor-modal-body">
-      <div class="bm-list-pane">
-        <div class="bm-list-head">
+    <div class="borm-body">
+      <!-- Lijst -->
+      <div class="borm-list-pane">
+        <div class="borm-list-hdr">
           <span>Boringen</span>
-          <button class="btn-bm-add" id="btnBmAdd" onclick="newBoring()">
-            <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Toevoegen
-          </button>
+          <button class="btn-borm-new" id="btnBormNew" onclick="newBorm()">+ Nieuw</button>
         </div>
-        <div class="bm-list" id="bmList"><div class="bm-empty">⚡ Nog geen boringen.</div></div>
+        <div class="borm-list" id="bormList"><div class="borm-empty-list">⚡ Nog geen boringen.</div></div>
       </div>
-      <div class="bm-form-pane">
-        <div class="bm-placeholder" id="bmPlaceholder"><span style="font-size:28px">👈</span><span>Selecteer of voeg een boring toe</span></div>
-        <div id="bmForm" style="display:none">
-          <div class="bm-form-section">Identificatie</div>
-          <div class="bm-grid">
-            <div class="bm-field"><label class="bm-label">Boring nr.</label><input class="bm-input" id="bfNr" type="text" placeholder="B-01" maxlength="20"></div>
-            <div class="bm-field"><label class="bm-label">Type</label>
-              <select class="bm-select" id="bfType"><option value="HDD">HDD</option><option value="Gestuurde boring">Gestuurde boring</option><option value="Persing">Persing</option><option value="Microtunneling">Microtunneling</option><option value="Anders">Anders</option></select>
+      <!-- Formulier -->
+      <div class="borm-form-pane">
+        <div class="borm-ph" id="bormPh"><span style="font-size:26px">👈</span><span>Kies een boring of voeg er een toe</span></div>
+        <div id="bormForm" style="display:none">
+          <div class="borm-fsec">Identificatie</div>
+          <div class="borm-grid">
+            <div class="borm-field"><label class="borm-lbl">Boring nr.</label><input class="borm-inp" id="bfNr" type="text" placeholder="B-01" maxlength="20"></div>
+            <div class="borm-field"><label class="borm-lbl">Type</label>
+              <select class="borm-sel" id="bfType"><option value="HDD">HDD</option><option value="Gestuurde boring">Gestuurde boring</option><option value="Persing">Persing</option><option value="Microtunneling">Microtunneling</option><option value="Anders">Anders</option></select>
             </div>
-            <div class="bm-field full"><label class="bm-label">Locatie omschrijving</label><input class="bm-input" id="bfLocatie" type="text" placeholder="bijv. Kruising N381 Hoogeveen"></div>
+            <div class="borm-field full"><label class="borm-lbl">Locatie omschrijving</label><input class="borm-inp" id="bfLocatie" type="text" placeholder="bijv. Kruising N381 Hoogeveen"></div>
           </div>
-          <div class="bm-form-section" style="margin-top:.5rem">Technische specs</div>
-          <div class="bm-grid g3">
-            <div class="bm-field"><label class="bm-label">Lengte (m)</label><input class="bm-input" id="bfLengte" type="number" placeholder="0" min="0" step="0.1"></div>
-            <div class="bm-field"><label class="bm-label">Diameter (mm)</label><input class="bm-input" id="bfDiameter" type="number" placeholder="0" min="0"></div>
-            <div class="bm-field"><label class="bm-label">Diepte (m NAP)</label><input class="bm-input" id="bfDiepte" type="number" placeholder="0" step="0.01"></div>
+          <div class="borm-fsec" style="margin-top:.5rem">Technische specs</div>
+          <div class="borm-grid g3">
+            <div class="borm-field"><label class="borm-lbl">Lengte (m)</label><input class="borm-inp" id="bfLengte" type="number" placeholder="0" min="0" step="0.1"></div>
+            <div class="borm-field"><label class="borm-lbl">Diameter (mm)</label><input class="borm-inp" id="bfDiam" type="number" placeholder="0" min="0"></div>
+            <div class="borm-field"><label class="borm-lbl">Diepte (m NAP)</label><input class="borm-inp" id="bfDiepte" type="number" placeholder="0" step="0.01"></div>
           </div>
-          <div class="bm-form-section" style="margin-top:.5rem">Planning</div>
-          <div class="bm-grid">
-            <div class="bm-field"><label class="bm-label">Aannemer</label><input class="bm-input" id="bfAannemer" type="text" placeholder="naam aannemer"></div>
-            <div class="bm-field" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:.4rem .75rem">
-              <div class="bm-field"><label class="bm-label">Startdatum</label><input class="bm-input" id="bfStart" type="date"></div>
-              <div class="bm-field"><label class="bm-label">Einddatum</label><input class="bm-input" id="bfEind" type="date"></div>
+          <div class="borm-fsec" style="margin-top:.5rem">Planning</div>
+          <div class="borm-grid">
+            <div class="borm-field"><label class="borm-lbl">Aannemer</label><input class="borm-inp" id="bfAannemer" type="text" placeholder="naam aannemer"></div>
+            <div class="borm-field" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:.375rem .75rem">
+              <div class="borm-field"><label class="borm-lbl">Startdatum</label><input class="borm-inp" id="bfStart" type="date"></div>
+              <div class="borm-field"><label class="borm-lbl">Einddatum</label><input class="borm-inp" id="bfEind" type="date"></div>
             </div>
           </div>
-          <div class="bm-form-section" style="margin-top:.5rem">Status</div>
-          <div class="bm-status-row">
-            <button class="bm-sbtn" data-s="Nog te starten" onclick="setBmStatus(this)">— Nog te starten</button>
-            <button class="bm-sbtn" data-s="Loopt"          onclick="setBmStatus(this)">▶ Loopt</button>
-            <button class="bm-sbtn" data-s="Review"         onclick="setBmStatus(this)">👁 Review</button>
-            <button class="bm-sbtn" data-s="Gereed"         onclick="setBmStatus(this)">✓ Gereed</button>
-            <button class="bm-sbtn" data-s="Geblokkeerd"    onclick="setBmStatus(this)">✗ Geblokkeerd</button>
+          <div class="borm-fsec" style="margin-top:.5rem">Status</div>
+          <div class="borm-stat-row">
+            <button class="borm-sbtn" data-s="Nog te starten" onclick="setBormStat(this)">— Nog te starten</button>
+            <button class="borm-sbtn" data-s="Loopt"          onclick="setBormStat(this)">▶ Loopt</button>
+            <button class="borm-sbtn" data-s="Review"         onclick="setBormStat(this)">👁 Review</button>
+            <button class="borm-sbtn" data-s="Gereed"         onclick="setBormStat(this)">✓ Gereed</button>
+            <button class="borm-sbtn" data-s="Geblokkeerd"    onclick="setBormStat(this)">✗ Geblokkeerd</button>
           </div>
-          <div class="bm-form-section" style="margin-top:.5rem">Vergunning</div>
-          <div class="bm-field full"><label class="bm-check-row"><input type="checkbox" id="bfVergNodig" onchange="toggleBmVerg()"><span class="bm-check-lbl">Vergunning benodigd voor deze boring</span></label></div>
-          <div class="bm-field" id="bfVergDatumWrap" style="display:none"><label class="bm-label">Vergunningsdatum</label><input class="bm-input" id="bfVergDatum" type="date"></div>
-          <div class="bm-form-section" style="margin-top:.5rem">Opmerkingen</div>
-          <div class="bm-field"><textarea class="bm-textarea" id="bfOpm" placeholder="Notities..." maxlength="500"></textarea></div>
+          <div class="borm-fsec" style="margin-top:.5rem">Vergunning</div>
+          <label class="borm-check"><input type="checkbox" id="bfVerg" onchange="toggleBfVerg()"><span class="borm-check-lbl">Vergunning benodigd voor deze boring</span></label>
+          <div class="borm-field" id="bfVergDatumWrap" style="display:none"><label class="borm-lbl">Vergunningsdatum</label><input class="borm-inp" id="bfVergDatum" type="date"></div>
+          <div class="borm-fsec" style="margin-top:.5rem">Opmerkingen</div>
+          <textarea class="borm-ta" id="bfOpm" placeholder="Notities over deze boring..." maxlength="500"></textarea>
         </div>
       </div>
     </div>
-    <div class="bm-modal-foot">
-      <button class="btn-bm-del" id="btnBmDel" onclick="deleteBoring()" style="display:none">🗑 Verwijderen</button>
-      <button class="btn-bm-cancel" onclick="closeBorModal()">Sluiten</button>
-      <button class="btn-bm-save" id="btnBmSave" onclick="saveBoring()" style="display:none">Opslaan</button>
+    <div class="borm-mfoot">
+      <button class="btn-borm-del" id="btnBormDel" onclick="deleteBorm()" style="display:none">🗑 Verwijderen</button>
+      <button class="btn-borm-cancel" onclick="closeBorModal()">Sluiten</button>
+      <button class="btn-borm-save" id="btnBormSave" onclick="saveBorm()" style="display:none">Opslaan</button>
     </div>
   </div>
 </div>
