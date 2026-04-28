@@ -2,1596 +2,674 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Project detail — TPA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@500;600&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Detail — TPA</title>
 <style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#F5F5F7; --surface:#FFFFFF; --surface2:#F5F5F7; --surface3:#E8E8ED;
+  --border:rgba(0,0,0,0.08); --border-md:rgba(0,0,0,0.12); --border-strong:rgba(0,0,0,0.20);
+  --text:#1D1D1F; --text-2:#6E6E73; --text-3:#A1A1A6;
+  --accent:#0071E3; --accent-2:rgba(0,113,227,0.08); --accent-3:rgba(0,113,227,0.04);
+  --navy:#1D1D1F; --navy-2:#2D2D2F; --navy-3:#3D3D3F;
+  --g-fg:#1A7F3C; --g-bg:#F0FBF4; --g-mid:#BBE8CB;
+  --l-fg:#0071E3; --l-bg:#EAF4FF; --l-mid:#B8DAFF;
+  --r-fg:#8E6000; --r-bg:#FFF8ED; --r-mid:#FFE0A0;
+  --b-fg:#D70015; --b-bg:#FFF0F0; --b-mid:#FFBBBB;
+  --n-fg:#6E6E73; --n-bg:#F5F5F7; --n-mid:#E0E0E5;
+  --r:8px; --r-md:10px; --r-lg:12px; --r-xl:18px;
+  --sh-sm:0 1px 3px rgba(0,0,0,0.04); --sh-md:0 4px 20px rgba(0,0,0,0.07); --sh-lg:0 20px 60px rgba(0,0,0,0.12);
+}
+body { font-family:'Inter',system-ui,-apple-system,sans-serif; background:var(--bg); color:var(--text); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; min-height:100vh; }
 
-  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-  :root {
-    --bg:#F0F4FF; --surface:#FFFFFF; --surface2:#EBF0FF; --surface3:#DCE5FF;
-    --border:rgba(0,60,200,0.08); --border-md:rgba(0,60,200,0.13); --border-strong:rgba(0,60,200,0.20);
-    --text:#0A0F2E; --text-2:#3A4270; --text-3:#7A84B0;
-    --accent:#0057FF; --accent-2:rgba(0,87,255,0.10);
-    --navy:#0A0F2E; --navy-2:#131830; --navy-3:#1D2440; --navy-4:#273054;
-    --g-fg:#006B47; --g-bg:#E6F5EE; --g-mid:#C8E8D8;
-    --l-fg:#004FCC; --l-bg:#E8EFFF; --l-mid:#C0D4FF;
-    --r-fg:#7A4800; --r-bg:#FFF2DC; --r-mid:#FFE0A0;
-    --b-fg:#B81518; --b-bg:#FFE8E8; --b-mid:#FFC8C8;
-    --n-fg:#44496A; --n-bg:#EAECF1; --n-mid:#D4D8E8;
-    --r:5px; --r-md:7px; --r-lg:10px; --r-xl:14px;
-    --sh-sm:0 1px 3px rgba(10,15,35,0.06),0 1px 2px rgba(10,15,35,0.04);
-    --sh-md:0 4px 16px rgba(10,15,35,0.08),0 2px 6px rgba(10,15,35,0.05);
-    --sh-lg:0 12px 40px rgba(10,15,35,0.12),0 4px 12px rgba(10,15,35,0.07);
-  }
-  body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:13px; line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; }
+/* HEADER */
+.site-header { background:rgba(255,255,255,0.82); backdrop-filter:saturate(180%) blur(20px); border-bottom:1px solid rgba(0,0,0,0.08); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:44px; position:sticky; top:0; z-index:100; }
+.logo { font-size:13px; font-weight:600; letter-spacing:-.01em; display:flex; align-items:center; gap:8px; font-family:'Poppins',sans-serif; }
+.logo-icon { width:18px; height:18px; background:var(--accent); border-radius:5px; display:flex; align-items:center; justify-content:center; }
+.btn-back { display:inline-flex; align-items:center; gap:4px; font-size:12px; padding:4px 11px; border-radius:20px; border:1px solid var(--border-md); background:rgba(0,0,0,0.04); color:var(--text-2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .12s; }
+.btn-back:hover { background:rgba(0,0,0,0.07); color:var(--text); }
 
-  /* HEADER */
-  .page-header { background:var(--navy); color:#fff; padding:0 1.25rem; display:flex; align-items:center; justify-content:space-between; height:44px; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(255,255,255,0.05); gap:1rem; }
-  .page-header .logo { font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:rgba(255,255,255,0.35); white-space:nowrap; display:flex; align-items:center; gap:7px; }
-  .logo-icon { width:18px; height:18px; background:var(--accent); border-radius:4px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .page-header .project-name { font-size:14px; font-weight:500; color:#fff; flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .page-header .meta { font-size:11px; color:rgba(255,255,255,0.3); font-family:'DM Mono',monospace; white-space:nowrap; }
-  .btn-back-detail { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:3px 9px; border-radius:var(--r); border:1px solid rgba(255,255,255,0.09); background:rgba(255,255,255,0.04); color:rgba(255,255,255,0.42); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s; white-space:nowrap; }
-  .btn-back-detail:hover { background:rgba(255,255,255,0.09); color:rgba(255,255,255,0.8); }
+/* LAYOUT */
+.main { max-width:1100px; margin:0 auto; padding:1.25rem 1.25rem 3rem; }
 
-  /* MAIN */
-  .main { max-width:900px; margin:0 auto; padding:1.125rem 1.5rem 4rem; }
+/* PROJECT HERO */
+.project-hero {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
+  padding:1.25rem 1.5rem; margin-bottom:1rem;
+  display:flex; align-items:flex-start; gap:1rem;
+  box-shadow:var(--sh-sm);
+}
+.project-icon {
+  width:48px; height:48px; border-radius:14px; flex-shrink:0;
+  background:linear-gradient(135deg,#0057FF,#0071E3);
+  display:flex; align-items:center; justify-content:center;
+}
+.project-title { font-size:20px; font-weight:600; letter-spacing:-.02em; color:var(--text); margin-bottom:2px; }
+.project-meta  { display:flex; gap:.75rem; flex-wrap:wrap; margin-top:.375rem; }
+.project-meta-item { display:flex; align-items:center; gap:4px; font-size:11px; color:var(--text-3); }
+.project-meta-item strong { color:var(--text-2); font-weight:500; }
+.dom-badge { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:600; padding:3px 10px; border-radius:20px; margin-left:auto; white-space:nowrap; }
+.dom-badge::before { content:''; width:5px; height:5px; border-radius:50%; }
+.dom-G { background:var(--g-bg); color:var(--g-fg); } .dom-G::before { background:var(--g-fg); }
+.dom-L { background:var(--l-bg); color:var(--l-fg); } .dom-L::before { background:var(--l-fg); }
+.dom-R { background:var(--r-bg); color:var(--r-fg); } .dom-R::before { background:var(--r-fg); }
+.dom-B { background:var(--b-bg); color:var(--b-fg); } .dom-B::before { background:var(--b-fg); }
+.dom-N { background:var(--n-bg); color:var(--n-fg); } .dom-N::before { background:var(--n-fg); }
 
-  /* PROJECT INFO */
-  .project-info { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:1rem 1.25rem; margin-bottom:1.125rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; box-shadow:var(--sh-sm); }
-  .info-item .info-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); margin-bottom:2px; }
-  .info-item .info-val { font-size:13px; font-weight:500; color:var(--text); }
+/* SECTION CARD */
+.section-card {
+  background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
+  margin-bottom:1rem; box-shadow:var(--sh-sm); overflow:hidden;
+}
+.section-header {
+  display:flex; align-items:center; gap:.625rem; padding:.75rem 1.25rem;
+  border-bottom:1px solid var(--border); cursor:pointer; user-select:none;
+  transition:background .07s;
+}
+.section-header:hover { background:var(--surface2); }
+.section-icon { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.section-title { font-size:13px; font-weight:600; color:var(--text); flex:1; }
+.section-badge { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--surface2); color:var(--text-3); border:1px solid var(--border-md); }
+.section-chevron { font-size:10px; color:var(--text-3); transition:transform .15s; }
+.section-card.collapsed .section-chevron { transform:rotate(-90deg); }
+.section-body { padding:1rem 1.25rem; }
+.section-card.collapsed .section-body { display:none; }
 
-  /* MODE BAR */
-  .mode-bar { display:flex; align-items:center; gap:.625rem; margin-bottom:1rem; padding:.5rem .875rem; background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); }
-  .mode-bar .mode-label { font-size:12px; color:var(--text-2); }
-  .mode-pill { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; }
-  .mode-pill.viewer { background:var(--l-bg); color:var(--l-fg); }
-  .mode-pill.editor { background:var(--g-bg); color:var(--g-fg); }
-  .mode-pill .dot { width:5px; height:5px; border-radius:50%; }
-  .mode-pill.viewer .dot { background:var(--l-fg); }
-  .mode-pill.editor .dot { background:var(--g-fg); }
-  .saving-indicator { display:none; align-items:center; gap:4px; font-size:10px; color:var(--text-3); margin-left:auto; }
-  .saving-indicator.show { display:flex; }
-  .saving-dot { width:4px; height:4px; border-radius:50%; background:var(--text-3); animation:savepulse .5s ease-in-out infinite alternate; }
-  @keyframes savepulse{to{opacity:.12}}
+/* TASK GRID */
+.task-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:6px; }
+.task-item { display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:var(--r-md); border:1px solid var(--border); background:var(--surface2); transition:all .08s; }
+.task-item:hover { background:var(--surface3); }
+.task-name { font-size:11px; color:var(--text-2); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.badge { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; }
+.badge::before { content:''; width:4px; height:4px; border-radius:50%; flex-shrink:0; }
+.G { background:var(--g-bg); color:var(--g-fg); } .G::before { background:var(--g-fg); }
+.L { background:var(--l-bg); color:var(--l-fg); } .L::before { background:var(--l-fg); }
+.R { background:var(--r-bg); color:var(--r-fg); } .R::before { background:var(--r-fg); }
+.B { background:var(--b-bg); color:var(--b-fg); } .B::before { background:var(--b-fg); }
+.N { background:var(--n-bg); color:var(--n-fg); } .N::before { background:var(--n-fg); }
+.janee-ja  { font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; background:var(--g-bg); color:var(--g-fg); }
+.janee-nee { font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; background:var(--b-bg); color:var(--b-fg); }
+.date-val  { font-size:10px; color:var(--text-2); font-variant-numeric:tabular-nums; }
+.wk-over   { font-size:10px; font-weight:700; color:var(--b-fg); }
+.wk-warn   { font-size:10px; font-weight:600; color:var(--r-fg); }
+.wk-ok     { font-size:10px; color:var(--g-fg); }
 
-  /* PHASE SECTIONS */
-  .fase-section { margin-bottom:.875rem; }
-  .fase-section-header { display:flex; align-items:center; gap:7px; margin-bottom:.5rem; cursor:pointer; user-select:none; }
-  .fase-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:20px; }
-  .collapse-icon { font-size:9px; color:var(--text-3); transition:transform .18s; }
-  .fase-section-header.collapsed .collapse-icon { transform:rotate(-90deg); }
-  .fase-section-body { display:grid; grid-template-columns:1fr 1fr; gap:5px; }
-  .fase-section-body.collapsed { display:none; }
+/* PROJECTINFO GRID */
+.info-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem .875rem; }
+.info-item { display:flex; flex-direction:column; gap:2px; }
+.info-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); }
+.info-value { font-size:13px; color:var(--text); font-weight:400; }
 
-  /* FIELD ROWS */
-  .field-row { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-md); padding:.5rem .75rem; display:flex; align-items:center; justify-content:space-between; gap:.625rem; min-height:38px; transition:background .08s; }
-  .field-row.full-width { grid-column:1/-1; }
-  .field-label { font-size:11px; color:var(--text-2); flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .field-val { flex-shrink:0; text-align:right; }
-  .mode-editor .field-row.editable { cursor:pointer; }
-  .mode-editor .field-row.editable:hover { background:var(--surface2); }
-  .mode-editor .field-row.editable:hover .badge,
-  .mode-editor .field-row.editable:hover .janee-ja,
-  .mode-editor .field-row.editable:hover .janee-nee,
-  .mode-editor .field-row.editable:hover .janee-leeg,
-  .mode-editor .field-row.editable:hover .date-val,
-  .mode-editor .field-row.editable:hover .opmerking-tekst,
-  .mode-editor .field-row.editable:hover .opmerking-leeg { outline:2px solid var(--accent); outline-offset:1px; }
+/* ══ BORINGEN SECTIE ══ */
+.bor-section-header {
+  background:linear-gradient(135deg,rgba(0,79,179,0.06),rgba(0,113,227,0.04));
+  border-bottom:2px solid rgba(0,113,227,0.15);
+}
+.bor-section-header .section-icon { background:linear-gradient(135deg,#0f4c9e,#0071E3); }
 
-  /* BADGES */
-  .badge { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:700; padding:2px 7px; border-radius:20px; white-space:nowrap; letter-spacing:.04em; }
-  .badge::before { content:''; width:4px; height:4px; border-radius:50%; flex-shrink:0; }
-  .G { background:var(--g-bg); color:var(--g-fg); } .G::before{background:var(--g-fg);}
-  .L { background:var(--l-bg); color:var(--l-fg); } .L::before{background:var(--l-fg);}
-  .R { background:var(--r-bg); color:var(--r-fg); } .R::before{background:var(--r-fg);}
-  .B { background:var(--b-bg); color:var(--b-fg); } .B::before{background:var(--b-fg);}
-  .N { background:var(--n-bg); color:var(--n-fg); } .N::before{background:var(--n-fg);}
-  .wk-over { color:var(--b-fg); font-weight:700; font-family:'DM Mono',monospace; font-size:11px; }
-  .wk-warn { color:var(--r-fg); font-weight:600; font-family:'DM Mono',monospace; font-size:11px; }
-  .wk-ok   { color:var(--g-fg); font-family:'DM Mono',monospace; font-size:11px; }
-  .janee-ja  { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:var(--g-bg); color:var(--g-fg); }
-  .janee-nee { display:inline-block; font-size:10px; font-weight:700; padding:2px 8px; border-radius:20px; background:var(--b-bg); color:var(--b-fg); }
-  .janee-leeg{ display:inline-block; font-size:10px; padding:2px 8px; border-radius:20px; background:var(--n-bg); color:var(--text-3); }
-  .date-val { font-size:11px; font-family:'DM Mono',monospace; color:var(--text-2); }
-  .opmerking-tekst { font-size:11px; color:var(--text); background:#FFFBEB; border-radius:3px; padding:2px 6px; border-left:2px solid #D4880A; }
-  .opmerking-leeg  { font-size:11px; font-style:italic; color:var(--text-3); }
+/* Progress */
+.bor-detail-progress {
+  display:flex; align-items:center; gap:.75rem; padding:.625rem 1.25rem;
+  border-bottom:1px solid var(--border); background:var(--surface2);
+}
+.bor-prog-label { font-size:11px; color:var(--text-2); white-space:nowrap; }
+.bor-prog-wrap { flex:1; height:6px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+.bor-prog-bar  { height:100%; background:linear-gradient(90deg,#0071E3,#34C759); border-radius:3px; transition:width .3s; }
+.bor-prog-pct  { font-size:11px; font-weight:600; color:var(--accent); white-space:nowrap; font-variant-numeric:tabular-nums; }
 
-  /* PICKERS */
-  .status-picker,.date-popup { position:fixed; background:var(--surface); border:1px solid var(--border-md); border-radius:var(--r-lg); box-shadow:var(--sh-lg); z-index:500; padding:4px; display:none; }
-  .status-picker.open { display:block; animation:popIn .1s ease; }
-  @keyframes popIn{from{opacity:0;transform:scale(.95) translateY(-3px)}to{opacity:1;transform:scale(1) translateY(0)}}
-  .sp-header,.date-popup-header { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); padding:5px 7px 3px; }
-  .status-option { display:flex; align-items:center; gap:7px; padding:5px 7px; border-radius:var(--r); cursor:pointer; font-size:11px; color:var(--text); transition:background .07s; }
-  .status-option:hover,.status-option.active { background:var(--surface2); }
-  .sdot { width:6px; height:6px; border-radius:2px; flex-shrink:0; }
-  .date-popup { min-width:210px; padding:.75rem; display:none; flex-direction:column; gap:.5rem; }
-  .date-popup.open { display:flex; animation:popIn .1s ease; }
-  .date-popup input[type="date"] { padding:5px 9px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; width:100%; transition:all .1s; }
-  .date-popup input[type="date"]:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
-  .date-popup-actions { display:flex; gap:4px; justify-content:flex-end; }
-  .date-popup-actions button { padding:4px 10px; font-size:11px; font-family:'DM Sans',sans-serif; border-radius:var(--r); cursor:pointer; border:1px solid var(--border-md); transition:all .1s; }
-  .btn-date-cancel { background:transparent; color:var(--text-2); }
-  .btn-date-cancel:hover { background:var(--surface2); }
-  .btn-date-save { background:var(--navy); color:#fff; border-color:var(--navy); font-weight:600; }
-  .btn-date-save:hover { background:var(--navy-3); }
-  .btn-date-clear { background:transparent; color:var(--b-fg); border-color:transparent; margin-right:auto; }
-  .btn-date-clear:hover { background:var(--b-bg); }
+/* Boring cards */
+.bor-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.625rem; padding:1rem 1.25rem; }
+.bor-card {
+  background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg);
+  padding:.75rem .875rem; transition:all .1s; cursor:default;
+}
+.bor-card:hover { border-color:var(--accent); background:var(--accent-2); box-shadow:0 2px 8px rgba(0,113,227,0.10); }
+.bor-card-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+.bor-card-nr {
+  width:32px; height:32px; border-radius:8px; background:var(--accent); color:#fff;
+  font-size:11px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.bor-card-type { font-size:12px; font-weight:600; color:var(--text); flex:1; }
+.bor-card-status { }
+.bor-card-status .badge { font-size:8.5px; }
+.bor-card-loc { font-size:11px; color:var(--text-2); margin-bottom:.5rem; font-style:italic; }
+.bor-card-specs {
+  display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:.375rem;
+}
+.bor-spec { display:flex; flex-direction:column; gap:1px; }
+.bor-spec-label { font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+.bor-spec-val   { font-size:11px; color:var(--text); font-variant-numeric:tabular-nums; }
+.bor-card-footer { display:flex; align-items:center; gap:.5rem; padding-top:.375rem; border-top:1px solid var(--border); margin-top:.25rem; }
+.bor-card-aannemer { font-size:10px; color:var(--text-3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.bor-verg-badge {
+  display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:600;
+  padding:1px 6px; border-radius:20px; background:var(--r-bg); color:var(--r-fg);
+}
+.bor-empty-state { padding:2rem 1.25rem; text-align:center; color:var(--text-3); font-size:12px; }
+.bor-empty-state-icon { font-size:32px; margin-bottom:.5rem; display:block; }
+.bor-add-btn {
+  display:inline-flex; align-items:center; gap:4px; margin-top:.75rem;
+  padding:6px 16px; font-size:12px; font-weight:600; border:none; border-radius:20px;
+  background:var(--accent); color:#fff; cursor:pointer; transition:all .12s; font-family:'Inter',sans-serif;
+}
+.bor-add-btn:hover { background:#0077ED; }
+.bor-summary-bar {
+  display:flex; gap:1.25rem; padding:.5rem 1.25rem; border-top:1px solid var(--border);
+  background:var(--surface2); flex-wrap:wrap;
+}
+.bor-sum-item { display:flex; align-items:baseline; gap:5px; }
+.bor-sum-num   { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; }
+.bor-sum-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
 
-  /* MODAL */
-  .opm-overlay { position:fixed; inset:0; background:rgba(8,13,31,0.45); z-index:600; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
-  .opm-overlay.open { opacity:1; pointer-events:all; }
-  .opm-modal { background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:420px; box-shadow:var(--sh-lg); border:1px solid var(--border-md); transform:translateY(6px); transition:transform .15s; }
-  .opm-overlay.open .opm-modal { transform:translateY(0); }
-  .opm-modal-header { padding:.875rem 1.125rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
-  .opm-modal-title { font-size:13px; font-weight:600; }
-  .opm-modal-sub { font-size:10px; color:var(--text-3); margin-top:1px; }
-  .opm-close { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:14px; padding:3px 6px; border-radius:5px; transition:all .1s; line-height:1; }
-  .opm-close:hover { background:var(--surface2); color:var(--text); }
-  .opm-modal-body { padding:.875rem 1.125rem; }
-  .opm-textarea { width:100%; min-height:88px; max-height:200px; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r-md); background:var(--surface2); color:var(--text); outline:none; resize:vertical; line-height:1.55; transition:all .1s; }
-  .opm-textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
-  .opm-modal-footer { padding:.625rem 1.125rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:5px; align-items:center; }
-  .opm-char-count { font-size:10px; color:var(--text-3); margin-right:auto; font-family:'DM Mono',monospace; }
-  .btn-opm-cancel { padding:5px 12px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; transition:all .1s; }
-  .btn-opm-cancel:hover { background:var(--surface2); }
-  .btn-opm-save { padding:5px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--navy); color:#fff; cursor:pointer; transition:all .1s; }
-  .btn-opm-save:hover { background:var(--navy-3); }
+/* Edit button overlay on card (editor only) */
+.bor-card-edit-btn {
+  display:none; position:absolute; top:6px; right:6px;
+  background:var(--accent); color:#fff; border:none; border-radius:6px;
+  width:24px; height:24px; cursor:pointer; font-size:11px;
+  align-items:center; justify-content:center; transition:all .1s;
+}
+.mode-editor .bor-card { position:relative; }
+.mode-editor .bor-card:hover .bor-card-edit-btn { display:flex; }
 
-  /* TOAST */
-  .toast { position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%) translateY(60px); background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:.5rem 1rem; font-size:12px; font-weight:500; z-index:300; transition:transform .22s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.07); box-shadow:var(--sh-lg); }
-  .toast.show { transform:translateX(-50%) translateY(0); }
-  .toast.success { background:#006B47; }
-  .toast.error   { background:#B81518; }
-  .toast.info    { background:var(--accent); }
+/* Toast */
+.toast { position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%) translateY(60px); background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:.5rem 1rem; font-size:12px; font-weight:500; z-index:300; transition:transform .22s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.07); box-shadow:var(--sh-lg); }
+.toast.show { transform:translateX(-50%) translateY(0); }
+.toast.success { background:#006B47; }
+.toast.error   { background:#B81518; }
+.toast.info    { background:var(--accent); }
 
-  /* SPINNER */
-  .spinner { width:24px; height:24px; border:2px solid var(--border-md); border-top-color:var(--accent); border-radius:50%; animation:spin .55s linear infinite; margin:0 auto .875rem; }
-  @keyframes spin{to{transform:rotate(360deg)}}
-  .loading-box { text-align:center; padding:4rem; color:var(--text-3); font-size:13px; }
-
-  @media(max-width:600px) { .main{padding:1rem;} .fase-section-body{grid-template-columns:1fr;} .project-info{grid-template-columns:1fr 1fr;} }
-
-  /* ── DETAIL FILTERS ── */
-  .detail-filter-bar {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
-    padding:.5rem .875rem; margin-bottom:.875rem;
-    display:flex; align-items:center; gap:.5rem; flex-wrap:wrap;
-  }
-  .detail-search {
-    flex:1; min-width:160px; padding:5px 10px; font-family:'DM Sans',sans-serif;
-    font-size:12px; border:1px solid var(--border-md); border-radius:var(--r);
-    background:var(--surface2); color:var(--text); outline:none; transition:all .1s;
-  }
-  .detail-search:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
-  .detail-search::placeholder { color:var(--text-3); }
-  .filter-status-btns { display:flex; gap:3px; flex-wrap:wrap; }
-  .fsb {
-    display:inline-flex; align-items:center; gap:3px; padding:3px 9px;
-    font-size:10px; font-weight:600; border-radius:20px; cursor:pointer;
-    border:1px solid var(--border-md); background:transparent; color:var(--text-2);
-    font-family:'DM Sans',sans-serif; transition:all .1s; white-space:nowrap;
-  }
-  .fsb:hover { background:var(--surface2); }
-  .fsb.active { border-color:currentColor; }
-  .fsb.fsb-G.active { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-fg); }
-  .fsb.fsb-L.active { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-fg); }
-  .fsb.fsb-R.active { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-fg); }
-  .fsb.fsb-B.active { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-fg); }
-  .fsb.fsb-N.active { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-fg); }
-  .fsb-dot { width:6px; height:6px; border-radius:50%; }
-  .detail-filter-count { font-size:10px; color:var(--text-3); font-family:'DM Mono',monospace; margin-left:auto; white-space:nowrap; }
-  .toggle-empty { display:inline-flex; align-items:center; gap:5px; font-size:11px; color:var(--text-2); cursor:pointer; user-select:none; white-space:nowrap; }
-  .toggle-empty input { accent-color:var(--accent); cursor:pointer; }
-
-  /* ── INLINE FASE NAVIGATOR ── */
-  .fase-nav {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
-    padding:.5rem .875rem; margin-bottom:.75rem;
-    display:flex; flex-direction:column; gap:0;
-  }
-  .fase-nav-row {
-    display:flex; gap:3px; align-items:center;
-    padding:4px 0; border-bottom:1px solid var(--border);
-  }
-  .fase-nav-row:last-child { border-bottom:none; }
-  .fase-nav-row:first-child { padding-top:0; }
-  .fase-nav-label {
-    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
-    color:var(--text-3); width:145px; flex-shrink:0;
-  }
-
-
-  /* ── GANTT CHART ── */
-  .gantt-wrap {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
-    padding:1rem 1.25rem; margin-bottom:.875rem; box-shadow:var(--sh-sm);
-  }
-  .gantt-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); margin-bottom:.875rem; display:flex; align-items:center; gap:6px; }
-  .gantt-row { display:flex; align-items:center; gap:.625rem; margin-bottom:6px; }
-  .gantt-label { font-size:10px; font-weight:500; color:var(--text-2); width:110px; flex-shrink:0; text-align:right; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .gantt-track { flex:1; background:var(--surface2); border-radius:4px; height:20px; position:relative; overflow:visible; }
-  .gantt-bar {
-    position:absolute; height:100%; border-radius:4px;
-    display:flex; align-items:center; padding:0 7px;
-    font-size:9px; font-weight:600; color:#fff; white-space:nowrap; overflow:hidden;
-    transition:opacity .15s; cursor:default; min-width:4px;
-  }
-  .gantt-bar:hover { opacity:.85; }
-  .gantt-bar.done { opacity:.45; }
-  .gantt-today {
-    position:absolute; top:-4px; bottom:-4px; width:2px;
-    background:#FF3B30; border-radius:1px; z-index:5; pointer-events:none;
-  }
-  .gantt-today::after {
-    content:'Vandaag'; position:absolute; top:-16px; left:50%; transform:translateX(-50%);
-    font-size:8px; font-weight:700; color:#FF3B30; white-space:nowrap;
-  }
-  .gantt-axis { display:flex; margin-left:110px; padding-left:.625rem; margin-bottom:3px; }
-  .gantt-tick { flex:1; font-size:8px; color:var(--text-3); text-align:center; font-variant-numeric:tabular-nums; }
-  .gantt-filters { display:flex; flex-direction:column; gap:0; margin-bottom:.5rem; padding-bottom:.5rem; border-bottom:1px solid var(--border); }
-  .gantt-filter-row { display:flex; gap:4px; align-items:center; flex-wrap:wrap; padding:3px 0; }
-  .gantt-filter-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); width:42px; flex-shrink:0; }
-  .gantt-ftab { padding:2px 9px; font-size:10px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; white-space:nowrap; }
-  .gantt-ftab:hover { background:var(--surface2); }
-  .gantt-ftab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-  .gantt-rtab { display:inline-flex; align-items:center; gap:4px; padding:2px 9px; font-size:10px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; white-space:nowrap; }
-  .gantt-rtab:hover { background:var(--surface2); }
-  .gantt-rtab.active { color:#fff; border-color:transparent; }
-  .gantt-rtab.active.rb-eng  { background:#0071E3; }
-  .gantt-rtab.active.rb-pl   { background:#1A7F3C; }
-  .gantt-rtab.active.rb-uitv { background:#7A4800; }
-  .gantt-rtab.active.rb-wb   { background:#6F35CE; }
-  .gr-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
-
-
-  .gantt-leg-item { display:flex; align-items:center; gap:4px; font-size:9px; color:var(--text-3); }
-  .gantt-leg-dot { width:8px; height:8px; border-radius:2px; }
-
-
-  .comments-section {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl);
-    margin-top:1.125rem; overflow:hidden; box-shadow:var(--sh-sm);
-  }
-  .comments-header {
-    padding:.75rem 1.25rem; border-bottom:1px solid var(--border);
-    display:flex; align-items:center; justify-content:space-between;
-  }
-  .comments-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); display:flex; align-items:center; gap:7px; }
-  .comments-count { font-size:10px; font-weight:600; padding:1px 7px; border-radius:20px; background:var(--surface2); color:var(--text-3); font-variant-numeric:tabular-nums; }
-  .comments-list { padding:.625rem .875rem; display:flex; flex-direction:column; gap:.625rem; max-height:400px; overflow-y:auto; }
-  .comments-list::-webkit-scrollbar { width:4px; }
-  .comments-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
-  .comments-empty { font-size:12px; color:var(--text-3); font-style:italic; padding:.5rem 0; text-align:center; }
-  .comment-item {
-    display:flex; gap:.625rem; align-items:flex-start;
-  }
-  .comment-avatar {
-    width:28px; height:28px; border-radius:50%; background:var(--accent); flex-shrink:0;
-    display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff;
-    margin-top:1px;
-  }
-  .comment-bubble {
-    flex:1; background:var(--surface2); border-radius:var(--r-md); padding:.5rem .75rem;
-    border:1px solid var(--border);
-  }
-  .comment-bubble.own { background:var(--l-bg); border-color:var(--l-mid); }
-  .comment-meta { display:flex; align-items:baseline; gap:6px; margin-bottom:3px; }
-  .comment-author { font-size:11px; font-weight:600; color:var(--text); }
-  .comment-time { font-size:9px; color:var(--text-3); font-variant-numeric:tabular-nums; }
-  .comment-text { font-size:12px; color:var(--text); line-height:1.55; white-space:pre-wrap; }
-  .comment-del { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:11px; padding:0 3px; line-height:1; margin-left:auto; transition:color .1s; }
-  .comment-del:hover { color:var(--b-fg); }
-  .comments-input-row {
-    padding:.625rem .875rem; border-top:1px solid var(--border);
-    display:flex; gap:.5rem; align-items:flex-end;
-  }
-  .comments-textarea {
-    flex:1; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:12px;
-    border:1px solid var(--border-md); border-radius:var(--r-md); background:var(--surface2);
-    color:var(--text); outline:none; resize:none; min-height:36px; max-height:120px;
-    line-height:1.5; transition:all .1s; overflow-y:auto;
-  }
-  .comments-textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
-  .comments-textarea::placeholder { color:var(--text-3); }
-  .btn-comment-post {
-    padding:8px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600;
-    border:none; border-radius:var(--r-md); background:var(--accent); color:#fff;
-    cursor:pointer; transition:all .1s; white-space:nowrap; flex-shrink:0;
-  }
-  .btn-comment-post:hover { background:#0044CC; }
-  .btn-comment-post:disabled { background:#A0C4F8; cursor:not-allowed; }
-
-
-  .rol-filter-row { display:flex; gap:4px; align-items:center; flex-wrap:wrap; padding-bottom:.375rem; border-bottom:1px solid var(--border); margin-bottom:.25rem; }
-  .rol-filter-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); margin-right:2px; white-space:nowrap; }
-  .rolf-btn { display:inline-flex; align-items:center; gap:4px; padding:3px 10px; font-size:10px; font-weight:600; border-radius:20px; cursor:pointer; border:1px solid var(--border-md); background:transparent; color:var(--text-2); font-family:'DM Sans',sans-serif; transition:all .12s; white-space:nowrap; }
-  .rolf-btn:hover { background:var(--surface2); }
-  .rolf-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .rolf-btn.active { color:#fff; border-color:transparent; }
-  .rolf-btn.active.rb-eng  { background:#0071E3; }
-  .rolf-btn.active.rb-pl   { background:#1A7F3C; }
-  .rolf-btn.active.rb-uitv { background:#7A4800; }
-  .rolf-btn.active.rb-wb   { background:#6F35CE; }
-  .field-rol-dot { width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:5px; flex-shrink:0; vertical-align:middle; }
-
-  .fase-section.all-hidden { display:none; }
-  .field-row.df-hidden { display:none; }
-
-
-  /* ── FASE TABS ── */
-  .detail-controls {
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
-    padding:.5rem .875rem; margin-bottom:.75rem; display:flex; flex-direction:column; gap:.5rem;
-  }
-  .detail-fase-row { display:flex; gap:3px; flex-wrap:wrap; align-items:center; padding:3px 0; border-bottom:1px solid var(--border); }
-  .detail-fase-row:last-child { border-bottom:none; }
-  .detail-fase-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); margin-right:4px; white-space:nowrap; width:150px; flex-shrink:0; }
-  .dtab {
-    padding:3px 11px; font-size:10px; font-weight:500; border:1px solid var(--border-md);
-    border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer;
-    transition:all .1s; font-family:'DM Sans',sans-serif; white-space:nowrap;
-  }
-  .dtab:hover { background:var(--surface2); color:var(--text); border-color:var(--border-strong); }
-  .dtab.active { background:var(--navy); color:#fff; border-color:var(--navy); }
-  .detail-filter-row { display:flex; gap:.5rem; align-items:center; flex-wrap:wrap; }
-  .filter-status-btns { display:flex; gap:3px; flex-wrap:wrap; }
-
-  /* ── EXPORT BUTTONS ── */
-  .detail-export-row {
-    display:flex; gap:.5rem; align-items:center; padding:.5rem .875rem;
-    background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg);
-    margin-bottom:.75rem;
-  }
-  .export-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); margin-right:4px; }
-  .btn-det-export {
-    display:inline-flex; align-items:center; gap:4px; padding:4px 11px;
-    font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600;
-    border-radius:var(--r); cursor:pointer; border:1px solid var(--border-md); transition:all .1s;
-  }
-  .btn-det-export.csv  { background:var(--surface2); color:var(--text-2); }
-  .btn-det-export.csv:hover  { background:var(--surface3); color:var(--text); }
-  .btn-det-export.xlsx { background:var(--g-fg); color:#fff; border-color:var(--g-fg); }
-  .btn-det-export.xlsx:hover { background:#00523A; }
-  .export-fase-note { font-size:10px; color:var(--text-3); margin-left:auto; }
-
+/* Boringen edit modal (same as dashboard) */
+.bor-overlay { position:fixed; inset:0; background:rgba(8,13,31,.55); z-index:800; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
+.bor-overlay.open { opacity:1; pointer-events:all; }
+.bor-modal { background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:920px; max-height:92vh; display:flex; flex-direction:column; box-shadow:var(--sh-lg); border:1px solid var(--border-md); transform:translateY(10px); transition:transform .18s cubic-bezier(.34,1.2,.64,1); }
+.bor-overlay.open .bor-modal { transform:translateY(0); }
+.bor-modal-header { padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; }
+.bor-modal-icon { width:34px; height:34px; border-radius:10px; background:linear-gradient(135deg,#0f4c9e,#0071E3); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.bor-modal-title { font-size:14px; font-weight:600; color:var(--text); }
+.bor-modal-sub   { font-size:10px; color:var(--text-3); margin-top:1px; }
+.bor-close { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:15px; padding:4px 7px; border-radius:6px; transition:all .1s; line-height:1; }
+.bor-close:hover { background:var(--surface2); color:var(--text); }
+.bor-progress-row { padding:.5rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; background:var(--surface2); }
+.bor-progress-label { font-size:11px; color:var(--text-2); white-space:nowrap; }
+.bor-progress-bar-wrap { flex:1; height:6px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+.bor-progress-bar { height:100%; background:linear-gradient(90deg,#0071E3,#34C759); border-radius:3px; transition:width .3s; }
+.bor-progress-pct { font-size:11px; font-weight:600; color:var(--accent); white-space:nowrap; }
+.bor-modal-body { display:flex; flex:1; overflow:hidden; }
+.bor-list-pane { width:300px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.bor-list-head { padding:.625rem .875rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); flex-shrink:0; }
+.btn-bor-add { display:inline-flex; align-items:center; gap:3px; padding:4px 11px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--accent); color:#fff; cursor:pointer; transition:all .12s; font-family:'Inter',sans-serif; }
+.btn-bor-add:hover { background:#0077ED; }
+.btn-bor-add:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
+.bor-list { flex:1; overflow-y:auto; padding:5px 0; }
+.bor-list::-webkit-scrollbar { width:4px; }
+.bor-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+.bor-item { display:flex; align-items:center; gap:8px; padding:6px 10px; margin:2px 5px; border-radius:var(--r-md); cursor:pointer; border:1px solid transparent; transition:all .08s; }
+.bor-item:hover { background:var(--surface2); border-color:var(--border); }
+.bor-item.active { background:var(--accent-2); border-color:var(--accent); }
+.bor-item-nr { width:34px; height:34px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--surface3); color:var(--text-2); }
+.bor-item.active .bor-item-nr { background:var(--accent); color:#fff; }
+.bor-item-info { flex:1; min-width:0; }
+.bor-item-name { font-size:12px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bor-item-meta { font-size:10px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.bor-status-dot { width:8px; height:8px; border-radius:2px; display:inline-block; }
+.bor-empty { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
+.bor-empty-icon { font-size:28px; margin-bottom:.5rem; display:block; }
+.bor-form-pane { flex:1; overflow-y:auto; padding:1rem 1.25rem; display:flex; flex-direction:column; gap:.75rem; }
+.bor-form-pane::-webkit-scrollbar { width:4px; }
+.bor-form-pane::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+.bor-form-placeholder { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--text-3); font-size:12px; padding:2rem; }
+.bor-form-placeholder-icon { font-size:32px; }
+.bor-section-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-3); margin-bottom:.25rem; padding-bottom:.25rem; border-bottom:1px solid var(--border); }
+.bor-field-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem .875rem; }
+.bor-field-grid.cols3 { grid-template-columns:1fr 1fr 1fr; }
+.bor-field { display:flex; flex-direction:column; gap:3px; }
+.bor-field.full { grid-column:1/-1; }
+.bor-field-label { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
+.bor-input, .bor-select, .bor-textarea { padding:6px 9px; font-family:'Inter',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; transition:all .1s; width:100%; }
+.bor-input:focus, .bor-select:focus, .bor-textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+.bor-textarea { min-height:60px; resize:vertical; line-height:1.5; }
+.bor-select { padding-right:24px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
+.bor-checkbox-row { display:flex; align-items:center; gap:6px; padding:4px 0; cursor:pointer; }
+.bor-checkbox-row input { accent-color:var(--accent); width:14px; height:14px; cursor:pointer; }
+.bor-checkbox-label { font-size:12px; color:var(--text-2); user-select:none; }
+.bor-status-row { display:flex; gap:5px; flex-wrap:wrap; }
+.bor-status-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; font-size:11px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'Inter',sans-serif; transition:all .1s; }
+.bor-status-btn.active-G { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-mid); }
+.bor-status-btn.active-L { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-mid); }
+.bor-status-btn.active-R { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-mid); }
+.bor-status-btn.active-B { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-mid); }
+.bor-status-btn.active-N { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-mid); }
+.bor-modal-footer { padding:.625rem 1.25rem; border-top:1px solid var(--border); display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
+.btn-bor-delete { padding:5px 13px; font-size:12px; font-family:'Inter',sans-serif; font-weight:500; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; transition:all .1s; }
+.btn-bor-delete:hover { background:var(--b-fg); color:#fff; }
+.btn-bor-cancel { padding:5px 13px; font-size:12px; font-family:'Inter',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; transition:all .1s; }
+.btn-bor-cancel:hover { background:var(--surface2); }
+.btn-bor-save { padding:5px 16px; font-size:12px; font-family:'Inter',sans-serif; font-weight:700; border:none; border-radius:var(--r); background:var(--accent); color:#fff; cursor:pointer; transition:all .1s; margin-left:auto; }
+.btn-bor-save:hover { background:#0044CC; }
+.btn-bor-save:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
 </style>
 </head>
 <body>
 
-<header class="page-header">
-  <div style="display:flex;align-items:center;gap:10px;min-width:0">
-    <button class="btn-back-detail" onclick="goBack()" title="Terug naar dashboard">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      Terug
-    </button>
-    <span style="color:rgba(255,255,255,0.2);font-size:12px">|</span>
-    <span class="logo-icon" style="flex-shrink:0"><svg width="9" height="9" viewBox="0 0 10 10" fill="none"><rect x="1" y="1" width="3.5" height="3.5" rx="1" fill="white"/><rect x="5.5" y="1" width="3.5" height="3.5" rx="1" fill="white" opacity=".55"/><rect x="1" y="5.5" width="3.5" height="3.5" rx="1" fill="white" opacity=".55"/><rect x="5.5" y="5.5" width="3.5" height="3.5" rx="1" fill="white" opacity=".28"/></svg></span>
-    <div class="project-name" id="pageTitle" style="min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Project laden...</div>
+<header class="site-header">
+  <div class="logo">
+    <span class="logo-icon"><svg width="11" height="11" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="white" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></span>
+    Dashboard Engineering
   </div>
-  <div style="display:flex;align-items:center;gap:.75rem;flex-shrink:0">
-    <span class="meta" id="pageWP"></span>
-    <button class="btn-back-detail" onclick="window.close()" title="Tabblad sluiten">
-      <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M1 1l10 10M11 1L1 11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-      Sluiten
-    </button>
+  <div style="display:flex;align-items:center;gap:.75rem">
+    <span id="modeIndicator" style="font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;background:var(--accent-2);color:var(--accent)">Viewer</span>
+    <button class="btn-back" onclick="window.close()">✕ Sluiten</button>
   </div>
 </header>
 
-
-<!-- Detail controls: only search + status filters -->
-<div class="detail-controls" id="detailControls" style="display:none">
-  <div class="detail-filter-row">
-    <input class="detail-search" type="text" id="detailSearch" placeholder="&#128269; Zoek veldnaam..." oninput="applyDetailFilters()">
-    <div class="filter-status-btns">
-      <button class="fsb fsb-G" onclick="toggleStatusFilter('Gereed',this)"><span class="fsb-dot" style="background:var(--g-fg)"></span>Gereed</button>
-      <button class="fsb fsb-L" onclick="toggleStatusFilter('Loopt',this)"><span class="fsb-dot" style="background:var(--l-fg)"></span>Loopt</button>
-      <button class="fsb fsb-R" onclick="toggleStatusFilter('Review',this)"><span class="fsb-dot" style="background:var(--r-fg)"></span>Review</button>
-      <button class="fsb fsb-B" onclick="toggleStatusFilter('Geblokkeerd',this)"><span class="fsb-dot" style="background:var(--b-fg)"></span>Geblokkeerd</button>
-      <button class="fsb fsb-N" onclick="toggleStatusFilter('Nog te starten',this)"><span class="fsb-dot" style="background:var(--n-fg)"></span>Nog te starten</button>
-    </div>
-    <label class="toggle-empty">
-      <input type="checkbox" id="hideEmpty" onchange="applyDetailFilters()"> Verberg lege velden
-    </label>
-    <span class="detail-filter-count" id="detailFilterCount"></span>
-  </div>
-</div>
-
-<div class="detail-export-row" id="detailExportRow" style="display:none">
-  <span class="export-label">Exporteer</span>
-  <button class="btn-det-export csv" onclick="exportDetailCSV()">
-    <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
-  </button>
-  <button class="btn-det-export xlsx" onclick="exportDetailXLSX()">
-    <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
-  </button>
-  <span class="export-fase-note" id="exportFaseNote">Huidig gefilterde fase</span>
-</div>
-
 <main class="main" id="mainContent">
-  <div class="loading-box">
-    <div class="spinner"></div>
+  <div style="text-align:center;padding:3rem;color:var(--text-3)">
+    <div style="width:24px;height:24px;border:2px solid var(--border-md);border-top-color:var(--accent);border-radius:50%;animation:spin .55s linear infinite;margin:0 auto .875rem"></div>
     <div>Project laden...</div>
   </div>
 </main>
 
-<!-- Opmerkingen sectie -->
-<div class="comments-section" id="commentsSection" style="display:none;max-width:900px;margin:1.125rem auto 0">
-  <div class="comments-header">
-    <div class="comments-title">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 2H2a1 1 0 00-1 1v8a1 1 0 001 1h2v3l3-3h7a1 1 0 001-1V3a1 1 0 00-1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
-      Opmerkingen
-      <span class="comments-count" id="commentsCount">0</span>
-    </div>
-  </div>
-  <div class="comments-list" id="commentsList">
-    <div class="comments-empty">Nog geen opmerkingen.</div>
-  </div>
-  <div class="comments-input-row">
-    <textarea class="comments-textarea" id="commentInput" placeholder="Schrijf een opmerking..." rows="1"
-      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,120)+'px'"
-      onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postComment()}"></textarea>
-    <button class="btn-comment-post" id="btnPostComment" onclick="postComment()">Plaatsen</button>
-  </div>
-</div>
-
-<!-- Status picker -->
-<div class="status-picker" id="statusPicker">
-  <div class="sp-header">Status wijzigen</div>
-  <div class="status-option" data-val="Gereed"         onclick="applyStatus('Gereed')"><span class="sdot" style="background:#2d7a4f"></span>Gereed</div>
-  <div class="status-option" data-val="Loopt"          onclick="applyStatus('Loopt')"><span class="sdot" style="background:#1a5fa8"></span>Loopt</div>
-  <div class="status-option" data-val="Review"         onclick="applyStatus('Review')"><span class="sdot" style="background:#8a5c0a"></span>Review</div>
-  <div class="status-option" data-val="Geblokkeerd"    onclick="applyStatus('Geblokkeerd')"><span class="sdot" style="background:#b53030"></span>Geblokkeerd</div>
-  <div class="status-option" data-val="Nog te starten" onclick="applyStatus('Nog te starten')"><span class="sdot" style="background:#555450"></span>Nog te starten</div>
-  <div style="border-top:1px solid var(--border);margin:4px 0"></div>
-  <div class="status-option" onclick="closeStatusPicker()" style="color:var(--text-faint)">Annuleren</div>
-</div>
-
-<!-- Date picker -->
-<div class="date-popup" id="datePicker">
-  <div class="date-popup-header">Datum aanpassen</div>
-  <input type="date" id="dateInput" />
-  <div class="date-popup-actions">
-    <button class="btn-date-clear" onclick="clearDate()">Wissen</button>
-    <button class="btn-date-cancel" onclick="closeDatePicker()">Annuleren</button>
-    <button class="btn-date-save"  onclick="saveDate()">Opslaan</button>
-  </div>
-</div>
-
-<!-- Opmerking modal -->
-<div class="opm-overlay" id="opmOverlay" onclick="if(event.target===this)closeOpmModal()">
-  <div class="opm-modal">
-    <div class="opm-modal-header">
-      <div>
-        <div class="opm-modal-title">&#128221; Opmerking</div>
-        <div class="opm-modal-sub" id="opmModalSub"></div>
-      </div>
-      <button class="opm-close" onclick="closeOpmModal()">&#10005;</button>
-    </div>
-    <div class="opm-modal-body">
-      <textarea class="opm-textarea" id="opmTextarea" placeholder="Typ hier je opmerking..." oninput="updateOpmCount()" maxlength="500"></textarea>
-    </div>
-    <div class="opm-modal-footer">
-      <span class="opm-char-count" id="opmCharCount">0 / 500</span>
-      <button class="btn-opm-cancel" onclick="closeOpmModal()">Annuleren</button>
-      <button class="btn-opm-save"   onclick="saveOpmerking()">Opslaan</button>
-    </div>
-  </div>
-</div>
-
 <div class="toast" id="toast"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- ══ BORINGEN MODAL ══ -->
+<div class="bor-overlay" id="borOverlay" onclick="if(event.target===this)closeBorModal()">
+  <div class="bor-modal">
+    <div class="bor-modal-header">
+      <div class="bor-modal-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div>
+        <div class="bor-modal-title" id="borModalTitle">Boringen beheren</div>
+        <div class="bor-modal-sub" id="borModalSub">Sleufloze technieken</div>
+      </div>
+      <button class="bor-close" onclick="closeBorModal()">✕</button>
+    </div>
+    <div class="bor-progress-row">
+      <span class="bor-progress-label" id="borProgressLabel">0 van 20</span>
+      <div class="bor-progress-bar-wrap"><div class="bor-progress-bar" id="borProgressBar" style="width:0%"></div></div>
+      <span class="bor-progress-pct" id="borProgressPct">0%</span>
+    </div>
+    <div class="bor-modal-body">
+      <div class="bor-list-pane">
+        <div class="bor-list-head">
+          <span>Boringen</span>
+          <button class="btn-bor-add" id="btnBorAdd" onclick="newBoring()">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Toevoegen
+          </button>
+        </div>
+        <div class="bor-list" id="borList"><div class="bor-empty"><span class="bor-empty-icon">⚡</span>Nog geen boringen.</div></div>
+      </div>
+      <div class="bor-form-pane">
+        <div class="bor-form-placeholder" id="borFormPlaceholder"><span class="bor-form-placeholder-icon">👈</span><span>Selecteer een boring of voeg er een toe</span></div>
+        <div id="borForm" style="display:none">
+          <div class="bor-section-title">Identificatie</div>
+          <div class="bor-field-grid">
+            <div class="bor-field"><label class="bor-field-label">Boring nr.</label><input class="bor-input" id="bfNr" type="text" placeholder="B-01" maxlength="20"></div>
+            <div class="bor-field"><label class="bor-field-label">Type</label>
+              <select class="bor-select" id="bfType"><option value="HDD">HDD</option><option value="Gestuurde boring">Gestuurde boring</option><option value="Persing">Persing</option><option value="Microtunneling">Microtunneling</option><option value="Anders">Anders</option></select>
+            </div>
+            <div class="bor-field full"><label class="bor-field-label">Locatie omschrijving</label><input class="bor-input" id="bfLocatie" type="text" placeholder="bijv. Kruising N381 Hoogeveen"></div>
+          </div>
+          <div class="bor-section-title">Technische specs</div>
+          <div class="bor-field-grid cols3">
+            <div class="bor-field"><label class="bor-field-label">Lengte (m)</label><input class="bor-input" id="bfLengte" type="number" placeholder="0" min="0" step="0.1"></div>
+            <div class="bor-field"><label class="bor-field-label">Diameter (mm)</label><input class="bor-input" id="bfDiameter" type="number" placeholder="0" min="0"></div>
+            <div class="bor-field"><label class="bor-field-label">Diepte (m NAP)</label><input class="bor-input" id="bfDiepte" type="number" placeholder="0" step="0.01"></div>
+          </div>
+          <div class="bor-section-title">Planning</div>
+          <div class="bor-field-grid">
+            <div class="bor-field"><label class="bor-field-label">Aannemer</label><input class="bor-input" id="bfAannemer" type="text" placeholder="naam aannemer"></div>
+            <div class="bor-field" style="grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:.5rem .875rem">
+              <div class="bor-field"><label class="bor-field-label">Startdatum</label><input class="bor-input" id="bfStart" type="date"></div>
+              <div class="bor-field"><label class="bor-field-label">Einddatum</label><input class="bor-input" id="bfEind" type="date"></div>
+            </div>
+          </div>
+          <div class="bor-section-title">Status</div>
+          <div class="bor-status-row" id="borStatusRow">
+            <button class="bor-status-btn" data-status="Nog te starten" onclick="setBorStatus(this)">— Nog te starten</button>
+            <button class="bor-status-btn" data-status="Loopt"          onclick="setBorStatus(this)">▶ Loopt</button>
+            <button class="bor-status-btn" data-status="Review"         onclick="setBorStatus(this)">👁 Review</button>
+            <button class="bor-status-btn" data-status="Gereed"         onclick="setBorStatus(this)">✓ Gereed</button>
+            <button class="bor-status-btn" data-status="Geblokkeerd"    onclick="setBorStatus(this)">✗ Geblokkeerd</button>
+          </div>
+          <div class="bor-section-title">Vergunning</div>
+          <div class="bor-field-grid">
+            <div class="bor-field full"><label class="bor-checkbox-row"><input type="checkbox" id="bfVergNodig" onchange="toggleVergDatum()"><span class="bor-checkbox-label">Vergunning benodigd voor deze boring</span></label></div>
+            <div class="bor-field" id="bfVergDatumWrap" style="display:none"><label class="bor-field-label">Vergunningsdatum</label><input class="bor-input" id="bfVergDatum" type="date"></div>
+          </div>
+          <div class="bor-section-title">Opmerkingen</div>
+          <div class="bor-field"><textarea class="bor-textarea" id="bfOpm" placeholder="Notities over deze boring..." maxlength="500"></textarea></div>
+        </div>
+      </div>
+    </div>
+    <div class="bor-modal-footer">
+      <button class="btn-bor-delete" id="btnBorDelete" onclick="deleteBoring()" style="display:none">🗑 Verwijderen</button>
+      <button class="btn-bor-cancel" onclick="closeBorModal()">Sluiten</button>
+      <button class="btn-bor-save" id="btnBorSave" onclick="saveBoring()" style="display:none">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+
 <script>
-function goBack() {
-  if (window.history.length > 1) {
-    window.history.back();
-  } else if (window.opener) {
-    window.opener.focus();
-    window.close();
-  } else {
-    window.close();
-  }
-}
+// ══ CONFIG ══
+var SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
+var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
 
-
-const SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
-const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
-
-var ROLE_COLOR_MAP = { engineer:'#0071E3', projectleider:'#1A7F3C', uitvoerder:'#7A4800', werkvoorbereider:'#6F35CE' };
-var ROLE_LABEL_MAP = { engineer:'Engineer', projectleider:'Projectleider', uitvoerder:'Uitvoerder', werkvoorbereider:'Werkvoorbereider' };
-
-// Default task-role mapping (will be overwritten by DB config)
-var TASK_ROLE_MAP = {
-  12:'engineer',13:'engineer',14:'engineer',15:'engineer',
-  16:'projectleider',17:'projectleider',18:'projectleider',19:'projectleider',
-  20:'projectleider',21:'projectleider',22:'projectleider',23:'engineer',
-  27:'engineer',28:'engineer',29:'projectleider',30:'projectleider',
-  31:'engineer',32:'projectleider',33:'projectleider',34:'engineer',
-  38:'engineer',39:'engineer',40:'werkvoorbereider',41:'werkvoorbereider',
-  42:'werkvoorbereider',43:'werkvoorbereider',44:'werkvoorbereider',
-  45:'uitvoerder',46:'uitvoerder',47:'engineer',48:'uitvoerder',
-  49:'werkvoorbereider',50:'engineer',51:'werkvoorbereider',
-  52:'projectleider',53:'projectleider',54:'uitvoerder',55:'uitvoerder',
-  56:'projectleider',57:'projectleider',
-  61:'engineer',62:'engineer',63:'engineer',64:'engineer',
-  65:'engineer',66:'engineer',67:'engineer',68:'projectleider',
-  69:'uitvoerder',70:'uitvoerder',71:'werkvoorbereider',72:'projectleider',
-  73:'werkvoorbereider',74:'werkvoorbereider',75:'uitvoerder',76:'uitvoerder',
-  77:'werkvoorbereider',78:'werkvoorbereider',79:'werkvoorbereider',80:'uitvoerder',
-  81:'werkvoorbereider',82:'werkvoorbereider',83:'werkvoorbereider',84:'uitvoerder',
-  85:'engineer',86:'engineer',87:'engineer',88:'engineer',89:'engineer',
-  90:'projectleider',91:'engineer',92:'engineer',93:'werkvoorbereider',94:'engineer',
-  98:'werkvoorbereider',99:'werkvoorbereider',100:'engineer',101:'engineer',
-  102:'engineer',103:'engineer',104:'engineer',105:'projectleider',
-  109:'engineer',110:'engineer',111:'werkvoorbereider',112:'werkvoorbereider',
-  113:'engineer',114:'werkvoorbereider',115:'werkvoorbereider',116:'werkvoorbereider',
-  117:'engineer',118:'werkvoorbereider',119:'werkvoorbereider',120:'werkvoorbereider',
-  121:'engineer',122:'engineer'
-};
-
-var activeDetailRol = ''; // '' = all roles visible
-
-function esc(v) {
-  return String(v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
-}
-
-const supa = {
-  async req(method, path, body) {
-    const r = await fetch(SUPA_URL + path, {
-      method,
-      headers: { 'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':'return=minimal' },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message||'HTTP '+r.status); }
-    return (method==='PATCH'||method==='DELETE') ? null : r.json();
-  },
-  get:   (p)    => supa.req('GET',p),
-  patch: (p,b)  => supa.req('PATCH',p,b),
-  post:  (p,b)  => supa.req('POST',p,b),
-};
-
-const COLS = [
-  {i:0,f:"",n:"Projectnummer intern"},{i:1,f:"",n:"Projectnummer extern"},{i:2,f:"",n:"Projectnaam"},
-  {i:3,f:"",n:"APD Bouwdeel"},{i:4,f:"",n:"Liander Tracédeel"},{i:5,f:"",n:"WP nummer"},
-  {i:6,f:"",n:"Tracé start"},{i:7,f:"",n:"Tracé eind"},{i:8,f:"",n:"Engineer"},
-  {i:9,f:"",n:"Lengte nieuw (m)"},{i:10,f:"",n:"Lengte verwijderen (m)"},{i:11,f:"",n:"Overdracht VO aannemer"},
-  {i:12,f:"Analyse",n:"Stukken VO controleren"},{i:13,f:"Analyse",n:"VO inhoudelijk beoordelen"},
-  {i:14,f:"Analyse",n:"Verificatieplan opstellen"},{i:15,f:"Analyse",n:"Eisen importeren Relatics"},
-  {i:16,f:"Analyse",n:"VO QuickScan beoordelen"},{i:17,f:"Analyse",n:"Taakstellend Budget"},
-  {i:18,f:"Analyse",n:"Input Startnota (1)"},{i:19,f:"Analyse",n:"Input Startnota (2)"},
-  {i:20,f:"Analyse",n:"Input Startnota (3)"},{i:21,f:"Analyse",n:"Input Startnota (4)"},
-  {i:22,f:"Analyse",n:"Warme overdracht"},{i:23,f:"Analyse",n:"Inrichten projectomgeving"},
-  {i:24,f:"Analyse",n:"[Analyse] Overgangsdatum"},{i:25,f:"Analyse",n:"[Analyse] Weken resterend"},
-  {i:26,f:"Analyse",n:"[Analyse] Gereed"},
-  {i:200,f:"Analyse",n:"[Analyse] Opmerkingen"},
-  {i:27,f:"VO-Fase",n:"Eisen beoordelen projectteam"},{i:28,f:"VO-Fase",n:"Eisen verwerken Excel"},
-  {i:29,f:"VO-Fase",n:"Kennismaking bevoegd gezag"},{i:30,f:"VO-Fase",n:"Periodiek overleg BG"},
-  {i:31,f:"VO-Fase",n:"Opvragen raakvlakken"},{i:32,f:"VO-Fase",n:"DR's/iMSR's bespreken"},
-  {i:33,f:"VO-Fase",n:"Spelregels bevoegd gezag"},{i:34,f:"VO-Fase",n:"Schetsontwerp opstellen"},
-  {i:35,f:"VO-Fase",n:"[VO] Overgangsdatum"},{i:36,f:"VO-Fase",n:"[VO] Weken resterend"},
-  {i:37,f:"VO-Fase",n:"[VO] Gereed"},
-  {i:201,f:"VO-Fase",n:"[VO] Opmerkingen"},
-  {i:38,f:"DO-Fase",n:"Eisen BG in werktekening"},{i:39,f:"DO-Fase",n:"CROW-500 invullen"},
-  {i:40,f:"DO-Fase",n:"EV-beheerders contacteren"},{i:41,f:"DO-Fase",n:"Vitens contacteren"},
-  {i:42,f:"DO-Fase",n:"Stakeholders inventariseren"},{i:43,f:"DO-Fase",n:"Aantal percelen"},
-  {i:44,f:"DO-Fase",n:"Aantal perceeleigenaren"},{i:45,f:"DO-Fase",n:"Boorlocaties uitzetten"},
-  {i:46,f:"DO-Fase",n:"Aantal boringen"},{i:47,f:"DO-Fase",n:"Kabeltrekplan maken"},
-  {i:48,f:"DO-Fase",n:"Duikers inmeten"},{i:49,f:"DO-Fase",n:"Schouwverslag maken"},
-  {i:50,f:"DO-Fase",n:"Boringen uitwerken"},{i:51,f:"DO-Fase",n:"Werkterrein-inrichting"},
-  {i:52,f:"DO-Fase",n:"Kennismaking ZRO"},{i:53,f:"DO-Fase",n:"Principe-akkoord grondeigenaren"},
-  {i:54,f:"DO-Fase",n:"Schouwen met realisatie"},{i:55,f:"DO-Fase",n:"Opmerkingen schouw realisatie"},
-  {i:56,f:"DO-Fase",n:"Schouw bevoegd gezag"},{i:57,f:"DO-Fase",n:"Opmerkingen schouw BG"},
-  {i:58,f:"DO-Fase",n:"[DO] Overgangsdatum"},{i:59,f:"DO-Fase",n:"[DO] Weken resterend"},
-  {i:60,f:"DO-Fase",n:"[DO] Gereed"},
-  {i:202,f:"DO-Fase",n:"[DO] Opmerkingen"},
-  {i:61,f:"Onderzoeksfase",n:"Conditionerende onderzoeken"},{i:62,f:"Onderzoeksfase",n:"Beïnvloedingsberekening"},
-  {i:63,f:"Onderzoeksfase",n:"Toestemming GasUnie/NEN3654"},{i:64,f:"Onderzoeksfase",n:"Belastbaarheidsberekening"},
-  {i:65,f:"Onderzoeksfase",n:"Toestemming TenneT"},{i:66,f:"Onderzoeksfase",n:"Toetsen met OIV'er"},
-  {i:67,f:"Onderzoeksfase",n:"ZRO-tekeningen opstellen"},{i:68,f:"Onderzoeksfase",n:"Vervolggesprekken grondeigenaren"},
-  {i:69,f:"Onderzoeksfase",n:"Proefsleuflocaties uitzetten"},{i:70,f:"Onderzoeksfase",n:"Controle boven/ondergrond"},
-  {i:71,f:"Onderzoeksfase",n:"Verkeersplan proefsleuven"},{i:72,f:"Onderzoeksfase",n:"Melden grondeigenaren"},
-  {i:73,f:"Onderzoeksfase",n:"Melding proefsleuven"},{i:74,f:"Onderzoeksfase",n:"Graafmelding KLIC"},
-  {i:75,f:"Onderzoeksfase",n:"Inladen Marxact"},{i:76,f:"Onderzoeksfase",n:"Graven proefsleuven"},
-  {i:77,f:"Onderzoeksfase",n:"Beschoeiing aanvragen"},{i:78,f:"Onderzoeksfase",n:"Melding beschoeiing grond."},
-  {i:79,f:"Onderzoeksfase",n:"Melding beschoeiing BG"},{i:80,f:"Onderzoeksfase",n:"Beschoeiing inmeten"},
-  {i:81,f:"Onderzoeksfase",n:"Sonderingen aanvragen"},{i:82,f:"Onderzoeksfase",n:"Melding sonderingen grond."},
-  {i:83,f:"Onderzoeksfase",n:"Melding sonderingen BG"},{i:84,f:"Onderzoeksfase",n:"Sonderingen maken"},
-  {i:85,f:"Onderzoeksfase",n:"Verwerken in boorplan"},{i:86,f:"Onderzoeksfase",n:"Resultaten proefsleuven"},
-  {i:87,f:"Onderzoeksfase",n:"Toetsen OIV'er (2)"},{i:88,f:"Onderzoeksfase",n:"Meeloopkansen controle"},
-  {i:89,f:"Onderzoeksfase",n:"ZRO's afronden"},{i:90,f:"Onderzoeksfase",n:"Rentmeesters inplannen"},
-  {i:91,f:"Onderzoeksfase",n:"Risicodossier opstellen"},{i:92,f:"Onderzoeksfase",n:"Verificatie- en validatieplan"},
-  {i:93,f:"Onderzoeksfase",n:"Verkeersplannen opstellen"},{i:94,f:"Onderzoeksfase",n:"DO-raming opstellen"},
-  {i:95,f:"Onderzoeksfase",n:"[Onderzoek] Overgangsdatum"},{i:96,f:"Onderzoeksfase",n:"[Onderzoek] Weken resterend"},
-  {i:97,f:"Onderzoeksfase",n:"[Onderzoek] Gereed"},
-  {i:203,f:"Onderzoeksfase",n:"[Onderzoek] Opmerkingen"},
-  {i:98,f:"DO-Fase",n:"AVOI-vergunningen aanvragen"},{i:99,f:"DO-Fase",n:"Omgevingsvergunningen"},
-  {i:100,f:"DO-Fase",n:"Input Ontwikkelnota (1)"},{i:101,f:"DO-Fase",n:"Input Ontwikkelnota (2)"},
-  {i:102,f:"DO-Fase",n:"Input Ontwikkelnota (3)"},{i:103,f:"DO-Fase",n:"Input Ontwikkelnota (4)"},
-  {i:104,f:"DO-Fase",n:"Interne review DO nota"},{i:105,f:"DO-Fase",n:"Beoordeling OG"},
-  {i:106,f:"DO-Fase",n:"[DO-verg.] Overgangsdatum"},{i:107,f:"DO-Fase",n:"[DO-verg.] Weken resterend"},
-  {i:108,f:"DO-Fase",n:"[DO-verg.] Gereed"},
-  {i:204,f:"DO-Fase",n:"[DO-verg.] Opmerkingen"},
-  {i:109,f:"UO-Fase",n:"UO-tekeningen (stempel)"},{i:110,f:"UO-Fase",n:"UO-kabeltrektekening"},
-  {i:111,f:"UO-Fase",n:"Materiaallijst definitief"},{i:112,f:"UO-Fase",n:"WBS-tracker opstellen"},
-  {i:113,f:"UO-Fase",n:"Verificatierapport"},{i:114,f:"UO-Fase",n:"Bemalingsplan"},
-  {i:115,f:"UO-Fase",n:"Cultuurtechnisch werkplan"},{i:116,f:"UO-Fase",n:"NSA-aanvraag indienen"},
-  {i:117,f:"UO-Fase",n:"Keuringsplannen"},{i:118,f:"UO-Fase",n:"Capaciteitsaanvraag definitief"},
-  {i:119,f:"UO-Fase",n:"Werkplannen/bedieningsplannen"},{i:120,f:"UO-Fase",n:"Stappenplan montage"},
-  {i:121,f:"UO-Fase",n:"Interne W-formulier"},{i:122,f:"UO-Fase",n:"UO begroting opstellen"},
-  {i:123,f:"UO-Fase",n:"[UO] Overgangsdatum"},{i:124,f:"UO-Fase",n:"[UO] Weken resterend"},
-  {i:125,f:"UO-Fase",n:"[UO] Gereed"},
-  {i:205,f:"UO-Fase",n:"[UO] Opmerkingen"},
-  {i:126,f:"Natuurtoets",n:"Ecologische quickscan uitgezet"},{i:127,f:"Natuurtoets",n:"Ecologische quickscan: datum"},
-  {i:128,f:"Natuurtoets",n:"Ecologische quickscan: gereed"},
-  {i:206,f:"Natuurtoets",n:"Ecologische quickscan: opmerkingen"},{i:129,f:"Natuurtoets",n:"Ecologisch vervolgonderzoek"},
-  {i:130,f:"Natuurtoets",n:"Vervolgonderzoek: datum"},{i:131,f:"Natuurtoets",n:"Vervolgonderzoek: gereed"},
-  {i:207,f:"Natuurtoets",n:"Vervolgonderzoek: opmerkingen"},
-  {i:132,f:"Natuurtoets",n:"Natura 2000 / AERIUS uitgezet"},{i:133,f:"Natuurtoets",n:"AERIUS: datum"},
-  {i:134,f:"Natuurtoets",n:"AERIUS: gereed"},
-  {i:208,f:"Natuurtoets",n:"AERIUS: opmerkingen"},{i:135,f:"Natuurtoets",n:"Natuurtoets / voortoets uitgezet"},
-  {i:136,f:"Natuurtoets",n:"Voortoets: datum"},{i:137,f:"Natuurtoets",n:"Voortoets: gereed"},
-  {i:209,f:"Natuurtoets",n:"Voortoets: opmerkingen"},
-  {i:138,f:"Archeologie",n:"Bureauonderzoek uitgezet"},{i:139,f:"Archeologie",n:"Bureauonderzoek: datum"},
-  {i:140,f:"Archeologie",n:"Bureauonderzoek: gereed"},
-  {i:210,f:"Archeologie",n:"Bureauonderzoek: opmerkingen"},{i:141,f:"Archeologie",n:"IVO uitgezet"},
-  {i:142,f:"Archeologie",n:"IVO: datum"},{i:143,f:"Archeologie",n:"IVO: gereed"},
-  {i:211,f:"Archeologie",n:"IVO: opmerkingen"},
-  {i:144,f:"Archeologie",n:"Proefsleuvenonderzoek uitgezet"},{i:145,f:"Archeologie",n:"Proefsleuven: datum"},
-  {i:146,f:"Archeologie",n:"Proefsleuven: gereed"},
-  {i:212,f:"Archeologie",n:"Proefsleuven: opmerkingen"},
-  {i:147,f:"Bodem",n:"Historisch bodemonderzoek uitgezet"},{i:148,f:"Bodem",n:"Historisch bodem: datum"},
-  {i:149,f:"Bodem",n:"Historisch bodem: gereed"},
-  {i:213,f:"Bodem",n:"Historisch bodem: opmerkingen"},{i:150,f:"Bodem",n:"Verkennend bodemonderzoek"},
-  {i:151,f:"Bodem",n:"Verkennend bodem: datum"},{i:152,f:"Bodem",n:"Verkennend bodem: gereed"},
-  {i:214,f:"Bodem",n:"Verkennend bodem: opmerkingen"},
-  {i:153,f:"Bodem",n:"Nader onderzoek / sanering"},{i:154,f:"Bodem",n:"Nader onderzoek: datum"},
-  {i:155,f:"Bodem",n:"Nader onderzoek: gereed"},
-  {i:215,f:"Bodem",n:"Nader onderzoek: opmerkingen"},
-  {i:156,f:"NGE/OO",n:"Explosieven quickscan uitgezet"},{i:157,f:"NGE/OO",n:"Explosieven quickscan: datum"},
-  {i:158,f:"NGE/OO",n:"Explosieven quickscan: gereed"},
-  {i:216,f:"NGE/OO",n:"Explosieven quickscan: opmerkingen"},{i:159,f:"NGE/OO",n:"NGE detectieonderzoek"},
-  {i:160,f:"NGE/OO",n:"NGE detectie: datum"},{i:161,f:"NGE/OO",n:"NGE detectie: gereed"},
-  {i:217,f:"NGE/OO",n:"NGE detectie: opmerkingen"},
-  {i:162,f:"NGE/OO",n:"NGE begeleiding graafwerk"},{i:163,f:"NGE/OO",n:"NGE begeleiding: datum"},
-  {i:164,f:"NGE/OO",n:"NGE begeleiding: gereed"},
-  {i:218,f:"NGE/OO",n:"NGE begeleiding: opmerkingen"},
-  {i:165,f:"Geotechnisch",n:"Geotechnisch onderzoek uitgezet"},{i:166,f:"Geotechnisch",n:"Geotechnisch: datum"},
-  {i:167,f:"Geotechnisch",n:"Geotechnisch: gereed"},
-  {i:219,f:"Geotechnisch",n:"Geotechnisch: opmerkingen"},{i:168,f:"Geotechnisch",n:"Thermische grondweerstand"},
-  {i:169,f:"Geotechnisch",n:"Thermische weerstand: datum"},{i:170,f:"Geotechnisch",n:"Thermische weerstand: gereed"},
-  {i:220,f:"Geotechnisch",n:"Thermische weerstand: opmerkingen"},
-  {i:171,f:"Geotechnisch",n:"Grondwateronderzoek uitgezet"},{i:172,f:"Geotechnisch",n:"Grondwater: datum"},
-  {i:173,f:"Geotechnisch",n:"Grondwater: gereed"},
-  {i:221,f:"Geotechnisch",n:"Grondwater: opmerkingen"},
-  {i:300,f:"Vergunningen",n:"Concept n.t.b. (1)"},
-  {i:301,f:"Vergunningen",n:"Concept n.t.b. (2)"},
-  {i:302,f:"Vergunningen",n:"Concept n.t.b. (3)"},
-  {i:400,f:"Vergunningen",n:"[Vergunningen] Opmerkingen"},
-  {i:310,f:"Sleufloze technieken",n:"Concept n.t.b. (1)"},
-  {i:311,f:"Sleufloze technieken",n:"Concept n.t.b. (2)"},
-  {i:312,f:"Sleufloze technieken",n:"Concept n.t.b. (3)"},
-  {i:401,f:"Sleufloze technieken",n:"[Sleufloze technieken] Opmerkingen"}
-];
-
-const FASE_STYLE = {
-  'Analyse':      {color:'var(--fase-analyse)',   bg:'var(--fase-analyse-bg)',   cls:'fl-analyse'},
-  'VO-Fase':      {color:'var(--fase-vo)',        bg:'var(--fase-vo-bg)',        cls:'fl-vo'},
-  'DO-Fase':      {color:'var(--fase-do)',        bg:'var(--fase-do-bg)',        cls:'fl-do'},
-  'Onderzoeksfase':{color:'var(--fase-onderzoek)',bg:'var(--fase-onderzoek-bg)',cls:'fl-onderzoek'},
-  'UO-Fase':      {color:'var(--fase-uo)',        bg:'var(--fase-uo-bg)',        cls:'fl-uo'},
-  'Natuurtoets':  {color:'var(--fase-natuur)',    bg:'var(--fase-natuur-bg)',    cls:'fl-natuur'},
-  'Archeologie':  {color:'var(--fase-archeologie)',bg:'var(--fase-archeologie-bg)',cls:'fl-archeologie'},
-  'Bodem':        {color:'var(--fase-bodem)',     bg:'var(--fase-bodem-bg)',     cls:'fl-bodem'},
-  'NGE/OO':       {color:'var(--fase-nge)',       bg:'var(--fase-nge-bg)',       cls:'fl-nge'},
-  'Geotechnisch': {color:'var(--fase-geo)',       bg:'var(--fase-geo-bg)',       cls:'fl-geo'},
-  'Vergunningen': {color:'#0077B5',               bg:'#EAF4FF',                  cls:'fl-verg'},
-  'Sleufloze technieken': {color:'#C93400',       bg:'#FFF3ED',                  cls:'fl-sleuf'},
-};
-
-
-var DATE_WEEK_PAIRS   = [[24,25],[35,36],[58,59],[95,96],[106,107],[123,124]];
-var PLANDATUM_COLS    = [127,130,133,136,139,142,145,148,151,154,157,160,163,166,169,172];
-var DATE_COL_INDICES  = DATE_WEEK_PAIRS.map(p=>p[0]).concat(PLANDATUM_COLS);
-var JANEE_COL_INDICES = [26,37,60,97,108,125,128,131,134,137,140,143,146,149,152,155,158,161,164,167,170,173];
-var VIRT_COLS         = [200,201,202,203,204,205,206,207,208,209,210,211,212,213,214,215,216,217,218,219,220,221,400,401];
-var OPM_VIRT_MAP      = {200:'Analyse',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfase',204:'DO-Fase',205:'UO-Fase',206:'Natuurtoets',207:'Natuurtoets',208:'Natuurtoets',209:'Natuurtoets',210:'Archeologie',211:'Archeologie',212:'Archeologie',213:'Bodem',214:'Bodem',215:'Bodem',216:'NGE/OO',217:'NGE/OO',218:'NGE/OO',219:'Geotechnisch',220:'Geotechnisch',221:'Geotechnisch'};
-var OPM_SUB_LABELS    = {200:'Analyse-fase',201:'VO-Fase',202:'DO-Fase',203:'Onderzoeksfase',204:'DO-vergunningen',205:'UO-Fase',206:'Ecologische quickscan',207:'Ecologisch vervolgonderzoek',208:'Natura 2000 / AERIUS',209:'Natuurtoets / voortoets',210:'Bureauonderzoek',211:'Inventariserend veldonderzoek',212:'Proefsleuvenonderzoek',213:'Historisch bodemonderzoek',214:'Verkennend bodemonderzoek',215:'Nader onderzoek / sanering',216:'Explosieven quickscan',217:'NGE detectieonderzoek',218:'NGE begeleiding graafwerk',219:'Geotechnisch onderzoek',220:'Thermische grondweerstand',221:'Grondwateronderzoek'};
-
-function parseDatum(str) {
-  if (!str||str==='?') return null; str=str.trim();
-  var m=str.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-  if(m) return new Date(parseInt(m[3]),parseInt(m[2])-1,parseInt(m[1]));
-  m=str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if(m) return new Date(parseInt(m[1]),parseInt(m[2])-1,parseInt(m[3]));
-  return null;
-}
-function toInputDate(d) {
-  if(!d) return '';
-  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-}
-function calcWeken(s) {
-  var d=parseDatum(s); if(!d) return '';
-  var today=new Date(); today.setHours(0,0,0,0);
-  return String(Math.ceil((d-today)/(1000*60*60*24*7)));
-}
-function badgeCls(v) {
-  if(v==='Gereed') return 'G'; if(v==='Loopt') return 'L';
-  if(v==='Review') return 'R'; if(v==='Geblokkeerd') return 'B';
-  if(v==='Nog te starten') return 'N'; return '';
-}
-
-// ══ STATE ══
-var ROW_DATA    = null;  // array[174]
-var ROW_IDX     = -1;
-var DB_ROW      = null;
-var OPMERKINGEN = {};
-var currentMode = 'viewer';
 var currentUser = '';
-var isSaving    = false;
-var pickerTarget = null;
-var datePicker_target = null;
-var opmTarget   = null;
+var currentMode = 'viewer';
+var rowData     = null;   // DB row
+var detailRow   = null;   // cel_data array
+var wpId        = -1;
 var toastTimer  = null;
+var isSaving    = false;
+
+function esc(v){return String(v||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function supaGet(path){return fetch(SUPA_URL+path,{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();});}
+function supaPatch(path,body){return fetch(SUPA_URL+path,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(body)}).then(function(r){return r.ok?null:Promise.reject(new Error('Patch failed'));});}
+function supaPost(path,body){return fetch(SUPA_URL+path,{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(body)}).then(function(r){return r.json();});}
+
+function showToast(msg,type){var t=document.getElementById('toast');t.innerHTML=msg;t.className='toast '+(type||'')+' show';clearTimeout(toastTimer);toastTimer=setTimeout(function(){t.className='toast '+(type||'');},2800);}
+function showSaving(on){isSaving=on;}
+
+function badgeCls(v){if(v==='Gereed')return 'G';if(v==='Loopt')return 'L';if(v==='Review')return 'R';if(v==='Geblokkeerd')return 'B';if(v==='Nog te starten')return 'N';return '';}
+function parseDatum(s){if(!s)return null;var m=s.match(/^(\d{2})-(\d{2})-(\d{4})$/);if(m)return new Date(+m[3],+m[2]-1,+m[1]);m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);if(m)return new Date(+m[1],+m[2]-1,+m[3]);return null;}
 
 // ══ INIT ══
-window.addEventListener('load', async function() {
-  // Read params from sessionStorage (set by main page)
-  var params = JSON.parse(sessionStorage.getItem('detail_params') || 'null');
-  if (!params) {
-    document.getElementById('mainContent').innerHTML = '<div class="loading-box">Geen projectdata gevonden. Open dit scherm via het dashboard.</div>';
-    return;
-  }
-  ROW_IDX     = params.rowIdx;
-  currentUser = params.user  || 'Onbekend';
-  currentMode = params.mode  || 'viewer';
+(function init() {
+  var raw = sessionStorage.getItem('detail_params');
+  if (!raw) { document.getElementById('mainContent').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-3)">Geen projectdata. Sluit dit venster en open opnieuw via het dashboard.</div>'; return; }
+  var p = JSON.parse(raw);
+  currentUser = p.user || '';
+  currentMode = p.mode || 'viewer';
+  wpId        = p.rowIdx;
+  if (currentMode === 'editor') document.body.className = 'mode-editor';
+  document.getElementById('modeIndicator').textContent = currentMode === 'editor' ? 'Bewerker' : 'Viewer';
+  document.getElementById('modeIndicator').style.background = currentMode === 'editor' ? 'var(--g-bg)' : 'var(--accent-2)';
+  document.getElementById('modeIndicator').style.color = currentMode === 'editor' ? 'var(--g-fg)' : 'var(--accent)';
+  loadProjectDetail();
+})();
 
-  // Load task-role config from Supabase
-  try {
-    var cfg = await supa.get('/rest/v1/werkpakketten?row_idx=eq.9999&select=cel_data');
-    if (cfg && cfg.length && cfg[0].cel_data && cfg[0].cel_data['__task_roles__']) {
-      var tr = JSON.parse(cfg[0].cel_data['__task_roles__']);
-      Object.keys(tr).forEach(function(k){ TASK_ROLE_MAP[parseInt(k)] = tr[k]; });
-    }
-  } catch(e) {}
-
-  await loadProject();
-  await loadComments();
-});
-
-function toggleDetailRol(roleKey) {
-  activeDetailRol = (activeDetailRol === roleKey) ? '' : roleKey;
-  var map = { engineer:'drfEng', projectleider:'drfPl', uitvoerder:'drfUitv', werkvoorbereider:'drfWb' };
-  Object.keys(map).forEach(function(k) {
-    var btn = document.getElementById(map[k]);
-    if (btn) btn.classList.toggle('active', activeDetailRol === k);
-  });
-  applyDetailFilters();
-}
-
-async function loadProject() {
-  try {
-    var data = await supa.get('/rest/v1/werkpakketten?row_idx=eq.'+ROW_IDX+'&select=*');
-    if (!data || !data.length) throw new Error('Project niet gevonden');
-    DB_ROW = data[0];
-    ROW_DATA = new Array(420).fill('');
-    var cd = DB_ROW.cel_data || {};
-    Object.keys(cd).forEach(function(k){ ROW_DATA[parseInt(k)] = cd[k]||''; });
-
-    // Load opmerkingen
-    var opms = await supa.get('/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&select=fase,tekst');
-    opms.forEach(function(o){ OPMERKINGEN[ROW_IDX+'-'+o.fase] = o.tekst||''; });
-
-    renderPage();
-  } catch(e) {
-    document.getElementById('mainContent').innerHTML = '<div class="loading-box" style="color:#b53030">Fout: '+esc(e.message)+'</div>';
-  }
-}
-
-
-// ══ DETAIL PAGE FILTERS ══
-var activeDetailStatus = {};
-var currentDetailFase  = 'alle';
-
-function setDetailFase(fase, btn) {
-  currentDetailFase = fase;
-  // Sync ALL dtab buttons (both top and inline navigator)
-  document.querySelectorAll('.dtab').forEach(function(b) { b.classList.remove('active'); });
-  // Activate all buttons matching this fase
-  document.querySelectorAll('.dtab').forEach(function(b) {
-    if (b.getAttribute('onclick') === "setDetailFase('"+fase+"',this)") b.classList.add('active');
-  });
-
-  // Show/hide fase sections
-  document.querySelectorAll('.fase-section').forEach(function(sec) {
-    var secFase = sec.getAttribute('data-fase');
-    if (fase === 'alle' || secFase === fase) {
-      sec.style.display = '';
-      // Auto-expand selected fase
-      var body = sec.querySelector('.fase-section-body');
-      var hdr  = sec.querySelector('.fase-section-header');
-      if (body) body.classList.remove('collapsed');
-      if (hdr)  hdr.classList.remove('collapsed');
-    } else {
-      sec.style.display = 'none';
-    }
-  });
-
-  // Update export note
-  var note = document.getElementById('exportFaseNote');
-  if (note) note.textContent = fase === 'alle' ? 'Alle fases' : fase;
-
-  applyDetailFilters();
-}
-
-function toggleStatusFilter(status, btn) {
-  if (activeDetailStatus[status]) {
-    delete activeDetailStatus[status];
-    btn.classList.remove('active');
-  } else {
-    activeDetailStatus[status] = true;
-    btn.classList.add('active');
-  }
-  applyDetailFilters();
-}
-
-function applyDetailFilters() {
-  var search    = (document.getElementById('detailSearch') ? document.getElementById('detailSearch').value : '').toLowerCase();
-  var hideEmpty = document.getElementById('hideEmpty') ? document.getElementById('hideEmpty').checked : false;
-  var hasStatusFilter = Object.keys(activeDetailStatus).length > 0;
-  var totalVisible = 0;
-
-  document.querySelectorAll('.field-row').forEach(function(row) {
-    var label  = (row.getAttribute('data-label')  || '').toLowerCase();
-    var val    = (row.getAttribute('data-val')    || '');
-    var status = (row.getAttribute('data-status') || '');
-    var colIdx = parseInt(row.getAttribute('data-col') || '-1');
-    var secEl  = row.closest('.fase-section');
-    var secFase = secEl ? secEl.getAttribute('data-fase') : '';
-
-    // Skip rows in hidden fase sections
-    if (currentDetailFase !== 'alle' && secFase !== currentDetailFase) return;
-
-    var show = true;
-    if (search && label.indexOf(search) < 0) show = false;
-    if (show && hasStatusFilter && status && !activeDetailStatus[status]) show = false;
-    if (show && hideEmpty && !val) show = false;
-
-    // Role filter — only for task cols (colIdx >= 12)
-    if (show && activeDetailRol && colIdx >= 12) {
-      var assigned = TASK_ROLE_MAP[colIdx] || 'engineer';
-      if (assigned !== activeDetailRol) show = false;
-    }
-
-    row.classList.toggle('df-hidden', !show);
-    if (show) totalVisible++;
-
-    // Update role dot in label
-    var dotEl = row.querySelector('.field-rol-dot');
-    if (dotEl && colIdx >= 12) {
-      var rKey = TASK_ROLE_MAP[colIdx] || 'engineer';
-      dotEl.style.background = ROLE_COLOR_MAP[rKey] || '#999';
-      dotEl.title = ROLE_LABEL_MAP[rKey] || rKey;
-    }
-  });
-
-  // Hide empty sections
-  document.querySelectorAll('.fase-section').forEach(function(sec) {
-    if (currentDetailFase !== 'alle' && sec.getAttribute('data-fase') !== currentDetailFase) return;
-    var hasVisible = sec.querySelectorAll('.field-row:not(.df-hidden)').length > 0;
-    sec.classList.toggle('all-hidden', !hasVisible);
-  });
-
-  var countEl = document.getElementById('detailFilterCount');
-  if (countEl) countEl.textContent = totalVisible + ' velden';
-}
-
-// ══ EXPORT ══
-function getDetailExportData() {
-  var rows = [];
-
-  // ── Projectinformatie bovenaan ──
-  var infoFields = [
-    [0,'Projectnummer intern'],[1,'Projectnummer extern'],[2,'Projectnaam'],
-    [3,'APD Bouwdeel'],[4,'Liander Tracédeel'],[5,'WP nummer'],
-    [6,'Tracé start'],[7,'Tracé eind'],[8,'Engineer'],
-    [9,'Lengte nieuw (m)'],[10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer'],
-    [179,'Projectleider'],[180,'Uitvoerder'],[181,'Werkvoorbereider']
-  ];
-  rows.push(['', '', '']); // lege scheidingsregel
-  rows.push(['PROJECTINFORMATIE', '', '']);
-  infoFields.forEach(function(f) {
-    rows.push(['Projectinfo', f[1], ROW_DATA[f[0]] || '']);
-  });
-  rows.push(['', '', '']); // lege scheidingsregel
-
-  // ── Fase velden ──
-  document.querySelectorAll('.fase-section').forEach(function(sec) {
-    if (sec.style.display === 'none') return;
-    var fase = sec.getAttribute('data-fase') || '';
-    var faseRows = [];
-    sec.querySelectorAll('.field-row:not(.df-hidden)').forEach(function(row) {
-      var label = row.querySelector('.field-label') ? row.querySelector('.field-label').textContent : '';
-      var valEl = row.querySelector('.field-val');
-      var val   = valEl ? valEl.textContent.trim() : '';
-      faseRows.push([fase, label, val]);
+function loadProjectDetail() {
+  supaGet('/rest/v1/werkpakketten?row_idx=eq.'+wpId+'&select=*')
+    .then(function(data) {
+      if (!data || !data.length) throw new Error('Project niet gevonden');
+      rowData = data[0];
+      var cd = rowData.cel_data || {};
+      // Build flat array
+      detailRow = new Array(420).fill('');
+      Object.keys(cd).forEach(function(k){ detailRow[parseInt(k)] = cd[k]||''; });
+      return supaGet('/rest/v1/boringen?werkpakket_id=eq.'+rowData.row_idx+'&order=boring_nr.asc&select=*');
+    })
+    .then(function(borings) {
+      borData = borings || [];
+      renderDetail();
+    })
+    .catch(function(e) {
+      document.getElementById('mainContent').innerHTML = '<div style="text-align:center;padding:3rem;color:var(--b-fg)">Fout: '+esc(e.message)+'</div>';
     });
-    if (faseRows.length) {
-      rows.push([fase.toUpperCase(), '', '']);
-      faseRows.forEach(function(r) { rows.push(r); });
-      rows.push(['', '', '']);
-    }
+}
+
+function renderDetail() {
+  var r = detailRow;
+  var naam = r[2] || rowData.projectnaam || '—';
+  document.title = naam + ' — TPA';
+
+  // Dominant status (simplified)
+  var allStatuses = [];
+  [12,13,14,15,16,17,18,19,20,21,22,23,27,28,29,30,31,32,33,34,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,98,99,100,101,102,103,104,105,109,110,111,112,113,114,115,116,117,118,119,120,121,122].forEach(function(i){if(r[i])allStatuses.push(r[i]);});
+  var dom='';
+  ['Geblokkeerd','Review','Loopt','Nog te starten','Gereed'].forEach(function(s){if(!dom&&allStatuses.indexOf(s)>=0)dom=s;});
+  var domCls=badgeCls(dom);
+
+  var html = '';
+
+  // ── Hero ──
+  html += '<div class="project-hero">'
+    + '<div class="project-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" stroke="white" stroke-width="1.5"/><path d="M9 22V12h6v10" stroke="white" stroke-width="1.5"/></svg></div>'
+    + '<div style="flex:1">'
+    + '<div class="project-title">'+esc(naam)+'</div>'
+    + '<div class="project-meta">'
+    + (r[5]?'<div class="project-meta-item"><strong>WP:</strong> '+esc(r[5])+'</div>':'')
+    + (r[8]?'<div class="project-meta-item"><strong>Engineer:</strong> '+esc(r[8])+'</div>':'')
+    + (r[0]?'<div class="project-meta-item"><strong>Intern:</strong> '+esc(r[0])+'</div>':'')
+    + (r[1]?'<div class="project-meta-item"><strong>Extern:</strong> '+esc(r[1])+'</div>':'')
+    + '</div></div>'
+    + (domCls?'<span class="dom-badge dom-'+domCls+'">'+esc(dom)+'</span>':'')
+    + '</div>';
+
+  // ── Projectinfo ──
+  html += sectionCard('Projectinfo','📋','#E8E8ED',false,function(){
+    var fields=[
+      [3,'APD Bouwdeel'],[4,'Liander Tracédeel'],[6,'Tracé start'],[7,'Tracé eind'],
+      [9,'Lengte nieuw (m)'],[10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer']
+    ];
+    var inner='<div class="info-grid">';
+    fields.forEach(function(f){inner+='<div class="info-item"><div class="info-label">'+esc(f[1])+'</div><div class="info-value">'+(r[f[0]]?esc(r[f[0]]):'<span style="color:var(--text-3)">—</span>')+'</div></div>';});
+    inner+='</div>';
+    return inner;
   });
-  return rows;
-}
 
-function exportDetailCSV() {
-  var naam = ROW_DATA[2] || 'project';
-  var fase = currentDetailFase === 'alle' ? 'alle-fases' : currentDetailFase;
-  var e2 = function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; };
-  var header = [e2('Fase'), e2('Veld'), e2('Waarde')].join(',');
-  var data = getDetailExportData().map(function(r) { return r.map(e2).join(','); });
-  var blob = new Blob(['﻿' + [header].concat(data).join('\r\n')], {type:'text/csv;charset=utf-8;'});
-  var a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = naam + '_' + fase + '_' + new Date().toISOString().slice(0,10) + '.csv';
-  document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1000);
-}
-
-function exportDetailXLSX() {
-  if (typeof XLSX === 'undefined') { showToast('Even wachten...','info'); return; }
-  var naam = ROW_DATA[2] || 'project';
-  var fase = currentDetailFase === 'alle' ? 'alle-fases' : currentDetailFase;
-  var data = getDetailExportData();
-  var wb = XLSX.utils.book_new();
-  var wsData = [['Fase','Veld','Waarde']].concat(data);
-  var ws = XLSX.utils.aoa_to_sheet(wsData);
-  ws['!cols'] = [{wch:22},{wch:38},{wch:28}];
-  XLSX.utils.book_append_sheet(wb, ws, fase.substring(0,31));
-  XLSX.writeFile(wb, naam + '_' + fase + '_' + new Date().toISOString().slice(0,10) + '.xlsx');
-}
-
-
-function renderPage() {
-  var naam = ROW_DATA[2] || 'Onbekend project';
-  var wp   = ROW_DATA[5] || '';
-  var eng  = ROW_DATA[8] || '';
-  document.title = naam + ' · TPA';
-  document.getElementById('pageTitle').textContent = naam;
-  document.getElementById('pageWP').textContent = wp + (eng ? ' — ' + eng : '');
-
-  var appEl = document.getElementById('app-wrapper');
-  if (appEl) appEl.className = currentMode === 'editor' ? 'mode-editor' : '';
-
-  var html = '<div id="app-wrapper" class="'+(currentMode==='editor'?'mode-editor':'')+'">';
-
-  // Mode bar
-  html += '<div class="mode-bar">';
-  html += '<span class="mode-label">Ingelogd als <b>'+esc(currentUser)+'</b></span>';
-  html += '<span class="mode-pill '+currentMode+'"><span class="dot"></span>'+
-    (currentMode==='viewer'?'Viewer':'Bewerker')+'</span>';
-  html += '<span class="saving-indicator" id="savingIndicator"><span class="saving-dot"></span>opslaan...</span>';
-  html += '</div>';
-
-  // Project info
-  html += '<div class="project-info">';
-  var infoFields = [
-    [0,'Projectnr. intern'],[1,'Projectnr. extern'],
-    [2,'Projectnaam'],[3,'APD Bouwdeel'],[4,'Tracédeel'],[5,'WP nummer'],
-    [6,'Tracé start'],[7,'Tracé eind'],[9,'Lengte nieuw (m)'],
-    [10,'Lengte verwijderen (m)'],[11,'Overdracht VO aannemer']
+  // ── Task fases ──
+  var fases=[
+    {label:'Analyse',color:'#0071E3',bg:'#EAF4FF',cols:[12,13,14,15,16,17,18,19,20,21,22,23],dateCols:[24,25,26]},
+    {label:'VO-Fase',color:'#1A7F3C',bg:'#F0FBF4',cols:[27,28,29,30,31,32,33,34],dateCols:[35,36,37]},
+    {label:'DO-Fase',color:'#8E6000',bg:'#FFF8ED',cols:[38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57],dateCols:[58,59,60]},
+    {label:'Onderzoeksfase',color:'#6F35CE',bg:'#F2EDFF',cols:[61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94],dateCols:[95,96,97]},
+    {label:'UO-Fase',color:'#D70015',bg:'#FFF0F0',cols:[109,110,111,112,113,114,115,116,117,118,119,120,121,122],dateCols:[123,124,125]},
   ];
-  infoFields.forEach(function(f) {
-    var val = ROW_DATA[f[0]] || '—';
-    html += '<div class="info-item"><div class="info-label">'+esc(f[1])+'</div><div class="info-val">'+esc(val)+'</div></div>';
-  });
-  html += '</div>';
+  var TASK_NAMES={12:'Stukken VO controleren',13:'VO inhoudelijk beoordelen',14:'Verificatieplan opstellen',15:'Eisen importeren Relatics',16:'VO QuickScan beoordelen',17:'Taakstellend Budget',18:'Input Startnota (1)',19:'Input Startnota (2)',20:'Input Startnota (3)',21:'Input Startnota (4)',22:'Warme overdracht',23:'Inrichten projectomgeving',24:'[Analyse] Overgangsdatum',25:'[Analyse] Weken resterend',26:'[Analyse] Gereed',27:'Eisen beoordelen projectteam',28:'Eisen verwerken Excel',29:'Kennismaking bevoegd gezag',30:'Periodiek overleg BG',31:'Opvragen raakvlakken',32:"DR's/iMSR's bespreken",33:'Spelregels bevoegd gezag',34:'Schetsontwerp opstellen',35:'[VO] Overgangsdatum',36:'[VO] Weken resterend',37:'[VO] Gereed',38:'Eisen BG in werktekening',39:'CROW-500 invullen',40:'EV-beheerders contacteren',41:'Vitens contacteren',42:'Stakeholders inventariseren',43:'Aantal percelen',44:'Aantal perceeleigenaren',45:'Boorlocaties uitzetten',46:'Aantal boringen',47:'Kabeltrekplan maken',48:'Duikers inmeten',49:'Schouwverslag maken',50:'Boringen uitwerken',51:'Werkterrein-inrichting',52:'Kennismaking ZRO',53:'Principe-akkoord grondeigenaren',54:'Schouwen met realisatie',55:'Opmerkingen schouw realisatie',56:'Schouw bevoegd gezag',57:'Opmerkingen schouw BG',58:'[DO] Overgangsdatum',59:'[DO] Weken resterend',60:'[DO] Gereed',61:'Conditionerende onderzoeken',62:'Beïnvloedingsberekening',63:'Toestemming GasUnie/NEN3654',64:'Belastbaarheidsberekening',65:'Toestemming TenneT',66:"Toetsen met OIV'er",67:'ZRO-tekeningen opstellen',68:'Vervolggesprekken grondeigenaren',69:'Proefsleuflocaties uitzetten',70:'Controle boven/ondergrond',71:'Verkeersplan proefsleuven',72:'Melden grondeigenaren',73:'Melding proefsleuven',74:'Graafmelding KLIC',75:'Inladen Marxact',76:'Graven proefsleuven',77:'Beschoeiing aanvragen',78:'Melding beschoeiing grond.',79:'Melding beschoeiing BG',80:'Beschoeiing inmeten',81:'Sonderingen aanvragen',82:'Melding sonderingen grond.',83:'Melding sonderingen BG',84:'Sonderingen maken',85:'Verwerken in boorplan',86:'Resultaten proefsleuven',87:"Toetsen OIV'er (2)",88:'Meeloopkansen controle',89:"ZRO's afronden",90:'Rentmeesters inplannen',91:'Risicodossier opstellen',92:'Verificatie- en validatieplan',93:'Verkeersplannen opstellen',94:'DO-raming opstellen',95:'[Onderzoek] Overgangsdatum',96:'[Onderzoek] Weken resterend',97:'[Onderzoek] Gereed',109:'UO-tekeningen (stempel)',110:'UO-kabeltrektekening',111:'Materiaallijst definitief',112:'WBS-tracker opstellen',113:'Verificatierapport',114:'Bemalingsplan',115:'Cultuurtechnisch werkplan',116:'NSA-aanvraag indienen',117:'Keuringsplannen',118:'Capaciteitsaanvraag definitief',119:'Werkplannen/bedieningsplannen',120:'Stappenplan montage',121:'Interne W-formulier',122:'UO begroting opstellen',123:'[UO] Overgangsdatum',124:'[UO] Weken resterend',125:'[UO] Gereed'};
 
-  // Rollen & gebruikers
-  var rolFields = [[8,'Engineer'],[179,'Projectleider'],[180,'Uitvoerder'],[181,'Werkvoorbereider']];
-  var hasRol = rolFields.some(function(f){ return ROW_DATA[f[0]] && ROW_DATA[f[0]] !== '—'; });
-  var rolColors = {8:'#0071E3', 179:'#1A7F3C', 180:'#8E6000', 181:'#6F35CE'};
-  html += '<div class="project-info" style="margin-bottom:1.125rem;grid-template-columns:repeat(4,1fr)">';
-  rolFields.forEach(function(f) {
-    var val = ROW_DATA[f[0]] || '—';
-    var dot = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+(rolColors[f[0]]||'#999')+';margin-right:5px;vertical-align:middle"></span>';
-    html += '<div class="info-item"><div class="info-label">'+esc(f[1])+'</div><div class="info-val">'+dot+esc(val)+'</div></div>';
-  });
-  html += '</div>';
-
-  // ── Gantt chart ──
-  html += buildGanttHTML();
-
-  // Phase sections
-  var phases = ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch','Vergunningen','Sleufloze technieken'];
-  phases.forEach(function(fase) {
-    var faseCols = COLS.filter(function(c){ return c.f === fase; });
-    if (!faseCols.length) return;
-    var fs = FASE_STYLE[fase] || {};
-
-    html += '<div class="fase-section" data-fase="'+esc(fase)+'">';
-    html += '<div class="fase-section-header" onclick="toggleSection(this)">';
-    html += '<span class="fase-title" style="background:'+fs.bg+';color:'+fs.color+'">'+esc(fase)+'</span>';
-    html += '<span class="collapse-icon">&#9660;</span>';
-    html += '</div>';
-    html += '<div class="fase-section-body">';
-
-    faseCols.forEach(function(col) {
-      var raw = ROW_DATA[col.i] || '';
-      var bc  = badgeCls(raw);
-      var isDate   = DATE_COL_INDICES.indexOf(col.i) >= 0;
-      var isJaNee  = JANEE_COL_INDICES.indexOf(col.i) >= 0;
-      var isVirt   = VIRT_COLS.indexOf(col.i) >= 0;
-      var isWeek   = col.n.indexOf('Weken resterend') >= 0;
-      var isFullW  = isVirt || col.n.length > 35;
-
-      var valHtml;
-      if (bc) {
-        valHtml = '<span class="badge '+bc+'">'+esc(raw)+'</span>';
-      } else if (isWeek && raw) {
-        var wn = parseInt(raw);
-        if (!isNaN(wn) && Math.abs(wn)<1000) {
-          var wc = wn<0?'wk-over':wn<=4?'wk-warn':'wk-ok';
-          valHtml = '<span class="'+wc+'">'+wn+'w</span>';
-        } else { valHtml = esc(raw); }
-      } else if (isDate && raw) {
-        valHtml = '<span class="date-val">'+esc(raw)+'</span>';
-      } else if (isJaNee) {
-        var jc = raw==='Ja'?'janee-ja':raw==='Nee'?'janee-nee':'janee-leeg';
-        valHtml = '<span class="'+jc+'">'+(raw||'—')+'</span>';
-      } else if (isVirt) {
-        var oKey = ROW_IDX+'-opm-'+col.i;
-        var ot   = OPMERKINGEN[oKey]||'';
-        valHtml = ot
-          ? '<span class="opmerking-tekst" title="'+esc(ot)+'">'+esc(ot)+'</span>'
-          : '<span class="opmerking-leeg">'+(currentMode==='editor'?'+ opmerking':'—')+'</span>';
-      } else {
-        valHtml = raw ? esc(raw) : '<span style="color:var(--text-faint)">—</span>';
-      }
-
-      // Click handler for editor
-      var clickAttr = '';
-      var editCls   = '';
-      if (currentMode === 'editor') {
-        if (bc) {
-          clickAttr = ' onclick="openStatusPicker(event,'+col.i+')"';
-          editCls   = ' editable';
-        } else if (isDate) {
-          clickAttr = ' onclick="openDatePicker(event,'+col.i+')"';
-          editCls   = ' editable';
-        } else if (isJaNee) {
-          clickAttr = ' onclick="toggleJaNee(event,'+col.i+')"';
-          editCls   = ' editable';
-        } else if (isVirt) {
-          clickAttr = ' onclick="openOpmModal(event,'+col.i+')"';
-          editCls   = ' editable';
-        }
-      }
-
-      var statusAttr = bc ? ' data-status="'+esc(raw)+'"' : '';
-      var rawVal = raw || '';
-      html += '<div class="field-row'+(isFullW?' full-width':'')+editCls+'" data-label="'+esc(col.n.toLowerCase())+'" data-val="'+esc(rawVal)+'"'+statusAttr+' data-col="'+col.i+'"'+clickAttr+'>';
-      // Role dot for task cols
-      var rolDot = '';
-      if (col.i >= 12 && TASK_ROLE_MAP && ROLE_COLOR_MAP) {
-        var rk = TASK_ROLE_MAP[col.i] || 'engineer';
-        rolDot = '<span class="field-rol-dot" style="background:'+(ROLE_COLOR_MAP[rk]||'#999')+'" title="'+(ROLE_LABEL_MAP[rk]||rk)+'"></span>';
-      }
-      html += '<span class="field-label" title="'+esc(col.n)+'">'+rolDot+esc(col.n)+'</span>';
-      html += '<span class="field-val">'+valHtml+'</span>';
-      html += '</div>';
-    });
-
-    html += '</div></div>'; // fase-section-body + fase-section
+  fases.forEach(function(fase) {
+    html += sectionCard(fase.label,'●',fase.bg,true,function(){
+      var inner='<div class="task-grid">';
+      fase.cols.forEach(function(ci){
+        var v=r[ci]||'';var bc=badgeCls(v);
+        inner+='<div class="task-item"><span class="task-name" title="'+(TASK_NAMES[ci]||'')+'">'+esc(TASK_NAMES[ci]||'Taak '+ci)+'</span>';
+        if(bc)inner+='<span class="badge '+bc+'">'+esc(v)+'</span>';
+        else inner+='<span style="font-size:10px;color:var(--text-3)">—</span>';
+        inner+='</div>';
+      });
+      inner+='</div>';
+      return inner;
+    },fase.color);
   });
 
-  html += '</div>'; // app-wrapper
+  // ── Sleufloze technieken / Boringen ──
+  html += borDetailSection();
+
   document.getElementById('mainContent').innerHTML = html;
-  document.getElementById('detailControls').style.display = 'flex';
-  document.getElementById('detailExportRow').style.display = 'flex';
-  // Default: show Analyse, all roles
-  setTimeout(function() {
-    applyFilters('Analyse', null, document.querySelector('#unifiedFilter .dtab[onclick*="\'Analyse\'"]'));
-  }, 0);
+  initCollapsible();
+  borRowIdx = rowData.row_idx;
 }
 
-function toggleSection(header) {
-  header.classList.toggle('collapsed');
-  header.nextElementSibling.classList.toggle('collapsed');
+function sectionCard(title,icon,iconBg,collapsed,contentFn,accentColor){
+  var id='sec-'+Math.random().toString(36).slice(2,7);
+  var borderStyle = accentColor ? 'border-left:3px solid '+accentColor : '';
+  return '<div class="section-card'+(collapsed?' collapsed':'')+'" id="'+id+'">'
+    +'<div class="section-header" style="'+borderStyle+'" onclick="toggleSection(\''+id+'\')">'
+    +'<div class="section-icon" style="background:'+iconBg+';font-size:12px;color:'+( accentColor||'var(--text-2)')+'">'+icon+'</div>'
+    +'<div class="section-title">'+esc(title)+'</div>'
+    +'<span class="section-chevron">▾</span>'
+    +'</div>'
+    +'<div class="section-body">'+contentFn()+'</div>'
+    +'</div>';
 }
 
-// ══ STATUS PICKER ══
-function openStatusPicker(e, colIdx) {
-  e.stopPropagation();
-  pickerTarget = colIdx;
-  var picker = document.getElementById('statusPicker');
-  var cur = ROW_DATA[colIdx];
-  picker.querySelectorAll('.status-option[data-val]').forEach(function(opt){
-    opt.classList.toggle('active', opt.getAttribute('data-val')===cur);
-  });
-  positionPopup(picker, e, 170, 230);
-  picker.classList.add('open');
-  setTimeout(function(){ document.addEventListener('click', closePickerOutside, {once:true}); }, 0);
-}
-function closePickerOutside(e) {
-  if (!document.getElementById('statusPicker').contains(e.target)) closeStatusPicker();
-}
-function closeStatusPicker() {
-  document.getElementById('statusPicker').classList.remove('open');
-  pickerTarget = null;
-}
-async function applyStatus(newVal) {
-  if (pickerTarget === null) return;
-  var ci  = pickerTarget;
-  var old = ROW_DATA[ci];
-  closeStatusPicker();
-  if (newVal === old) return;
-  ROW_DATA[ci] = newVal;
-  renderPage();
-  await saveCell(ci, newVal, old);
-}
+function toggleSection(id){document.getElementById(id).classList.toggle('collapsed');}
+function initCollapsible(){}
 
-// ══ DATE PICKER ══
-function openDatePicker(e, colIdx) {
-  e.stopPropagation();
-  datePicker_target = colIdx;
-  var cur = ROW_DATA[colIdx];
-  var d   = parseDatum(cur);
-  document.getElementById('dateInput').value = d ? toInputDate(d) : '';
-  var popup = document.getElementById('datePicker');
-  positionPopup(popup, e, 240, 150);
-  popup.classList.add('open');
-  setTimeout(function(){ document.getElementById('dateInput').focus(); document.addEventListener('click', closeDateOutside, {once:true}); }, 50);
-}
-function closeDateOutside(e) {
-  if (!document.getElementById('datePicker').contains(e.target)) closeDatePicker();
-}
-function closeDatePicker() { document.getElementById('datePicker').classList.remove('open'); datePicker_target=null; }
-function clearDate()  { applyDate(''); }
-function saveDate()   {
-  var v = document.getElementById('dateInput').value;
-  if (!v) { applyDate(''); return; }
-  var p = v.split('-');
-  applyDate(p[2]+'-'+p[1]+'-'+p[0]);
-}
-async function applyDate(newDateStr) {
-  if (datePicker_target === null) return;
-  var ci   = datePicker_target;
-  var old  = ROW_DATA[ci];
-  closeDatePicker();
-  var updates = {};
-  updates[ci] = newDateStr;
-  DATE_WEEK_PAIRS.forEach(function(pair){
-    if (pair[0]===ci) updates[pair[1]] = newDateStr ? calcWeken(newDateStr) : '';
-  });
-  var oldVals = {};
-  Object.keys(updates).forEach(function(k){ oldVals[k]=ROW_DATA[parseInt(k)]; ROW_DATA[parseInt(k)]=updates[k]; });
-  renderPage();
-  await saveCells(updates, oldVals);
-}
+// ── Boringen detail section ──
+function borDetailSection(){
+  var n=borData.length;
+  var pct=Math.round(n/20*100);
+  var totalLen=0; var gereed=0; var vergNodig=0;
+  borData.forEach(function(b){if(b.lengte_m)totalLen+=parseFloat(b.lengte_m);if(b.status==='Gereed')gereed++;if(b.vergunning_nodig)vergNodig++;});
+  totalLen=Math.round(totalLen*10)/10;
 
-// ══ JA/NEE TOGGLE ══
-async function toggleJaNee(e, colIdx) {
-  e.stopPropagation();
-  var old = ROW_DATA[colIdx];
-  var nw  = old==='Ja'?'Nee':'Ja';
-  ROW_DATA[colIdx] = nw;
-  renderPage();
-  await saveCell(colIdx, nw, old);
-}
+  var canEdit = currentMode==='editor';
 
-// ══ OPMERKING ══
-function openOpmModal(e, virtColIdx) {
-  e.stopPropagation();
-  opmTarget = virtColIdx;
-  var tekst = OPMERKINGEN[ROW_IDX+'-opm-'+virtColIdx]||'';
-  document.getElementById('opmTextarea').value = tekst;
-  document.getElementById('opmModalSub').textContent = OPM_SUB_LABELS[virtColIdx]||'';
-  updateOpmCount();
-  document.getElementById('opmOverlay').classList.add('open');
-  setTimeout(function(){ document.getElementById('opmTextarea').focus(); },100);
-}
-function closeOpmModal() { document.getElementById('opmOverlay').classList.remove('open'); opmTarget=null; }
-function updateOpmCount() { document.getElementById('opmCharCount').textContent=document.getElementById('opmTextarea').value.length+' / 500'; }
-async function saveOpmerking() {
-  if (opmTarget===null) return;
-  var vci   = opmTarget;
-  var tekst = document.getElementById('opmTextarea').value.trim();
-  closeOpmModal();
-  var key = ROW_IDX+'-opm-'+vci;
-  OPMERKINGEN[key] = tekst;
-  renderPage();
-  showSaving(true);
-  try {
-    var existing = await supa.get('/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.opm-'+vci+'&select=id');
-    if (existing && existing.length) {
-      await supa.patch('/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.opm-'+vci,
-        {tekst:tekst,updated_by:currentUser,updated_at:new Date().toISOString()});
-    } else {
-      await supa.post('/rest/v1/opmerkingen',{row_idx:ROW_IDX,fase:'opm-'+vci,tekst:tekst,updated_by:currentUser,updated_at:new Date().toISOString()});
-    }
-    showToast('&#10003; Opmerking opgeslagen','success');
-  } catch(err) {
-    showToast('&#10007; '+err.message,'error');
-  } finally { showSaving(false); }
-}
+  var html='<div class="section-card" id="sec-boringen">'
+    +'<div class="section-header bor-section-header" onclick="toggleSection(\'sec-boringen\')">'
+    +'<div class="section-icon bor-si"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>'
+    +'<div class="section-title">Sleufloze technieken — Boringen</div>'
+    +(n>0?'<span class="section-badge">'+n+' boring'+(n!==1?'en':'')+'</span>':'')
+    +(canEdit?'<button onclick="event.stopPropagation();openBorModal('+rowData.row_idx+',\'\')" style="display:inline-flex;align-items:center;gap:3px;margin-left:.5rem;padding:3px 10px;font-size:11px;font-weight:600;border:none;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit">+ Toevoegen</button>':'')
+    +'<span class="section-chevron">▾</span>'
+    +'</div>';
 
-// ══ GANTT CHART ══════════════════════════════════════════
+  // progress
+  html+='<div class="bor-detail-progress">'
+    +'<span class="bor-prog-label">'+n+' van 20</span>'
+    +'<div class="bor-prog-wrap"><div class="bor-prog-bar" style="width:'+pct+'%;background:'+(pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0071E3,#34C759)')+'"></div></div>'
+    +'<span class="bor-prog-pct">'+pct+'%</span>'
+    +'</div>';
 
-var ganttFaseFilter = 'alle';
-var ganttRolFilter  = '';
-
-var GANTT_PHASES = [
-  { label:'Analyse',    datumCol:24,  gereedCol:26,  color:'#0071E3', group:'fasering',
-    taskCols:[12,13,14,15,16,17,18,19,20,21,22,23] },
-  { label:'VO-Fase',    datumCol:35,  gereedCol:37,  color:'#1A7F3C', group:'fasering',
-    taskCols:[27,28,29,30,31,32,33,34] },
-  { label:'DO-Fase',    datumCol:58,  gereedCol:60,  color:'#8E6000', group:'fasering',
-    taskCols:[38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,98,99,100,101,102,103,104,105] },
-  { label:'Onderzoek',  datumCol:95,  gereedCol:97,  color:'#6F35CE', group:'fasering',
-    taskCols:[61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94] },
-  { label:'UO-Fase',    datumCol:123, gereedCol:125, color:'#D70015', group:'fasering',
-    taskCols:[109,110,111,112,113,114,115,116,117,118,119,120,121,122] },
-  { label:'Natuurtoets', datumCol:127, gereedCol:128, color:'#1A7F3C', group:'omgeving', taskCols:[] },
-  { label:'Archeologie', datumCol:139, gereedCol:140, color:'#881C58', group:'omgeving', taskCols:[] },
-  { label:'Bodem',       datumCol:148, gereedCol:149, color:'#6E6E73', group:'omgeving', taskCols:[] },
-  { label:'NGE/OO',      datumCol:157, gereedCol:158, color:'#C93400', group:'omgeving', taskCols:[] },
-  { label:'Geotechnisch',datumCol:166, gereedCol:167, color:'#0077B5', group:'omgeving', taskCols:[] },
-];
-
-function parseDatumG(s) {
-  if (!s||s==='01-01-2020'||s==='?') return null;
-  var m=s.match(/^(\d{2})-(\d{2})-(\d{4})$/);
-  if(m) return new Date(+m[3],+m[2]-1,+m[1]);
-  m=s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if(m) return new Date(+m[1],+m[2]-1,+m[3]);
-  return null;
-}
-function fmtShortG(d) {
-  return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getFullYear()).slice(2);
-}
-
-function buildGanttHTML() {
-  return '<div class="fase-nav" id="unifiedFilter">'
-    // Row 0: Alle fases
-    + '<div class="fase-nav-row" style="padding-top:0;border-bottom:1px solid var(--border);padding-bottom:5px">'
-    + '<button class="dtab active" id="uf-alle" onclick="applyFilters(\'alle\',null,this)">Alle fases</button>'
-    + '</div>'
-    // Row 1: Fasering
-    + '<div class="fase-nav-row"><span class="fase-nav-label">Fasering</span>'
-    + ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].map(function(f){
-        return '<button class="dtab" onclick="applyFilters(\''+f+'\',null,this)">'+f+'</button>';
-      }).join('')
-    + '</div>'
-    // Row 2: Omgevingsmanagement
-    + '<div class="fase-nav-row"><span class="fase-nav-label">Omgevingsmanagement</span>'
-    + ['Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch'].map(function(f){
-        return '<button class="dtab" onclick="applyFilters(\''+f+'\',null,this)">'+f+'</button>';
-      }).join('')
-    + '</div>'
-    // Row 3: Vergunningen
-    + '<div class="fase-nav-row"><span class="fase-nav-label">Vergunningen</span>'
-    + '<button class="dtab" onclick="applyFilters(\'Vergunningen\',null,this)">Vergunningen</button>'
-    + '</div>'
-    // Row 4: Sleufloze
-    + '<div class="fase-nav-row" style="border-bottom:1px solid var(--border);padding-bottom:5px"><span class="fase-nav-label">Sleufloze technieken</span>'
-    + '<button class="dtab" onclick="applyFilters(\'Sleufloze technieken\',null,this)">Sleufloze technieken</button>'
-    + '</div>'
-    // Row 5: Rol
-    + '<div class="fase-nav-row" style="border-bottom:none">'
-    + '<span class="fase-nav-label">Rol</span>'
-    + '<button class="rolf-btn rb-eng"  id="drfEng"  onclick="applyFilters(null,\'engineer\')">      <span class="rolf-dot" style="background:#0071E3"></span>Engineer</button>'
-    + '<button class="rolf-btn rb-pl"   id="drfPl"   onclick="applyFilters(null,\'projectleider\')"> <span class="rolf-dot" style="background:#1A7F3C"></span>Projectleider</button>'
-    + '<button class="rolf-btn rb-uitv" id="drfUitv" onclick="applyFilters(null,\'uitvoerder\')">    <span class="rolf-dot" style="background:#7A4800"></span>Uitvoerder</button>'
-    + '<button class="rolf-btn rb-wb"   id="drfWb"   onclick="applyFilters(null,\'werkvoorbereider\')"><span class="rolf-dot" style="background:#6F35CE"></span>Werkvoorbereider</button>'
-    + '</div>'
-    + '</div>'
-    // Gantt chart below filter
-    + '<div class="gantt-wrap" id="ganttWrap">'
-    + '<div class="gantt-title">'
-    + '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'
-    + 'Gantt overzicht</div>'
-    + '<div id="ganttChart"></div>'
-    + '</div>';
-}
-
-// ── Master filter function ──────────────────────────────
-function applyFilters(fase, rol, btn) {
-  // Update fase
-  if (fase !== null) {
-    currentDetailFase = fase;
-    ganttFaseFilter   = fase === 'alle' ? 'alle'
-      : ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(fase) >= 0 ? 'fasering' : 'omgeving';
-    // Sync dtab buttons
-    document.querySelectorAll('.dtab').forEach(function(b){ b.classList.remove('active'); });
-    if (btn) btn.classList.add('active');
-  }
-
-  // Update rol (toggle)
-  if (rol !== null) {
-    activeDetailRol = (activeDetailRol === rol) ? '' : rol;
-    ganttRolFilter  = activeDetailRol;
-    var rmap = {engineer:'drfEng', projectleider:'drfPl', uitvoerder:'drfUitv', werkvoorbereider:'drfWb'};
-    Object.keys(rmap).forEach(function(k){
-      var b = document.getElementById(rmap[k]);
-      if (b) b.classList.toggle('active', activeDetailRol === k);
+  if(!n){
+    html+='<div class="bor-empty-state"><span class="bor-empty-state-icon">⚡</span>Nog geen boringen geregistreerd voor dit project.'
+      +(canEdit?'<br><button class="bor-add-btn" onclick="openBorModal('+rowData.row_idx+',\'\')">+ Boring toevoegen</button>':'')+'</div>';
+  } else {
+    html+='<div class="bor-cards">';
+    borData.forEach(function(b){
+      var bc=badgeCls(b.status);
+      html+='<div class="bor-card">'
+        +'<div class="bor-card-head">'
+        +'<div class="bor-card-nr">'+esc(b.boring_nr||'?')+'</div>'
+        +'<div class="bor-card-type">'+esc(b.type_boring||'Boring')+'</div>'
+        +(bc?'<div class="bor-card-status"><span class="badge '+bc+'">'+esc(b.status)+'</span></div>':'')
+        +(canEdit?'<button class="bor-card-edit-btn" onclick="openBorModal('+rowData.row_idx+',\'\');setTimeout(function(){selectBoring('+b.id+')},400)">✎</button>':'')
+        +'</div>'
+        +(b.locatie?'<div class="bor-card-loc">📍 '+esc(b.locatie)+'</div>':'')
+        +'<div class="bor-card-specs">'
+        +'<div class="bor-spec"><span class="bor-spec-label">Lengte</span><span class="bor-spec-val">'+(b.lengte_m!=null?b.lengte_m+' m':'—')+'</span></div>'
+        +'<div class="bor-spec"><span class="bor-spec-label">Ø</span><span class="bor-spec-val">'+(b.diameter_mm!=null?b.diameter_mm+' mm':'—')+'</span></div>'
+        +'<div class="bor-spec"><span class="bor-spec-label">Diepte</span><span class="bor-spec-val">'+(b.diepte_m!=null?b.diepte_m+' m':'—')+'</span></div>'
+        +'</div>'
+        +'<div class="bor-card-footer">'
+        +'<span class="bor-card-aannemer">'+(b.aannemer?'🏗 '+esc(b.aannemer):'')+'</span>'
+        +(b.vergunning_nodig?'<span class="bor-verg-badge">⚠ Vergunning</span>':'')
+        +'</div>'
+        +(b.opmerkingen?'<div style="margin-top:.375rem;font-size:10px;color:var(--text-2);background:#FFFBEB;border-radius:4px;padding:4px 7px;border-left:2px solid #D4880A;">'+esc(b.opmerkingen)+'</div>':'')
+        +'</div>';
     });
+    html+='</div>';
+
+    // Summary bar
+    html+='<div class="bor-summary-bar">'
+      +'<div class="bor-sum-item"><span class="bor-sum-num">'+n+'</span><span class="bor-sum-label">Boringen</span></div>'
+      +(totalLen?'<div class="bor-sum-item"><span class="bor-sum-num">'+totalLen+'</span><span class="bor-sum-label">m totaal</span></div>':'')
+      +'<div class="bor-sum-item"><span class="bor-sum-num">'+gereed+'</span><span class="bor-sum-label">Gereed</span></div>'
+      +(vergNodig?'<div class="bor-sum-item"><span class="bor-sum-num">'+vergNodig+'</span><span class="bor-sum-label">Vergunning nodig</span></div>':'')
+      +'</div>';
   }
+  html+='</div>';
+  return html;
+}
 
-  // Apply to both Gantt and task sections
-  renderGanttChart();
-  applyDetailFilters();
+// ══ BORINGEN CRUD (same as dashboard) ══
+var BOR_MAX   = 20;
+var borRowIdx = -1;
+var borData   = [];
+var borSelId  = null;
+var borStatus = 'Nog te starten';
 
-  // Show/hide fase sections
-  document.querySelectorAll('.fase-section').forEach(function(sec) {
-    var sf = sec.getAttribute('data-fase');
-    var show = currentDetailFase === 'alle' || sf === currentDetailFase;
-    sec.style.display = show ? '' : 'none';
-    if (show) {
-      sec.querySelector('.fase-section-body').classList.remove('collapsed');
-      sec.querySelector('.fase-section-header').classList.remove('collapsed');
-    }
+function borGet(wid){return fetch(SUPA_URL+'/rest/v1/boringen?werkpakket_id=eq.'+wid+'&order=boring_nr.asc&select=*',{headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.json();});}
+function borInsert(obj){return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(obj)}).then(function(r){return r.json();});}
+function borPatch(id,obj){return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(obj)}).then(function(r){return r.ok?null:Promise.reject(new Error('Patch failed'));});}
+function borDelete(id){return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete failed'));});}
+
+function openBorModal(wpId2,name){
+  borRowIdx=wpId2; borSelId=null; borStatus='Nog te starten';
+  document.getElementById('borModalTitle').textContent='Boringen — '+(rowData?rowData.projectnaam:'Project');
+  document.getElementById('borModalSub').textContent='Sleufloze technieken · max. '+BOR_MAX+' boringen';
+  document.getElementById('borOverlay').classList.add('open');
+  hideBorForm(); loadBoringen();
+}
+function closeBorModal(){
+  document.getElementById('borOverlay').classList.remove('open');
+  borSelId=null;
+  // Refresh cards in page
+  if(borData.length>-1) renderBorCardsInline();
+}
+function renderBorCardsInline(){
+  var sec=document.getElementById('sec-boringen');
+  if(sec){var newSec=document.createElement('div');newSec.innerHTML=borDetailSection();sec.replaceWith(newSec.firstChild);}
+}
+function loadBoringen(){
+  document.getElementById('borList').innerHTML='<div class="bor-empty"><span class="bor-empty-icon">⌛</span>Laden...</div>';
+  borGet(borRowIdx).then(function(data){borData=data||[];renderBorList();updateBorProgress();})
+    .catch(function(e){document.getElementById('borList').innerHTML='<div class="bor-empty">Fout: '+esc(e.message)+'</div>';});
+}
+function renderBorList(){
+  var list=document.getElementById('borList');
+  if(!borData.length){list.innerHTML='<div class="bor-empty"><span class="bor-empty-icon">⚡</span>Nog geen boringen.</div>';document.getElementById('btnBorAdd').disabled=false;return;}
+  var html='';
+  borData.forEach(function(b){
+    var bc=BOR_STATUS_CLS[b.status]||'N';
+    var dotColor={G:'#2d7a4f',L:'#1a5fa8',R:'#8a5c0a',B:'#b53030',N:'#888'}[bc]||'#ccc';
+    var meta=[b.type_boring,b.lengte_m?b.lengte_m+' m':'',b.locatie].filter(Boolean).join(' · ');
+    html+='<div class="bor-item'+(b.id===borSelId?' active':'')+'" onclick="selectBoring('+b.id+')">'
+      +'<div class="bor-item-nr">'+esc(b.boring_nr||'?')+'</div>'
+      +'<div class="bor-item-info"><div class="bor-item-name">'+esc(b.type_boring||'Boring')+(b.locatie?' — '+esc(b.locatie):'')+'</div><div class="bor-item-meta">'+esc(meta)+'</div></div>'
+      +'<span class="bor-status-dot" style="background:'+dotColor+'"></span></div>';
   });
+  list.innerHTML=html;
+  var ab=document.getElementById('btnBorAdd');ab.disabled=borData.length>=BOR_MAX;
 }
-
-function renderGanttChart() {
-  var chart = document.getElementById('ganttChart');
-  if (!chart) return;
-
-  // Filter phases — show all, group, or highlight specific fase
-  var phases = GANTT_PHASES.filter(function(p) {
-    var gff = ganttFaseFilter;
-    if (gff === 'fasering' && p.group !== 'fasering') return false;
-    if (gff === 'omgeving' && p.group !== 'omgeving') return false;
-    if (gff !== 'alle' && gff !== 'fasering' && gff !== 'omgeving') {
-      // Specific fase — show all fasering for context + matching omgeving
-      var mapLabel = (gff === 'Onderzoeksfase') ? 'Onderzoek' : gff;
-      if (p.group === 'fasering') { /* always show fasering for context */ }
-      else if (p.label !== mapLabel) return false;
-    }
-    if (ganttRolFilter && p.taskCols.length > 0) {
-      var hasRole = p.taskCols.some(function(ci){ return (TASK_ROLE_MAP[ci]||'engineer') === ganttRolFilter; });
-      if (!hasRole) return false;
-    }
-    return parseDatumG(ROW_DATA[p.datumCol]) !== null;
-  });
-
-  if (!phases.length) {
-    chart.innerHTML = '<div style="text-align:center;padding:1.5rem;font-size:12px;color:var(--text-3);font-style:italic">Geen data beschikbaar voor deze filter.</div>';
-    return;
-  }
-
-  var today = new Date(); today.setHours(0,0,0,0);
-  var allDates = [today];
-  phases.forEach(function(p){ var d=parseDatumG(ROW_DATA[p.datumCol]); if(d) allDates.push(d); });
-
-  var minD = new Date(Math.min.apply(null,allDates));
-  var maxD = new Date(Math.max.apply(null,allDates));
-  minD.setMonth(minD.getMonth()-2);
-  maxD.setMonth(maxD.getMonth()+2);
-  var totalMs = maxD - minD;
-
-  function pct(d){ return Math.max(0,Math.min(100,((d-minD)/totalMs)*100)); }
-
-  var todayPct = pct(today);
-  var html = '';
-
-  // Axis
-  html += '<div class="gantt-axis">';
-  for (var ti=0; ti<=3; ti++) {
-    var tDate = new Date(minD.getTime() + (totalMs/3)*ti);
-    html += '<div class="gantt-tick">'+fmtShortG(tDate)+'</div>';
-  }
-  html += '</div>';
-
-  // Bars
-  var fasering = phases.filter(function(p){return p.group==='fasering';});
-  phases.forEach(function(p, idx) {
-    var endD   = parseDatumG(ROW_DATA[p.datumCol]);
-    var isDone = ROW_DATA[p.gereedCol] === 'Ja';
-    if (!endD) return;
-
-    // Start: previous FASERING phase end, or 2 months before
-    var prevFas = fasering[fasering.indexOf(p)-1];
-    var startD  = (prevFas && parseDatumG(ROW_DATA[prevFas.datumCol]))
-      ? parseDatumG(ROW_DATA[prevFas.datumCol])
-      : new Date(endD.getTime() - 60*24*60*60*1000);
-
-    var x1 = pct(startD), x2 = pct(endD), w = Math.max(1.5, x2-x1);
-    var barColor = isDone ? '#8E8E93' : p.color;
-    var barLabel = fmtShortG(endD);
-
-    // Progress within bar
-    var doneTasks = p.taskCols.filter(function(ci){ return ROW_DATA[ci]==='Gereed'; }).length;
-    var totalTasks = p.taskCols.length;
-    var progPct = totalTasks > 0 ? Math.round(doneTasks/totalTasks*100) : (isDone?100:0);
-    var progBar = totalTasks > 0
-      ? '<div style="position:absolute;top:0;left:0;height:100%;width:'+progPct+'%;background:rgba(255,255,255,0.25);border-radius:4px;pointer-events:none"></div>'
-      : '';
-
-    html += '<div class="gantt-row">'
-      + '<div class="gantt-label" title="'+esc(p.label)+'">'+esc(p.label)+'</div>'
-      + '<div class="gantt-track">'
-        + '<div class="gantt-bar'+(isDone?' done':'')+'" style="left:'+x1+'%;width:'+w+'%;background:'+barColor+'" title="'+esc(p.label)+': t/m '+barLabel+(totalTasks?' · '+progPct+'% klaar':'')+'">'
-          + progBar + barLabel
-        + '</div>'
-        + '<div class="gantt-today" style="left:'+todayPct+'%"></div>'
-      + '</div>'
-    + '</div>';
-  });
-
-  // Legend
-  html += '<div class="gantt-legend">';
-  phases.forEach(function(p){
-    html += '<div class="gantt-leg-item"><div class="gantt-leg-dot" style="background:'+p.color+'"></div><span>'+esc(p.label)+'</span></div>';
-  });
-  html += '<div class="gantt-leg-item"><div class="gantt-leg-dot" style="background:#FF3B30"></div><span>Vandaag</span></div>';
-  html += '<div class="gantt-leg-item"><div class="gantt-leg-dot" style="background:rgba(255,255,255,.25);border:1px solid #ccc"></div><span>Voortgang</span></div>';
-  html += '</div>';
-
-  chart.innerHTML = html;
+function updateBorProgress(){
+  var n=borData.length,pct=Math.round(n/BOR_MAX*100);
+  document.getElementById('borProgressLabel').textContent=n+' van '+BOR_MAX+' boringen';
+  document.getElementById('borProgressBar').style.width=pct+'%';
+  document.getElementById('borProgressPct').textContent=pct+'%';
+  var bar=document.getElementById('borProgressBar');
+  bar.style.background=pct>=90?'linear-gradient(90deg,#ff6b35,#d70015)':pct>=60?'linear-gradient(90deg,#E8870C,#f5c542)':'linear-gradient(90deg,#0071E3,#34C759)';
 }
-
-
-
-var PROJECT_COMMENTS = []; // array of {id, tekst, updated_by, updated_at}
-var COMMENTS_FASE_KEY = 'project-comment'; // prefix in opmerkingen table
-
-function fmtCommentTime(iso) {
-  if (!iso) return '';
-  var d = new Date(iso);
-  var now = new Date();
-  var diff = Math.floor((now - d) / 1000);
-  if (diff < 60) return 'zojuist';
-  if (diff < 3600) return Math.floor(diff/60) + ' min geleden';
-  if (diff < 86400) return Math.floor(diff/3600) + ' uur geleden';
-  return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear()
-    +' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+function selectBoring(id){borSelId=id;var b=borData.find(function(x){return x.id===id;});if(!b)return;fillBorForm(b);renderBorList();}
+function newBoring(){
+  if(borData.length>=BOR_MAX){showToast('Maximum bereikt','error');return;}
+  borSelId=null;
+  fillBorForm({boring_nr:'B-'+String(borData.length+1).padStart(2,'0'),type_boring:'HDD',locatie:'',lengte_m:'',diameter_mm:'',diepte_m:'',aannemer:'',startdatum:'',einddatum:'',status:'Nog te starten',vergunning_nodig:false,vergunning_datum:'',opmerkingen:''});
+  renderBorList();
 }
-
-function commentInitials(name) {
-  return (name||'?').split(' ').filter(function(w){return w.length>0;})
-    .map(function(w){return w[0].toUpperCase();}).join('').slice(0,2);
+function fillBorForm(b){
+  document.getElementById('bfNr').value=b.boring_nr||'';document.getElementById('bfType').value=b.type_boring||'HDD';
+  document.getElementById('bfLocatie').value=b.locatie||'';document.getElementById('bfLengte').value=b.lengte_m!=null?b.lengte_m:'';
+  document.getElementById('bfDiameter').value=b.diameter_mm!=null?b.diameter_mm:'';document.getElementById('bfDiepte').value=b.diepte_m!=null?b.diepte_m:'';
+  document.getElementById('bfAannemer').value=b.aannemer||'';document.getElementById('bfStart').value=b.startdatum||'';
+  document.getElementById('bfEind').value=b.einddatum||'';document.getElementById('bfVergNodig').checked=!!b.vergunning_nodig;
+  document.getElementById('bfVergDatum').value=b.vergunning_datum||'';document.getElementById('bfOpm').value=b.opmerkingen||'';
+  borStatus=b.status||'Nog te starten';toggleVergDatum();renderBorStatusBtns();showBorForm();
 }
-
-async function loadComments() {
-  try {
-    var data = await supa.get('/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=like.'+COMMENTS_FASE_KEY+'*&select=id,fase,tekst,updated_by,updated_at&order=updated_at.asc');
-    PROJECT_COMMENTS = Array.isArray(data) ? data : [];
-    renderComments();
-    document.getElementById('commentsSection').style.display = 'block';
-  } catch(e) {
-    console.warn('Comments laden mislukt', e);
-  }
+function showBorForm(){document.getElementById('borFormPlaceholder').style.display='none';document.getElementById('borForm').style.display='';document.getElementById('btnBorSave').style.display='';document.getElementById('btnBorDelete').style.display=borSelId!==null?'':'none';}
+function hideBorForm(){document.getElementById('borFormPlaceholder').style.display='';document.getElementById('borForm').style.display='none';document.getElementById('btnBorSave').style.display='none';document.getElementById('btnBorDelete').style.display='none';}
+var BOR_STATUS_CLS={'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
+function setBorStatus(btn){borStatus=btn.getAttribute('data-status');renderBorStatusBtns();}
+function renderBorStatusBtns(){document.querySelectorAll('.bor-status-btn').forEach(function(btn){var s=btn.getAttribute('data-status'),bc=BOR_STATUS_CLS[s]||'N';btn.className='bor-status-btn'+(s===borStatus?' active-'+bc:'');});}
+function toggleVergDatum(){document.getElementById('bfVergDatumWrap').style.display=document.getElementById('bfVergNodig').checked?'':'none';}
+function saveBoring(){
+  var nr=(document.getElementById('bfNr').value||'').trim();
+  if(!nr){showToast('✗ Boring nr. verplicht','error');return;}
+  var dup=borData.find(function(b){return b.boring_nr===nr&&b.id!==borSelId;});
+  if(dup){showToast('✗ Boring nr. bestaat al','error');return;}
+  var payload={werkpakket_id:borRowIdx,boring_nr:nr,type_boring:document.getElementById('bfType').value||'HDD',locatie:document.getElementById('bfLocatie').value||null,lengte_m:parseFloat(document.getElementById('bfLengte').value)||null,diameter_mm:parseInt(document.getElementById('bfDiameter').value)||null,diepte_m:parseFloat(document.getElementById('bfDiepte').value)||null,aannemer:document.getElementById('bfAannemer').value||null,startdatum:document.getElementById('bfStart').value||null,einddatum:document.getElementById('bfEind').value||null,status:borStatus,vergunning_nodig:document.getElementById('bfVergNodig').checked,vergunning_datum:document.getElementById('bfVergDatum').value||null,opmerkingen:document.getElementById('bfOpm').value||null,updated_by:currentUser,updated_at:new Date().toISOString()};
+  document.getElementById('btnBorSave').disabled=true;
+  var promise;
+  if(borSelId!==null){promise=borPatch(borSelId,payload).then(function(){var idx=borData.findIndex(function(b){return b.id===borSelId;});if(idx>=0)borData[idx]=Object.assign(borData[idx],payload);showToast('✓ Opgeslagen','success');});}
+  else{payload.created_by=currentUser;payload.created_at=new Date().toISOString();promise=borInsert(payload).then(function(ins){var nb=Array.isArray(ins)?ins[0]:ins;borData.push(nb);borSelId=nb.id;showToast('✓ Toegevoegd','success');});}
+  promise.then(function(){document.getElementById('btnBorSave').disabled=false;renderBorList();updateBorProgress();showBorForm();})
+    .catch(function(err){document.getElementById('btnBorSave').disabled=false;showToast('✗ '+err.message,'error');});
 }
-
-function renderComments() {
-  var list = document.getElementById('commentsList');
-  var countEl = document.getElementById('commentsCount');
-  if (!list) return;
-  if (countEl) countEl.textContent = PROJECT_COMMENTS.length;
-
-  if (!PROJECT_COMMENTS.length) {
-    list.innerHTML = '<div class="comments-empty">Nog geen opmerkingen. Schrijf de eerste!</div>';
-    return;
-  }
-
-  var html = '';
-  PROJECT_COMMENTS.forEach(function(c) {
-    var isOwn = c.updated_by === currentUser;
-    var initials = commentInitials(c.updated_by);
-    html += '<div class="comment-item" data-id="'+esc(c.fase)+'">'
-      + '<div class="comment-avatar" title="'+esc(c.updated_by)+'">'+esc(initials)+'</div>'
-      + '<div class="comment-bubble'+(isOwn?' own':'')+'">'
-        + '<div class="comment-meta">'
-          + '<span class="comment-author">'+esc(c.updated_by)+'</span>'
-          + '<span class="comment-time">'+esc(fmtCommentTime(c.updated_at))+'</span>'
-          + (isOwn ? '<button class="comment-del" onclick="deleteComment(\''+esc(c.fase)+'\')" title="Verwijderen">✕</button>' : '')
-        + '</div>'
-        + '<div class="comment-text">'+esc(c.tekst)+'</div>'
-      + '</div></div>';
-  });
-  list.innerHTML = html;
-  // Scroll to bottom
-  list.scrollTop = list.scrollHeight;
-}
-
-async function postComment() {
-  var input = document.getElementById('commentInput');
-  var tekst = (input.value || '').trim();
-  if (!tekst) { input.focus(); return; }
-
-  var btn = document.getElementById('btnPostComment');
-  btn.disabled = true;
-
-  // Unique fase key using timestamp
-  var faseKey = COMMENTS_FASE_KEY + '-' + Date.now();
-
-  try {
-    await supa.post('/rest/v1/opmerkingen', {
-      row_idx:    ROW_IDX,
-      fase:       faseKey,
-      tekst:      tekst,
-      updated_by: currentUser,
-      updated_at: new Date().toISOString()
-    });
-    input.value = '';
-    input.style.height = 'auto';
-    await loadComments();
-  } catch(e) {
-    showToast('✗ Opslaan mislukt: ' + e.message, 'error');
-  } finally {
-    btn.disabled = false;
-    input.focus();
-  }
-}
-
-async function deleteComment(faseKey) {
-  if (!confirm('Opmerking verwijderen?')) return;
-  try {
-    await supa.req('DELETE', '/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.'+encodeURIComponent(faseKey));
-    await loadComments();
-  } catch(e) {
-    showToast('✗ Verwijderen mislukt: ' + e.message, 'error');
-  }
-}
-
-
-async function saveCell(ci, newVal, oldVal) {
-  showSaving(true);
-  try {
-    var cd = Object.assign({}, DB_ROW.cel_data||{});
-    if (newVal) cd[String(ci)]=newVal; else delete cd[String(ci)];
-    await supa.patch('/rest/v1/werkpakketten?row_idx=eq.'+ROW_IDX,
-      {cel_data:cd,updated_by:currentUser,updated_at:new Date().toISOString()});
-    DB_ROW.cel_data = cd;
-    showToast('&#10003; Opgeslagen','success');
-  } catch(err) {
-    ROW_DATA[ci] = oldVal; renderPage();
-    showToast('&#10007; '+err.message,'error');
-  } finally { showSaving(false); }
-}
-async function saveCells(updates, oldVals) {
-  showSaving(true);
-  try {
-    var cd = Object.assign({}, DB_ROW.cel_data||{});
-    Object.keys(updates).forEach(function(k){ if(updates[k]) cd[k]=updates[k]; else delete cd[k]; });
-    await supa.patch('/rest/v1/werkpakketten?row_idx=eq.'+ROW_IDX,
-      {cel_data:cd,updated_by:currentUser,updated_at:new Date().toISOString()});
-    DB_ROW.cel_data = cd;
-    showToast('&#10003; Opgeslagen','success');
-  } catch(err) {
-    Object.keys(oldVals).forEach(function(k){ ROW_DATA[parseInt(k)]=oldVals[k]; });
-    renderPage();
-    showToast('&#10007; '+err.message,'error');
-  } finally { showSaving(false); }
-}
-
-function showSaving(on) {
-  isSaving = on;
-  var el = document.getElementById('savingIndicator');
-  if (el) el.classList.toggle('show', on);
-}
-
-// ══ UTILS ══
-function positionPopup(el, e, w, h) {
-  var rect = e.currentTarget.getBoundingClientRect();
-  var left = rect.left, top = rect.bottom+6;
-  if (left+w > window.innerWidth)  left = window.innerWidth-w-5;
-  if (top +h > window.innerHeight) top  = rect.top-h-6;
-  el.style.top=top+'px'; el.style.left=left+'px';
-}
-
-function showToast(msg, type) {
-  var t = document.getElementById('toast');
-  t.innerHTML=msg; t.className='toast '+(type||'')+' show';
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(function(){ t.className='toast '+(type||''); },2500);
+function deleteBoring(){
+  if(borSelId===null)return;
+  var b=borData.find(function(x){return x.id===borSelId;});
+  if(!confirm('Verwijder '+(b?b.boring_nr:'boring')+'?'))return;
+  borDelete(borSelId).then(function(){borData=borData.filter(function(x){return x.id!==borSelId;});borSelId=null;showToast('✓ Verwijderd','success');renderBorList();updateBorProgress();hideBorForm();})
+    .catch(function(err){showToast('✗ '+err.message,'error');});
 }
 </script>
 </body>
