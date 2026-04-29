@@ -34,7 +34,7 @@
 }
 .bor-modal-icon {
   width:34px; height:34px; border-radius:10px;
-  background:linear-gradient(135deg,#0f4c9e,var(--accent));
+  background:linear-gradient(135deg,#0f4c9e,#0071E3);
   display:flex; align-items:center; justify-content:center; flex-shrink:0;
 }
 .bor-modal-title { font-size:14px; font-weight:600; color:var(--text); }
@@ -58,7 +58,7 @@
   border-radius:3px; overflow:hidden;
 }
 .bor-progress-bar {
-  height:100%; background:linear-gradient(90deg,var(--accent),#34C759);
+  height:100%; background:linear-gradient(90deg,#0071E3,#34C759);
   border-radius:3px; transition:width .3s ease;
 }
 .bor-progress-pct {
@@ -536,7 +536,7 @@ function updateBorProgress() {
     ? 'linear-gradient(90deg,#ff6b35,#d70015)'
     : pct >= 60
       ? 'linear-gradient(90deg,#E8870C,#f5c542)'
-      : 'linear-gradient(90deg,var(--accent),#34C759)';
+      : 'linear-gradient(90deg,#0071E3,#34C759)';
 }
 
 // ══ SELECT / NEW ══
