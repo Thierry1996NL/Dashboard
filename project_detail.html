@@ -507,6 +507,32 @@
   .dxf-status.info{ background:var(--l-bg); color:var(--l-fg); }
   .map-fsec { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); padding-bottom:.25rem; border-bottom:1px solid var(--border); }
 
+  /* Coördinaten tabel */
+  .coord-table { border:1px solid var(--border-md); border-radius:var(--r-md); overflow:hidden; }
+  .coord-row { display:grid; grid-template-columns:28px 48px 1fr 1fr; align-items:center; border-bottom:1px solid var(--border); }
+  .coord-row:last-child { border-bottom:none; }
+  .coord-row-head { background:var(--surface2); }
+  .coord-cell-pin  { display:flex; align-items:center; justify-content:center; padding:.375rem .25rem; }
+  .coord-cell-lbl  { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); padding:.375rem 0; }
+  .coord-cell-x, .coord-cell-y { padding:.375rem .625rem; }
+  .coord-pt-lbl { font-size:11px; font-weight:500; color:var(--text-2); text-transform:none; letter-spacing:0; }
+  .coord-val { font-size:12px; font-family:'DM Mono',monospace; color:var(--text); font-variant-numeric:tabular-nums; }
+  .coord-pin { width:20px; height:20px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; color:#fff; font-family:'DM Mono',monospace; }
+  .coord-pin.p1 { background:#0057FF; }
+  .coord-pin.p2 { background:#D70015; }
+
+  /* Omdraaien knop */
+  .btn-swap-pts {
+    display:inline-flex; align-items:center; gap:5px; padding:4px 11px;
+    font-size:11px; font-weight:600; border:1px solid var(--border-md);
+    border-radius:20px; background:var(--surface2); color:var(--text-2);
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
+    white-space:nowrap;
+  }
+  .btn-swap-pts:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .btn-swap-pts svg { transition:transform .25s; }
+  .btn-swap-pts:hover svg { transform:rotate(180deg); }
+
 </style>
 </head>
 <body>
@@ -1760,7 +1786,10 @@ function switchBormTab(tab) {
   document.getElementById('panelKaart').style.display    = tab === 'kaart'    ? '' : 'none';
   document.getElementById('tabGegevens').classList.toggle('active', tab === 'gegevens');
   document.getElementById('tabKaart').classList.toggle('active',    tab === 'kaart');
-  if (tab === 'kaart') setTimeout(function(){ if(borMap) borMap.invalidateSize(); }, 80);
+  if (tab === 'kaart') {
+    updateCoordDisplay();
+    setTimeout(function(){ if(borMap) borMap.invalidateSize(); }, 80);
+  }
 }
 
 // ══════════════════════════════════════════
@@ -2091,6 +2120,34 @@ function parseLine(lines, start) {
   return null;
 }
 
+function updateCoordDisplay() {
+  var hasDxf = currentDxf && currentDxf.length >= 2;
+  var dispEl   = document.getElementById('coordDisplay');
+  var manualEl = document.getElementById('coordManual');
+  if (dispEl)   dispEl.style.display   = hasDxf ? '' : 'none';
+  if (manualEl) manualEl.style.display = hasDxf ? 'none' : '';
+
+  if (!hasDxf) return;
+  var p1 = currentDxf[0];
+  var p2 = currentDxf[currentDxf.length - 1];
+  var fmt = function(v) { return Math.round(v).toLocaleString('nl-NL'); };
+  document.getElementById('coordP1X').textContent = fmt(p1[0]);
+  document.getElementById('coordP1Y').textContent = fmt(p1[1]);
+  document.getElementById('coordP2X').textContent = fmt(p2[0]);
+  document.getElementById('coordP2Y').textContent = fmt(p2[1]);
+}
+
+function swapDxfPoints() {
+  if (!currentDxf || currentDxf.length < 2) return;
+  currentDxf = currentDxf.slice().reverse();
+  // Update hidden RD fields to new punt 1
+  document.getElementById('bfRdX').value = Math.round(currentDxf[0][0]);
+  document.getElementById('bfRdY').value = Math.round(currentDxf[0][1]);
+  updateCoordDisplay();
+  refreshDxfLine();
+  showToast('↕ Punt 1 en 2 omgedraaid', 'info');
+}
+
 function refreshDxfLine() {
   if (!borMap) return;
 
@@ -2165,6 +2222,9 @@ function refreshDxfLine() {
     document.getElementById('bfRdX').value = Math.round(currentDxf[0][0]);
     document.getElementById('bfRdY').value = Math.round(currentDxf[0][1]);
   }
+
+  // ── Coördinaten tabel bijwerken ──
+  updateCoordDisplay();
 }
 
 function clearDxf() {
@@ -2176,6 +2236,10 @@ function clearDxf() {
   document.getElementById('btnClearDxf').style.display = 'none';
   document.getElementById('dxfStatus').style.display   = 'none';
   document.getElementById('dxfFileInput').value = '';
+  // Reset coord display
+  document.getElementById('bfRdX').value = '';
+  document.getElementById('bfRdY').value = '';
+  updateCoordDisplay();
 }
 
 function showDxfStatus(msg, type) {
@@ -2669,20 +2733,53 @@ async function deleteBorm() {
             <!-- Kaart -->
             <div id="borMap"></div>
 
-            <!-- Coördinaten (RD New) -->
-            <div>
+            <!-- Punt 1 & 2 coördinaten display + wissel knop -->
+            <div id="coordDisplay" style="display:none">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.375rem">
+                <div class="map-fsec" style="border:none;padding:0">Coördinaten boorlijn (RD New)</div>
+                <button class="btn-swap-pts" onclick="swapDxfPoints()" title="Punt 1 en 2 omdraaien">
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <path d="M2 5h10M9 2l3 3-3 3M14 11H4M7 8l-3 3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  Omdraaien
+                </button>
+              </div>
+              <div class="coord-table">
+                <div class="coord-row coord-row-head">
+                  <div class="coord-cell-pin"></div>
+                  <div class="coord-cell-lbl">Punt</div>
+                  <div class="coord-cell-x">X (m Oost)</div>
+                  <div class="coord-cell-y">Y (m Noord)</div>
+                </div>
+                <div class="coord-row">
+                  <div class="coord-cell-pin"><div class="coord-pin p1">1</div></div>
+                  <div class="coord-cell-lbl coord-pt-lbl">Start</div>
+                  <div class="coord-cell-x"><span class="coord-val" id="coordP1X">—</span></div>
+                  <div class="coord-cell-y"><span class="coord-val" id="coordP1Y">—</span></div>
+                </div>
+                <div class="coord-row">
+                  <div class="coord-cell-pin"><div class="coord-pin p2">2</div></div>
+                  <div class="coord-cell-lbl coord-pt-lbl">Eind</div>
+                  <div class="coord-cell-x"><span class="coord-val" id="coordP2X">—</span></div>
+                  <div class="coord-cell-y"><span class="coord-val" id="coordP2Y">—</span></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fallback: handmatig startpunt als geen DXF geladen -->
+            <div id="coordManual">
               <div class="map-fsec" style="margin-bottom:.375rem">
-                Startpunt boring — RD New coördinaten
+                Startpunt boring — RD New
                 <span style="font-size:9px;font-weight:400;color:var(--text-3);margin-left:.5rem">(klik op de kaart om te plaatsen)</span>
               </div>
               <div class="map-coord-row">
                 <div class="borm-field">
                   <label class="borm-lbl">X (m Oost)</label>
-                  <input class="borm-inp" id="bfRdX" type="number" placeholder="bijv. 233000" step="1" oninput="onRdCoordInput()">
+                  <input class="borm-inp" id="bfRdX" type="number" placeholder="bijv. 193000" step="1" oninput="onRdCoordInput()">
                 </div>
                 <div class="borm-field">
                   <label class="borm-lbl">Y (m Noord)</label>
-                  <input class="borm-inp" id="bfRdY" type="number" placeholder="bijv. 582000" step="1" oninput="onRdCoordInput()">
+                  <input class="borm-inp" id="bfRdY" type="number" placeholder="bijv. 558000" step="1" oninput="onRdCoordInput()">
                 </div>
               </div>
               <div class="map-coord-hint">Nederland: X 0–280.000 · Y 300.000–625.000</div>
