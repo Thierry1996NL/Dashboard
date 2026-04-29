@@ -2106,7 +2106,6 @@ function parseDxf(text, filename) {
     document.getElementById('dxfDropArea').classList.add('has-file');
     document.getElementById('dxfDropLabel').textContent = filename;
     document.getElementById('btnClearDxf').style.display = '';
-    document.getElementById('btnExportDxf').style.display = '';
     showDxfStatus('✓ '+currentDxf.length+' punten geladen · '+Math.round(totalLen)+' m · '+polylines.length+' polyline(s) gevonden', 'ok');
 
     // Automatisch lengte invullen als nog leeg
@@ -2169,8 +2168,15 @@ function updateCoordDisplay() {
   var hasDxf = currentDxf && currentDxf.length >= 2;
   var dispEl   = document.getElementById('coordDisplay');
   var manualEl = document.getElementById('coordManual');
+  var dxfBtn   = document.getElementById('btnExportDxf');
   if (dispEl)   dispEl.style.display   = hasDxf ? '' : 'none';
   if (manualEl) manualEl.style.display = hasDxf ? 'none' : '';
+  if (dxfBtn) {
+    dxfBtn.style.display = '';
+    dxfBtn.disabled      = false;
+    dxfBtn.style.opacity = '1';
+    dxfBtn.title         = 'DXF downloaden';
+  }
 
   if (!hasDxf) return;
   var p1 = currentDxf[0];
@@ -2297,7 +2303,6 @@ function clearDxf() {
   document.getElementById('dxfDropArea').classList.remove('has-file');
   document.getElementById('dxfDropLabel').textContent = 'Klik of sleep een DXF bestand hierheen';
   document.getElementById('btnClearDxf').style.display = 'none';
-  document.getElementById('btnExportDxf').style.display = 'none';
   document.getElementById('dxfStatus').style.display   = 'none';
   document.getElementById('dxfFileInput').value = '';
   // Reset coord display
@@ -2315,35 +2320,54 @@ function showDxfStatus(msg, type) {
 // EXPORT: DXF
 // ══════════════════════════════════════════
 function exportBoringDxf() {
-  if (!currentDxf || !currentDxf.length) {
-    showToast('Geen boorlijn geladen om te exporteren', 'error'); return;
-  }
   var code = getBoorCode();
+
+  // Gebruik opgeslagen polyline, of val terug op startpunt coordinaten
+  var pts = currentDxf && currentDxf.length >= 2 ? currentDxf : null;
+  if (!pts) {
+    var rdX = parseFloat(document.getElementById('bfRdX').value);
+    var rdY = parseFloat(document.getElementById('bfRdY').value);
+    if (!rdX || !rdY) { showToast('Geen coördinaten beschikbaar om te exporteren', 'error'); return; }
+    pts = [[rdX, rdY]]; // enkel startpunt
+  }
+
   var lines = [];
   lines.push('0','SECTION','2','HEADER',
     '9','$ACADVER','1','AC1015',
     '0','ENDSEC');
   lines.push('0','SECTION','2','ENTITIES');
-  lines.push('0','LWPOLYLINE');
-  lines.push('5','1');
-  lines.push('8','BORINGEN');
-  lines.push('100','AcDbEntity');
-  lines.push('100','AcDbPolyline');
-  lines.push('90', String(currentDxf.length));
-  lines.push('70','0');
-  currentDxf.forEach(function(pt) {
-    lines.push('10', pt[0].toFixed(3));
-    lines.push('20', pt[1].toFixed(3));
-  });
-  // Label op middelpunt
-  if (currentDxf.length >= 2) {
-    var mid = Math.floor(currentDxf.length / 2);
-    var mx = currentDxf[mid][0], my = currentDxf[mid][1];
+
+  if (pts.length >= 2) {
+    // Volledige polyline
+    lines.push('0','LWPOLYLINE');
+    lines.push('5','1');
+    lines.push('8','BORINGEN');
+    lines.push('100','AcDbEntity');
+    lines.push('100','AcDbPolyline');
+    lines.push('90', String(pts.length));
+    lines.push('70','0');
+    pts.forEach(function(pt) {
+      lines.push('10', pt[0].toFixed(3));
+      lines.push('20', pt[1].toFixed(3));
+    });
+    // Label op middelpunt
+    var mid = Math.floor(pts.length / 2);
+    var mx = pts[mid][0], my = pts[mid][1];
     lines.push('0','TEXT','8','LABELS',
       '10',mx.toFixed(3),'20',my.toFixed(3),'30','0.0',
       '40','2.0','1',code,'72','1',
       '11',mx.toFixed(3),'21',my.toFixed(3),'31','0.0');
+  } else {
+    // Alleen een punt
+    lines.push('0','POINT','8','BORINGEN',
+      '10',pts[0][0].toFixed(3),
+      '20',pts[0][1].toFixed(3),
+      '30','0.0');
+    lines.push('0','TEXT','8','LABELS',
+      '10',pts[0][0].toFixed(3),'20',(pts[0][1]+2).toFixed(3),'30','0.0',
+      '40','2.0','1',code);
   }
+
   lines.push('0','ENDSEC','0','EOF');
   var blob = new Blob([lines.join('\n')], {type:'application/dxf'});
   var a = document.createElement('a');
@@ -2969,7 +2993,7 @@ async function deleteBorm() {
             <div>
               <div class="map-fsec" style="margin-bottom:.5rem">Exporteren</div>
               <div style="display:flex;gap:.5rem;flex-wrap:wrap">
-                <button class="btn-export-map" id="btnExportDxf" onclick="exportBoringDxf()" style="display:none">
+                <button class="btn-export-map" id="btnExportDxf" onclick="exportBoringDxf()" title="DXF downloaden">
                   <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
                   DXF downloaden
                 </button>
