@@ -691,6 +691,54 @@
   }
   .btn-planning:hover { background:rgba(0,0,0,0.09); color:var(--text); }
 
+  /* ── PROJECTEN HOME TAB ── */
+  .tab-home {
+    display:inline-flex; align-items:center; gap:5px;
+    background:var(--navy) !important; color:#fff !important;
+    border-color:var(--navy) !important;
+    font-weight:600 !important;
+    box-shadow:0 2px 8px rgba(0,0,0,0.18);
+  }
+  .tab-home:hover { background:var(--navy-2) !important; }
+  .tab-home.active {
+    background:var(--navy) !important; color:#fff !important;
+    border-color:var(--navy) !important;
+  }
+  .tab-home .home-icon { opacity:.7; font-size:11px; }
+
+  /* ── COMPACT PROJECTEN TABLE ── */
+  .tbl-compact td  { padding:4px 7px !important; font-size:11px !important; }
+  .tbl-compact th  { padding:5px 7px !important; font-size:10px !important; }
+  .tbl-compact .edit-col-cell { font-size:12px !important; }
+
+  /* Role avatars in projecten view */
+  .role-avatar {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:22px; height:22px; border-radius:50%;
+    font-size:8px; font-weight:700; color:#fff;
+    flex-shrink:0; letter-spacing:.02em;
+  }
+  .role-row { display:flex; align-items:center; gap:4px; }
+  .role-name { font-size:11px; color:var(--text-2); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px; }
+  .role-empty { font-size:10px; color:var(--text-3); font-style:italic; }
+
+  /* Projectnr compact pill */
+  .proj-nr-pill {
+    display:inline-flex; align-items:center; gap:3px;
+    font-size:9px; font-weight:600; padding:1px 6px; border-radius:5px;
+    background:var(--surface2); color:var(--text-3); border:1px solid var(--border);
+    font-variant-numeric:tabular-nums; letter-spacing:.03em; white-space:nowrap;
+  }
+  .proj-nr-ext { background:var(--accent-2); color:var(--accent); border-color:rgba(0,113,227,0.18); }
+
+  /* Lengte compact */
+  .lengte-val { font-size:11px; font-variant-numeric:tabular-nums; color:var(--text-2); }
+  .lengte-unit { font-size:9px; color:var(--text-3); margin-left:1px; }
+
+  /* Section divider in "Projectinfo" header */
+  .grp-projectinfo th { background: linear-gradient(to right, #f0f4ff, var(--surface2)); }
+  .grp-rollen th { background: linear-gradient(to right, #f0fff4, var(--surface2)); }
+
   /* ══ ROLLEN MODAL ══ */
   .btn-rollen {
     display:inline-flex; align-items:center; gap:4px; padding:5px 13px;
@@ -1100,9 +1148,13 @@
     <!-- Fase tabs + search + filters in één balk -->
     <div class="top-controls">
       <div class="fase-rows">
-        <!-- Rij 1: Alle fases knop -->
+        <!-- Rij 1: Projecten (home) + Alle fases -->
         <div class="fase-row fase-row-top">
-          <button class="tab active" onclick="setFase('alle',this)">Alle fases</button>
+          <button class="tab tab-home active" onclick="setFase('projecten',this)">
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="opacity:.8"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+            Projecten
+          </button>
+          <button class="tab" onclick="setFase('alle',this)">Alle fases</button>
         </div>
         <!-- Rij 2: Fasering -->
         <div class="fase-row">
@@ -1542,12 +1594,12 @@ function supaPost(path, body)  { return supaReq('POST',  path, body); }
 
 // ══ STATE ══
 var COLS = [
-  {i:0,f:"",n:"Projectnummer intern"},{i:1,f:"",n:"Projectnummer extern"},{i:2,f:"",n:"Projectnaam"},
-  {i:3,f:"",n:"APD Bouwdeel"},{i:4,f:"",n:"Liander Tracédeel"},{i:5,f:"",n:"WP nummer"},
-  {i:6,f:"",n:"Tracé start"},{i:7,f:"",n:"Tracé eind"},
-  {i:9,f:"",n:"Lengte nieuw (m)"},{i:10,f:"",n:"Lengte verwijderen (m)"},{i:11,f:"",n:"Overdracht VO aannemer"},
-  {i:8,f:"Rollen & Gebruikers",n:"Engineer"},
-  {i:179,f:"Rollen & Gebruikers",n:"Projectleider"},{i:180,f:"Rollen & Gebruikers",n:"Uitvoerder"},{i:181,f:"Rollen & Gebruikers",n:"Werkvoorbereider"},
+  {i:0,f:"",n:"Projectnummer intern",s:"Nr. int."},{i:1,f:"",n:"Projectnummer extern",s:"Nr. ext."},{i:2,f:"",n:"Projectnaam",s:"Projectnaam"},
+  {i:3,f:"",n:"APD Bouwdeel",s:"APD"},{i:4,f:"",n:"Liander Tracédeel",s:"Tracédeel"},{i:5,f:"",n:"WP nummer",s:"WP"},
+  {i:6,f:"",n:"Tracé start",s:"Start"},{i:7,f:"",n:"Tracé eind",s:"Eind"},
+  {i:9,f:"",n:"Lengte nieuw (m)",s:"L.nieuw"},{i:10,f:"",n:"Lengte verwijderen (m)",s:"L.verwijd."},{i:11,f:"",n:"Overdracht VO aannemer",s:"Overdracht VO"},
+  {i:8,f:"Rollen & Gebruikers",n:"Engineer",s:"Engineer"},
+  {i:179,f:"Rollen & Gebruikers",n:"Projectleider",s:"Projectleider"},{i:180,f:"Rollen & Gebruikers",n:"Uitvoerder",s:"Uitvoerder"},{i:181,f:"Rollen & Gebruikers",n:"Werkvoorbereider",s:"WVB"},
   {i:12,f:"Analyse",n:"Stukken VO controleren"},{i:13,f:"Analyse",n:"VO inhoudelijk beoordelen"},
   {i:14,f:"Analyse",n:"Verificatieplan opstellen"},{i:15,f:"Analyse",n:"Eisen importeren Relatics"},
   {i:16,f:"Analyse",n:"VO QuickScan beoordelen"},{i:17,f:"Analyse",n:"Taakstellend Budget"},
@@ -1689,7 +1741,7 @@ var ROWS        = [];
 var DB_ROWS     = [];
 var OPMERKINGEN = {};
 var CHANGES     = {};
-var currentFase = 'alle';
+var currentFase = 'projecten';
 var currentMode = 'viewer';
 var currentUser = '';
 var sortCol = -1, sortDir = 1;
@@ -2029,6 +2081,9 @@ function applyModeUI() {
   document.getElementById('app').className = currentMode === 'editor' ? 'mode-editor' : '';
   document.getElementById('editorNotice').style.display = currentMode === 'editor' ? 'flex' : 'none';
   document.getElementById('exportGroup').style.display  = currentMode === 'viewer' ? 'flex' : 'none';
+  // Set initial compact scroll height (default is projecten)
+  var initScroll = document.querySelector('.tbl-scroll');
+  if (initScroll) initScroll.style.maxHeight = 'calc(100vh - 230px)';
 }
 
 function toggleMode() {
@@ -2951,7 +3006,10 @@ function deleteProject() { archiveProject(); }
 // ══ RENDER HELPERS ══
 function visibleCols() {
   var base;
-  if (currentFase === 'alle') {
+  if (currentFase === 'projecten') {
+    // Homepage: only projectinfo + roles, no fase columns
+    return COLS.filter(function(col) { return col.f === '' || col.f === 'Rollen & Gebruikers'; });
+  } else if (currentFase === 'alle') {
     base = COLS.filter(function(col) {
       return col.f === '' || col.f === 'Rollen & Gebruikers' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(col.f) >= 0;
     });
@@ -3037,8 +3095,18 @@ function render() {
   groups.forEach(function(g) {
     var label = g.f || 'Projectinfo';
     var s = FASE_STYLE[g.f];
-    var style = s ? 'color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color : 'color:var(--text-3);background:var(--surface2)';
-    html += '<th colspan="'+g.count+'" style="'+style+'">'+esc(label)+'</th>';
+    var style, icon = '';
+    if (g.f === 'Rollen & Gebruikers') {
+      style = 'color:#186030;background:#EDF9F1;border-bottom:2px solid #1A7F3C';
+      icon  = '<svg width="9" height="9" viewBox="0 0 16 16" fill="none" style="vertical-align:-1px;margin-right:4px"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M1 14c0-2.8 2.2-5 5-5h4c2.8 0 5 2.2 5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>';
+      label = 'Team';
+    } else if (!g.f) {
+      style = 'color:#0050A0;background:#E8F2FF;border-bottom:2px solid #0071E3';
+      icon  = '<svg width="9" height="9" viewBox="0 0 16 16" fill="none" style="vertical-align:-1px;margin-right:4px"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M4 7h8M4 10h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>';
+    } else {
+      style = s ? 'color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color : 'color:var(--text-3);background:var(--surface2)';
+    }
+    html += '<th colspan="'+g.count+'" style="'+style+'">'+icon+esc(label)+'</th>';
   });
   html += '</tr><tr class="col-hdr-row">';
   if (currentMode==='editor') html += '<th class="edit-col-hdr" style="background:var(--surface2);border-bottom:1px solid var(--border-md);width:32px;font-size:10px;font-weight:600;color:var(--text-3);padding:4px 6px;white-space:nowrap;text-align:center">Bewerken</th>';
@@ -3049,7 +3117,11 @@ function render() {
     var bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
     var hasFilter = activeFilters[col.i] && !activeFilters[col.i].allSelected;
     var filterCls = hasFilter ? ' has-filter' : '';
-    var minW = Math.max(80, col.n.length * 7) + 'px';
+    var isCompact = currentFase === 'projecten';
+    var colLabel  = (isCompact && col.s) ? col.s : col.n;
+    var minW = isCompact
+      ? Math.max(48, colLabel.length * 6) + 'px'
+      : Math.max(80, col.n.length * 7) + 'px';
     // Role dot in header for task cols
     var rolDotHdr = '';
     if (col.f !== '' && col.f !== 'Rollen & Gebruikers' && TASK_ROLE_MAP && ROLE_COLOR_MAP) {
@@ -3058,7 +3130,7 @@ function render() {
       rolDotHdr = '<span class="col-rol-dot" style="background:'+rColor+'" title="'+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"></span>';
     }
     html += '<th class="'+filterCls+'" style="'+bl+';min-width:'+minW+'" title="'+esc(col.n)+'">'
-      + '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'
+      + '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(colLabel)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'
       + ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>'
       + '</th>';
   });
@@ -3085,6 +3157,42 @@ function render() {
         var bl       = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
         var cls      = isBase ? 'col-base' : (col.i===5 ? 'col-wp' : '');
         var isVirt   = VIRT_COLS.indexOf(col.i) >= 0;
+
+        // ── PROJECTEN VIEW: rich role cells ──
+        if (currentFase === 'projecten' && col.f === 'Rollen & Gebruikers') {
+          var rColors = {8:'#0071E3',179:'#1A7F3C',180:'#8E6000',181:'#6F35CE'};
+          var rColor  = rColors[col.i] || '#555';
+          var initials = raw ? raw.split(' ').filter(function(w){return w;}).map(function(w){return w[0].toUpperCase();}).join('').slice(0,2) : '';
+          var roleCell;
+          if (raw) {
+            roleCell = '<div class="role-row">'
+              + '<span class="role-avatar" style="background:'+rColor+'" title="'+val+'">'+initials+'</span>'
+              + '<span class="role-name" title="'+val+'">'+val+'</span>'
+              + '</div>';
+          } else {
+            roleCell = '<span class="role-empty">—</span>';
+          }
+          var clickAttrR = (currentMode==='editor') ? ' onclick="openTextPicker(event,'+actualIdx+','+col.i+')"' : '';
+          html += '<td class="'+(currentMode==='editor'?'text-cell':'')+'" style="'+bl+'"'+clickAttrR+'>'+roleCell+'</td>';
+          return;
+        }
+
+        // ── PROJECTEN VIEW: compact number pills for projectnummers ──
+        if (currentFase === 'projecten' && (col.i === 0 || col.i === 1)) {
+          var pillCls = col.i === 1 ? 'proj-nr-pill proj-nr-ext' : 'proj-nr-pill';
+          var pillCell = raw ? '<span class="'+pillCls+'">'+val+'</span>' : '<span style="color:var(--text-3);font-size:10px">—</span>';
+          var clickAttrN = (currentMode==='editor') ? ' onclick="openTextPicker(event,'+actualIdx+','+col.i+')"' : '';
+          html += '<td class="'+(currentMode==='editor'?'text-cell':'')+'" style="'+bl+'"'+clickAttrN+'>'+pillCell+'</td>';
+          return;
+        }
+
+        // ── PROJECTEN VIEW: compact lengte cells ──
+        if (currentFase === 'projecten' && (col.i === 9 || col.i === 10)) {
+          var lenCell2 = raw ? '<span class="lengte-val">'+val+'<span class="lengte-unit">m</span></span>' : '<span style="color:var(--text-3);font-size:10px">—</span>';
+          var clickAttrL = (currentMode==='editor') ? ' onclick="openTextPicker(event,'+actualIdx+','+col.i+')"' : '';
+          html += '<td class="'+(currentMode==='editor'?'text-cell':'')+'" style="'+bl+'"'+clickAttrL+'>'+lenCell2+'</td>';
+          return;
+        }
 
         if (isVirt) {
           // ── Col 310: Boringen badge ──
@@ -3159,6 +3267,12 @@ function render() {
   }
   html += '</tbody>';
   document.getElementById('tbl').innerHTML = html;
+  // Apply compact class
+  var tblEl = document.getElementById('tbl');
+  if (tblEl) {
+    if (currentFase === 'projecten') tblEl.classList.add('tbl-compact');
+    else tblEl.classList.remove('tbl-compact');
+  }
 }
 
 function sortBy(ci) {
@@ -3170,6 +3284,11 @@ function setFase(f, btn) {
   document.querySelectorAll('.tab').forEach(function(b) { b.classList.remove('active'); });
   btn.classList.add('active');
   sortCol = -1;
+  // Compact scroll height for projecten (fewer cols, more vertical space)
+  var tblScroll = document.querySelector('.tbl-scroll');
+  if (tblScroll) {
+    tblScroll.style.maxHeight = (f === 'projecten') ? 'calc(100vh - 230px)' : '';
+  }
   render();
 }
 
