@@ -533,6 +533,17 @@
   .btn-swap-pts svg { transition:transform .25s; }
   .btn-swap-pts:hover svg { transform:rotate(180deg); }
 
+  /* Export knoppen op kaart tab */
+  .btn-export-map {
+    display:inline-flex; align-items:center; gap:5px; padding:5px 13px;
+    font-size:11px; font-weight:600; border:1px solid var(--border-md);
+    border-radius:var(--r); background:var(--surface2); color:var(--text-2);
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
+  }
+  .btn-export-map:hover { background:var(--navy); color:#fff; border-color:var(--navy); }
+  .btn-export-xl { background:var(--g-fg); color:#fff; border-color:var(--g-fg); }
+  .btn-export-xl:hover { background:#004d2a; }
+
 </style>
 </head>
 <body>
@@ -2062,6 +2073,7 @@ function parseDxf(text, filename) {
     document.getElementById('dxfDropArea').classList.add('has-file');
     document.getElementById('dxfDropLabel').textContent = filename;
     document.getElementById('btnClearDxf').style.display = '';
+    document.getElementById('btnExportDxf').style.display = '';
     showDxfStatus('✓ '+currentDxf.length+' punten geladen · '+Math.round(totalLen)+' m · '+polylines.length+' polyline(s) gevonden', 'ok');
 
     // Automatisch lengte invullen als nog leeg
@@ -2205,13 +2217,31 @@ function refreshDxfLine() {
   );
   borDxfMarkers.push(m2);
 
-  // ── Boringcode label: in het midden van de lijn ──
-  var midIdx  = Math.floor(wgsPoints.length / 2);
-  var midPt   = wgsPoints[midIdx];
-  var lIcon   = L.divIcon({
+  // ── Boringcode label: geometrisch midden van de lijn, gecentreerd ──
+  // Bereken het punt op de lijn dat op precies 50% van de totale lengte ligt
+  var totalDist = 0;
+  for (var di = 1; di < wgsPoints.length; di++) {
+    var dLat = wgsPoints[di][0]-wgsPoints[di-1][0], dLng = wgsPoints[di][1]-wgsPoints[di-1][1];
+    totalDist += Math.sqrt(dLat*dLat + dLng*dLng);
+  }
+  var halfDist = totalDist / 2, cumDist = 0, midPt = wgsPoints[0];
+  for (var di2 = 1; di2 < wgsPoints.length; di2++) {
+    var dLat2 = wgsPoints[di2][0]-wgsPoints[di2-1][0], dLng2 = wgsPoints[di2][1]-wgsPoints[di2-1][1];
+    var segLen = Math.sqrt(dLat2*dLat2 + dLng2*dLng2);
+    if (cumDist + segLen >= halfDist) {
+      var t = (halfDist - cumDist) / segLen;
+      midPt = [wgsPoints[di2-1][0] + t*dLat2, wgsPoints[di2-1][1] + t*dLng2];
+      break;
+    }
+    cumDist += segLen;
+  }
+  // Schat labelbreedtte: ~7px per karakter + 16px padding
+  var labelW = Math.max(code.length * 7 + 16, 32);
+  var lIcon = L.divIcon({
     className:'',
     html: markerHtmlLabel(code, '#1D1D2E'),
-    iconSize:[null, null], iconAnchor:[-4, -6]
+    iconSize:  [labelW, 22],
+    iconAnchor:[Math.round(labelW/2), 11]
   });
   borLabelMarker = L.marker(midPt, { icon:lIcon, interactive:false, zIndexOffset:2000 }).addTo(borMap);
   borDxfMarkers.push(borLabelMarker);
@@ -2234,6 +2264,7 @@ function clearDxf() {
   document.getElementById('dxfDropArea').classList.remove('has-file');
   document.getElementById('dxfDropLabel').textContent = 'Klik of sleep een DXF bestand hierheen';
   document.getElementById('btnClearDxf').style.display = 'none';
+  document.getElementById('btnExportDxf').style.display = 'none';
   document.getElementById('dxfStatus').style.display   = 'none';
   document.getElementById('dxfFileInput').value = '';
   // Reset coord display
@@ -2258,6 +2289,107 @@ closeBorModal = function() {
   currentDxf = null;
   _origCloseBorModal();
 };
+// ══════════════════════════════════════════
+// EXPORT: DXF
+// ══════════════════════════════════════════
+function exportBoringDxf() {
+  if (!currentDxf || !currentDxf.length) {
+    showToast('Geen boorlijn geladen om te exporteren', 'error'); return;
+  }
+  var code = getBoorCode();
+  var lines = [];
+  lines.push('0','SECTION','2','HEADER',
+    '9','$ACADVER','1','AC1015',
+    '0','ENDSEC');
+  lines.push('0','SECTION','2','ENTITIES');
+  lines.push('0','LWPOLYLINE');
+  lines.push('5','1');
+  lines.push('8','BORINGEN');
+  lines.push('100','AcDbEntity');
+  lines.push('100','AcDbPolyline');
+  lines.push('90', String(currentDxf.length));
+  lines.push('70','0');
+  currentDxf.forEach(function(pt) {
+    lines.push('10', pt[0].toFixed(3));
+    lines.push('20', pt[1].toFixed(3));
+  });
+  // Label op middelpunt
+  if (currentDxf.length >= 2) {
+    var mid = Math.floor(currentDxf.length / 2);
+    var mx = currentDxf[mid][0], my = currentDxf[mid][1];
+    lines.push('0','TEXT','8','LABELS',
+      '10',mx.toFixed(3),'20',my.toFixed(3),'30','0.0',
+      '40','2.0','1',code,'72','1',
+      '11',mx.toFixed(3),'21',my.toFixed(3),'31','0.0');
+  }
+  lines.push('0','ENDSEC','0','EOF');
+  var blob = new Blob([lines.join('\n')], {type:'application/dxf'});
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'boring_' + code.replace(/[^a-zA-Z0-9_-]/g,'_') + '.dxf';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('✓ DXF gedownload', 'success');
+}
+
+// ══════════════════════════════════════════
+// EXPORT: EXCEL (alle boringen van dit project)
+// ══════════════════════════════════════════
+function exportBoringenExcel() {
+  if (!BOR_DATA || !BOR_DATA.length) {
+    showToast('Geen boringen om te exporteren', 'error'); return;
+  }
+  if (typeof XLSX === 'undefined') {
+    showToast('Excel bibliotheek nog niet geladen, probeer opnieuw', 'error'); return;
+  }
+  var projectNaam = (ROW_DATA && ROW_DATA[2]) ? ROW_DATA[2] : 'Project';
+  var wp          = (ROW_DATA && ROW_DATA[5]) ? ROW_DATA[5] : '';
+  var rows = [[
+    'Boring nr.','Type','Locatie','Status','Lengte (m)','Diameter (mm)',
+    'Diepte (m NAP)','Aannemer','Startdatum','Einddatum',
+    'Vergunning nodig','Vergunningsdatum',
+    'Punt 1 X (RD)','Punt 1 Y (RD)',
+    'Punt 2 X (RD)','Punt 2 Y (RD)',
+    'Aantal DXF punten','Opmerkingen'
+  ]];
+  BOR_DATA.forEach(function(b) {
+    var dxf = b.dxf_polyline;
+    var p1x='',p1y='',p2x='',p2y='',nPts='';
+    if (dxf && dxf.length >= 2) {
+      p1x=dxf[0][0]; p1y=dxf[0][1];
+      p2x=dxf[dxf.length-1][0]; p2y=dxf[dxf.length-1][1];
+      nPts=dxf.length;
+    } else if (b.rd_x && b.rd_y) {
+      p1x=b.rd_x; p1y=b.rd_y;
+    }
+    rows.push([
+      b.boring_nr||'', b.type_boring||'', b.locatie||'', b.status||'',
+      b.lengte_m!=null?b.lengte_m:'', b.diameter_mm!=null?b.diameter_mm:'',
+      b.diepte_m!=null?b.diepte_m:'', b.aannemer||'',
+      b.startdatum||'', b.einddatum||'',
+      b.vergunning_nodig?'Ja':'Nee', b.vergunning_datum||'',
+      p1x,p1y,p2x,p2y,nPts, b.opmerkingen||''
+    ]);
+  });
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    {wch:10},{wch:16},{wch:28},{wch:14},{wch:10},{wch:13},{wch:13},{wch:20},
+    {wch:12},{wch:12},{wch:16},{wch:16},{wch:13},{wch:13},{wch:13},{wch:13},{wch:14},{wch:30}
+  ];
+  var infoWs = XLSX.utils.aoa_to_sheet([
+    ['Project', projectNaam],['Werkpakket', wp],
+    ['Datum export', new Date().toLocaleDateString('nl-NL')],
+    ['Aantal boringen', BOR_DATA.length]
+  ]);
+  infoWs['!cols'] = [{wch:16},{wch:32}];
+  XLSX.utils.book_append_sheet(wb, infoWs, 'Projectinfo');
+  XLSX.utils.book_append_sheet(wb, ws, 'Boringen');
+  var fn = 'boringen_'+(wp||projectNaam).replace(/[^a-zA-Z0-9_-]/g,'_')
+         +'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  XLSX.writeFile(wb, fn);
+  showToast('✓ Excel gedownload ('+BOR_DATA.length+' boringen)', 'success');
+}
+
 var BOR_MAX  = 20;
 var borSelId = null;
 var borStat  = 'Nog te starten';
@@ -2803,6 +2935,21 @@ async function deleteBorm() {
               <input type="file" id="dxfFileInput" accept=".dxf" style="display:none" onchange="handleDxfFile(this.files[0])">
               <div id="dxfStatus" style="display:none" class="dxf-status"></div>
               <button id="btnClearDxf" onclick="clearDxf()" style="display:none;margin-top:.375rem;padding:3px 9px;font-size:10px;font-weight:600;border:1px solid var(--b-mid);border-radius:20px;background:var(--b-bg);color:var(--b-fg);cursor:pointer;font-family:'DM Sans',sans-serif">✕ DXF verwijderen</button>
+            </div>
+
+            <!-- Export knoppen -->
+            <div>
+              <div class="map-fsec" style="margin-bottom:.5rem">Exporteren</div>
+              <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                <button class="btn-export-map" id="btnExportDxf" onclick="exportBoringDxf()" style="display:none">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  DXF downloaden
+                </button>
+                <button class="btn-export-map btn-export-xl" onclick="exportBoringenExcel()">
+                  <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Excel overzicht
+                </button>
+              </div>
             </div>
 
           </div><!-- /panelKaart -->
