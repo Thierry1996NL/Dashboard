@@ -23,7 +23,8 @@
     --r-fg:#7A4800; --r-bg:#FFF2DC; --r-mid:#FFE0A0;
     --b-fg:#B81518; --b-bg:#FFE8E8; --b-mid:#FFC8C8;
     --n-fg:#44496A; --n-bg:#EAECF1; --n-mid:#D4D8E8;
-    --r:5px; --r-md:7px; --r-lg:10px; --r-xl:14px;
+    --dk:#0070A8; --dk-bg:#E8F4FD; --dk-mid:#A8D4EF;
+  --r:5px; --r-md:7px; --r-lg:10px; --r-xl:14px;
     --sh-sm:0 1px 3px rgba(10,15,35,0.06),0 1px 2px rgba(10,15,35,0.04);
     --sh-md:0 4px 16px rgba(10,15,35,0.08),0 2px 6px rgba(10,15,35,0.05);
     --sh-lg:0 12px 40px rgba(10,15,35,0.12),0 4px 12px rgba(10,15,35,0.07);
@@ -415,6 +416,141 @@
 
 
   /* ══ PROEFSLEUVEN ══ */
+  /* ══ DUIKERS ══ */
+  .dk-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); margin-bottom:1.5rem; }
+  .dk-hdr { display:flex; align-items:center; gap:.625rem; padding:.625rem 1.25rem; background:linear-gradient(135deg,rgba(0,112,168,0.06),rgba(0,112,168,0.02)); border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+  .dk-hdr:hover { background:linear-gradient(135deg,rgba(0,112,168,0.11),rgba(0,112,168,0.05)); }
+  .dk-hdr-ico { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#005580,#0070A8); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .dk-hdr-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); flex:1; }
+  .dk-hdr-cnt { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--dk-bg); color:var(--dk); }
+  .dk-hdr-chev { font-size:9px; color:var(--text-3); transition:transform .18s; }
+  .dk-wrap.collapsed .dk-hdr-chev { transform:rotate(-90deg); }
+  .dk-wrap.collapsed .dk-content { display:none; }
+  .btn-dk-open { display:inline-flex; align-items:center; gap:4px; padding:4px 13px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--dk); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s; white-space:nowrap; }
+  .btn-dk-open:hover { background:#005580; }
+  .dk-prog-row { display:flex; align-items:center; gap:.75rem; padding:.4rem 1.25rem; border-bottom:1px solid var(--border); background:var(--surface2); }
+  .dk-prog-lbl { font-size:11px; color:var(--text-2); white-space:nowrap; }
+  .dk-prog-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .dk-prog-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#0070A8,#34C3D9); transition:width .3s; }
+  .dk-prog-pct { font-size:11px; font-weight:700; color:var(--dk); white-space:nowrap; font-family:'DM Mono',monospace; }
+  .dk-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:.625rem; padding:1rem 1.25rem; }
+  .dk-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg); padding:.75rem .875rem; transition:all .1s; position:relative; cursor:pointer; }
+  .dk-card:hover { border-color:var(--dk); background:var(--dk-bg); box-shadow:var(--sh-sm); }
+  .dk-card.has-map::after { content:'📍'; position:absolute; top:8px; right:10px; font-size:11px; }
+  .dk-card-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .dk-card-nr { width:30px; height:30px; border-radius:7px; background:linear-gradient(135deg,#005580,#0070A8); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'DM Mono',monospace; }
+  .dk-card-type { font-size:12px; font-weight:600; color:var(--text); flex:1; }
+  .dk-card-loc { font-size:10px; color:var(--text-3); margin-bottom:.5rem; }
+  .dk-card-specs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:.5rem; }
+  .dk-spec-lbl { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+  .dk-spec-val { font-size:11px; color:var(--text); font-family:'DM Mono',monospace; }
+  .dk-card-foot { display:flex; align-items:center; gap:.5rem; padding-top:.375rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .dk-toestand { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:600; padding:1px 6px; border-radius:20px; }
+  .dk-toestand.goed { background:var(--g-bg); color:var(--g-fg); }
+  .dk-toestand.matig { background:var(--r-bg); color:var(--r-fg); }
+  .dk-toestand.slecht { background:var(--b-bg); color:var(--b-fg); }
+  .dk-beheerder { font-size:10px; color:var(--text-3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .dk-card-opm { margin-top:.375rem; font-size:10px; color:var(--text-2); background:#FFFBEB; border-radius:3px; padding:3px 7px; border-left:2px solid #D4880A; }
+  .dk-empty-state { padding:2rem 1.25rem; text-align:center; color:var(--text-3); font-size:12px; }
+  .dk-empty-icon { font-size:30px; margin-bottom:.5rem; display:block; }
+  .btn-dk-first { display:inline-flex; align-items:center; gap:4px; margin-top:.75rem; padding:7px 18px; font-size:12px; font-weight:600; border:none; border-radius:20px; background:var(--dk); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-dk-first:hover { background:#005580; }
+  .dk-summary { display:flex; gap:1.5rem; padding:.5rem 1.25rem; border-top:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
+  .dk-sum-item { display:flex; align-items:baseline; gap:4px; }
+  .dk-sum-n { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; }
+  .dk-sum-l { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+
+  /* DUIKERS MODAL */
+  .dkm-overlay { position:fixed; inset:0; background:rgba(10,15,46,.55); backdrop-filter:blur(4px); z-index:900; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
+  .dkm-overlay.open { opacity:1; pointer-events:all; }
+  .dkm-modal { background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:920px; max-height:93vh; display:flex; flex-direction:column; box-shadow:0 32px 80px rgba(10,15,46,.22),0 8px 28px rgba(10,15,46,.14); border:1px solid var(--border-md); transform:translateY(10px); transition:transform .18s cubic-bezier(.34,1.2,.64,1); }
+  .dkm-overlay.open .dkm-modal { transform:translateY(0); }
+  .dkm-mhead { padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; }
+  .dkm-micon { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#005580,#0070A8); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 10px rgba(0,112,168,.35); }
+  .dkm-mtitle { font-size:14px; font-weight:600; color:var(--text); }
+  .dkm-msub { font-size:10px; color:var(--text-3); margin-top:1px; }
+  .dkm-close { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:16px; padding:4px 7px; border-radius:6px; transition:all .1s; line-height:1; }
+  .dkm-close:hover { background:var(--surface2); color:var(--text); }
+  .dkm-prog-row { padding:.4rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; background:var(--surface2); }
+  .dkm-prog-lbl { font-size:11px; color:var(--text-2); white-space:nowrap; }
+  .dkm-prog-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .dkm-prog-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#0070A8,#34C3D9); transition:width .3s; }
+  .dkm-prog-pct { font-size:11px; font-weight:700; color:var(--dk); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .dkm-body { display:flex; flex:1; overflow:hidden; min-height:0; }
+  .dkm-list-pane { width:250px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+  .dkm-list-head { padding:.625rem .875rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); flex-shrink:0; }
+  .btn-dkm-add { display:inline-flex; align-items:center; gap:3px; padding:4px 11px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--dk); color:#fff; cursor:pointer; transition:all .12s; font-family:'DM Sans',sans-serif; }
+  .btn-dkm-add:hover { background:#005580; }
+  .dkm-list { flex:1; overflow-y:auto; padding:5px 0; }
+  .dkm-list::-webkit-scrollbar { width:4px; }
+  .dkm-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .dkm-item { display:flex; align-items:center; gap:8px; padding:6px 10px; margin:2px 5px; border-radius:var(--r-md); cursor:pointer; border:1px solid transparent; transition:all .09s; }
+  .dkm-item:hover { background:var(--surface2); border-color:var(--border); }
+  .dkm-item.active { background:var(--dk-bg); border-color:var(--dk-mid); }
+  .dkm-item-nr { width:34px; height:34px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--surface3); color:var(--text-2); font-family:'DM Mono',monospace; }
+  .dkm-item.active .dkm-item-nr { background:var(--dk); color:#fff; }
+  .dkm-item.has-loc .dkm-item-nr { outline:2px solid var(--dk); outline-offset:1px; }
+  .dkm-item-info { flex:1; min-width:0; }
+  .dkm-item-name { font-size:12px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dkm-item-meta { font-size:10px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .dkm-status-dot { width:8px; height:8px; border-radius:2px; display:inline-block; }
+  .dkm-empty { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
+  .dkm-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; padding:0 1.25rem; gap:0; }
+  .dkm-tab { display:inline-flex; align-items:center; gap:5px; padding:.625rem .875rem; font-size:12px; font-weight:400; color:var(--text-3); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .12s; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+  .dkm-tab:hover { color:var(--text-2); }
+  .dkm-tab.active { color:var(--dk); border-bottom-color:var(--dk); font-weight:600; }
+  .dkm-right { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .dkm-form-ph { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--text-3); font-size:12px; padding:2rem; }
+  .dkm-map-pane { height:280px; flex-shrink:0; border-bottom:1px solid var(--border); position:relative; overflow:hidden; background:#e8f2f8; }
+  .dkm-map-ph { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; color:var(--text-3); font-size:12px; pointer-events:none; }
+  #dkmMap { width:100%; height:100%; z-index:1; }
+  .dkm-coord-bar { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,.93); backdrop-filter:blur(8px); border-top:1px solid var(--border); padding:5px 10px; display:none; align-items:center; gap:10px; z-index:1000; }
+  .dkm-coord-bar.show { display:flex; }
+  .dkm-coord-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); white-space:nowrap; }
+  .dkm-coord-val { font-size:11px; font-weight:600; font-variant-numeric:tabular-nums; font-family:'DM Mono',monospace; color:var(--dk); }
+  .dkm-coord-hint { font-size:10px; color:var(--text-3); margin-left:auto; }
+  .dkm-form-pane { flex:1; overflow-y:auto; padding:.875rem 1.25rem; display:flex; flex-direction:column; gap:.75rem; }
+  .dkm-form-pane::-webkit-scrollbar { width:4px; }
+  .dkm-form-pane::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .dkm-sec { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-3); padding-bottom:.25rem; border-bottom:1px solid var(--border); }
+  .dkm-fg { display:grid; grid-template-columns:1fr 1fr; gap:.5rem .875rem; }
+  .dkm-fg.c3 { grid-template-columns:1fr 1fr 1fr; }
+  .dkm-field { display:flex; flex-direction:column; gap:3px; }
+  .dkm-field.full { grid-column:1/-1; }
+  .dkm-fl { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
+  .dkm-in,.dkm-sel,.dkm-ta { padding:6px 9px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; transition:all .1s; width:100%; }
+  .dkm-in:focus,.dkm-sel:focus,.dkm-ta:focus { border-color:var(--dk); background:#fff; box-shadow:0 0 0 3px rgba(0,112,168,.12); }
+  .dkm-sel { padding-right:24px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
+  .dkm-ta { min-height:58px; resize:vertical; line-height:1.5; }
+  .dkm-cb-row { display:flex; align-items:center; gap:6px; padding:3px 0; cursor:pointer; }
+  .dkm-cb-row input { accent-color:var(--dk); width:14px; height:14px; cursor:pointer; }
+  .dkm-cb-lbl { font-size:12px; color:var(--text-2); user-select:none; }
+  .dkm-stat-row { display:flex; gap:5px; flex-wrap:wrap; }
+  .dkm-sbtn { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; font-size:11px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; }
+  .dkm-sbtn.aG { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-mid); }
+  .dkm-sbtn.aL { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-mid); }
+  .dkm-sbtn.aR { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-mid); }
+  .dkm-sbtn.aB { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-mid); }
+  .dkm-sbtn.aN { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-mid); }
+  .dkm-export-row { padding:.625rem .875rem; display:flex; flex-direction:column; gap:.5rem; }
+  .dkm-dxf-area { border:2px dashed var(--border-strong); border-radius:var(--r-lg); padding:.75rem 1rem; text-align:center; cursor:pointer; transition:all .12s; background:var(--surface2); }
+  .dkm-dxf-area:hover { border-color:var(--dk); background:var(--dk-bg); }
+  .dkm-dxf-lbl { font-size:12px; font-weight:500; color:var(--text-2); }
+  .dkm-dxf-sub { font-size:10px; color:var(--text-3); margin-top:2px; }
+  .dkm-dxf-status { font-size:11px; padding:5px 10px; border-radius:var(--r); margin-top:.375rem; }
+  .dkm-dxf-status.ok  { background:var(--dk-bg); color:var(--dk); }
+  .dkm-dxf-status.err { background:var(--b-bg); color:var(--b-fg); }
+  .dkm-dxf-status.info { background:var(--l-bg); color:var(--l-fg); }
+  .dkm-mfoot { padding:.625rem 1.25rem; border-top:1px solid var(--border); display:flex; align-items:center; gap:.5rem; flex-shrink:0; background:var(--surface2); }
+  .btn-dkm-del { padding:5px 13px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; transition:all .1s; }
+  .btn-dkm-del:hover { background:var(--b-fg); color:#fff; }
+  .btn-dkm-cancel { padding:5px 13px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; transition:all .1s; }
+  .btn-dkm-cancel:hover { background:var(--surface3); }
+  .btn-dkm-save { padding:5px 16px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:700; border:none; border-radius:var(--r); background:var(--dk); color:#fff; cursor:pointer; transition:all .1s; margin-left:auto; }
+  .btn-dkm-save:hover { background:#005580; }
+  .btn-dkm-save:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
+
+
   /* PSM tabs */
   .psm-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; padding:0 1.25rem; gap:0; }
   .psm-tab { display:inline-flex; align-items:center; gap:5px; padding:.625rem .875rem; font-size:12px; font-weight:400; color:var(--text-3); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .12s; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; white-space:nowrap; }
@@ -778,6 +914,9 @@
 <!-- ══ PROEFSLEUVEN SECTIE ══ -->
 <div id="proefsleuvenSection" style="max-width:900px;margin:.875rem auto 0;padding:0 1.5rem 0"></div>
 
+<!-- ══ DUIKERS SECTIE ══ -->
+<div id="duikersSection" style="max-width:900px;margin:.875rem auto 0;padding:0 1.5rem 0"></div>
+
 <!-- Opmerkingen sectie -->
 <div class="comments-section" id="commentsSection" style="display:none;max-width:900px;margin:1.125rem auto 0">
   <div class="comments-header">
@@ -1111,6 +1250,15 @@ var psmCoords      = [];
 var psmDrawing     = false;
 var psmTempLine    = null;
 var psmCurrentLayer = 'pdok';
+var DK_DATA     = [];   // duikers voor dit project
+var dkmSelId    = null;
+var dkmStatus   = 'Nog te starten';
+var dkmMap      = null;
+var dkmMapInit  = false;
+var dkmMarker   = null;  // enkel punt
+var dkmRdX      = null;
+var dkmRdY      = null;
+var dkmCurLayer = 'pdok';
 var psmLabelMarker  = null;
 var psmDxf          = null;   // RD New [[x,y],...] geladen via DXF import
 
@@ -1177,6 +1325,13 @@ async function loadProject() {
     renderPage();
     renderBoringen();
     renderProefsleuven();
+
+    // Load duikers
+    try {
+      DK_DATA = await supa.get('/rest/v1/duikers?werkpakket_id=eq.'+ROW_IDX+'&order=duiker_nr.asc&select=*');
+      if (!Array.isArray(DK_DATA)) DK_DATA = [];
+    } catch(e) { DK_DATA = []; }
+    renderDuikers();
   } catch(e) {
     document.getElementById('mainContent').innerHTML = '<div class="loading-box" style="color:#b53030">Fout: '+esc(e.message)+'</div>';
   }
@@ -3073,6 +3228,426 @@ function exportProefsleuvenCsv() {
   showToast('✓ CSV gedownload (' + PS_DATA.length + ' rijen)', 'success');
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+// DUIKERS
+// ══════════════════════════════════════════════════════════════════
+
+// ── Supabase helpers ──
+function dkInsert(o) {
+  return fetch(SUPA_URL+'/rest/v1/duikers',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)})
+  .then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error((d&&(d.message||d.error))||('HTTP '+r.status)); return d; }); });
+}
+function dkPatch(id,o) {
+  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)})
+  .then(function(r){ if(!r.ok) return r.json().catch(function(){return{};}).then(function(d){ throw new Error((d&&(d.message||d.error))||('HTTP '+r.status)); }); });
+}
+function dkDel(id) {
+  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+  .then(function(r){ if(!r.ok) throw new Error('Verwijderen mislukt'); });
+}
+
+// ── Render section cards ──
+function renderDuikers() {
+  var el = document.getElementById('duikersSection');
+  if (!el) return;
+  var n=DK_DATA.length, ger=0, metLoc=0, totLen=0;
+  DK_DATA.forEach(function(d){
+    if(d.status==='Gereed') ger++;
+    if(d.rd_x && d.rd_y) metLoc++;
+    if(d.lengte_m) totLen += parseFloat(d.lengte_m);
+  });
+  totLen = Math.round(totLen*10)/10;
+  var h = '<div class="dk-wrap" id="dkWrap">';
+  h += '<div class="dk-hdr" onclick="toggleDkWrap()">'
+    + '<div class="dk-hdr-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="3" ry="10" stroke="white" stroke-width="1.8"/><path d="M2 12h20M4 7c2 1.5 4 2 8 2s6-.5 8-2M4 17c2-1.5 4-2 8-2s6 .5 8 2" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg></div>'
+    + '<span class="dk-hdr-lbl">Duikers</span>'
+    + (n ? '<span class="dk-hdr-cnt">'+n+'</span>' : '')
+    + '<button class="btn-dk-open" onclick="event.stopPropagation();openDkmModal(null)"><svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg> Toevoegen</button>'
+    + '<span class="dk-hdr-chev">&#9662;</span>'
+    + '</div>';
+  h += '<div class="dk-content">';
+  if(n>0){
+    var pct=Math.round(ger/n*100);
+    h += '<div class="dk-prog-row"><span class="dk-prog-lbl">'+ger+' van '+n+' gereed'+(metLoc?' &middot; '+metLoc+' ingemeten':'')+'</span><div class="dk-prog-track"><div class="dk-prog-fill" style="width:'+pct+'%"></div></div><span class="dk-prog-pct">'+pct+'%</span></div>';
+  }
+  if(!n){
+    h += '<div class="dk-empty-state"><span class="dk-empty-icon">&#x1F6B0;</span>Nog geen duikers geregistreerd.<br><button class="btn-dk-first" onclick="openDkmModal(null)">+ Eerste duiker toevoegen</button></div>';
+  } else {
+    var toestClr = {Goed:'goed',Matig:'matig',Slecht:'slecht'};
+    h += '<div class="dk-cards">';
+    DK_DATA.forEach(function(d){
+      var bc = {G:'G',L:'L',R:'R',B:'B',N:'N'}[{'Gereed':'G','Loopt':'L','Review':'R','Geblokkeerd':'B','Nog te starten':'N'}[d.status]]||'N';
+      var hasLoc = !!(d.rd_x && d.rd_y);
+      var tc = toestClr[d.toestand]||'';
+      var diam = d.diameter_mm ? d.diameter_mm+' mm' : (d.breedte_mm&&d.hoogte_mm ? d.breedte_mm+'×'+d.hoogte_mm+' mm' : '—');
+      h += '<div class="dk-card'+(hasLoc?' has-map':'')+'" onclick="openDkmModal('+d.id+')" title="Klik om te bewerken">'
+        + '<div class="dk-card-head"><div class="dk-card-nr">'+esc(d.duiker_nr||'?')+'</div>'
+        + '<div class="dk-card-type">'+esc(d.type_duiker||'Duiker')+'</div>'
+        + (bc?'<span class="badge '+bc+'">'+esc(d.status)+'</span>':'')
+        + '</div>'
+        + (d.locatie?'<div class="dk-card-loc">&#128205; '+esc(d.locatie)+'</div>':'')
+        + '<div class="dk-card-specs">'
+        + '<div><div class="dk-spec-lbl">&#216;</div><div class="dk-spec-val">'+diam+'</div></div>'
+        + '<div><div class="dk-spec-lbl">Lengte</div><div class="dk-spec-val">'+(d.lengte_m!=null?d.lengte_m+' m':'—')+'</div></div>'
+        + '<div><div class="dk-spec-lbl">Materiaal</div><div class="dk-spec-val">'+esc(d.materiaal||'—')+'</div></div>'
+        + '</div>'
+        + '<div class="dk-card-foot">'
+        + '<span class="dk-beheerder">'+(d.beheerder?'&#x1F4CB; '+esc(d.beheerder):'')+'</span>'
+        + (tc?'<span class="dk-toestand '+tc+'">'+esc(d.toestand)+'</span>':'')
+        + (d.vergunning_nodig?'<span class="bor-verg-badge">&#9888; Vergunning</span>':'')
+        + '</div>'
+        + (d.opmerkingen?'<div class="dk-card-opm">'+esc(d.opmerkingen)+'</div>':'')
+        + '</div>';
+    });
+    h += '</div>';
+    h += '<div class="dk-summary"><div class="dk-sum-item"><span class="dk-sum-n">'+n+'</span><span class="dk-sum-l">duikers</span></div>'
+      +(totLen?'<div class="dk-sum-item"><span class="dk-sum-n">'+totLen+'</span><span class="dk-sum-l">m totaal</span></div>':'')
+      +'<div class="dk-sum-item"><span class="dk-sum-n">'+ger+'</span><span class="dk-sum-l">gereed</span></div>'
+      +(metLoc?'<div class="dk-sum-item"><span class="dk-sum-n">'+metLoc+'</span><span class="dk-sum-l">ingemeten</span></div>':'')
+      +'</div>';
+  }
+  h += '</div></div>';
+  el.innerHTML = h;
+}
+function toggleDkWrap() { var w=document.getElementById('dkWrap'); if(w) w.classList.toggle('collapsed'); }
+
+// ── Modal open/close ──
+function openDkmModal(editId) {
+  dkmSelId = editId;
+  var naam = ROW_DATA ? (ROW_DATA[2]||'Project') : 'Project';
+  document.getElementById('dkmTitle').textContent = naam;
+  document.getElementById('dkmOverlay').classList.add('open');
+  renderDkmList(); updateDkmProg();
+  if (editId !== null) {
+    var d = DK_DATA.find(function(x){ return x.id===editId; });
+    if (d) { fillDkmForm(d); return; }
+  }
+  hideDkmForm();
+  setTimeout(initDkmMap, 150);
+}
+function closeDkmModal() {
+  document.getElementById('dkmOverlay').classList.remove('open');
+  dkmSelId = null; dkmRdX = null; dkmRdY = null;
+}
+
+// ── List ──
+function renderDkmList() {
+  var list = document.getElementById('dkmList');
+  var clsMap = {'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
+  var dotClr = {G:'#1A7F3C',L:'#004FCC',R:'#7A4800',B:'#B81518',N:'#96A3BE'};
+  var html = '';
+  // Pending row for new unsaved
+  var frmEl = document.getElementById('dkmForm');
+  if (dkmSelId===null && frmEl && frmEl.style.display!=='none') {
+    var pNr = (document.getElementById('dkmNr')&&document.getElementById('dkmNr').value.trim())||'...';
+    var pTyp = (document.getElementById('dkmType')&&document.getElementById('dkmType').value)||'Nieuw';
+    html += '<div class="dkm-item active" style="opacity:.85">'
+      + '<div class="dkm-item-nr" style="background:var(--dk);color:#fff;font-size:9px">'+esc(pNr.slice(0,6))+'</div>'
+      + '<div class="dkm-item-info"><div class="dkm-item-name">'+esc(pTyp)+'</div>'
+      + '<div class="dkm-item-meta" style="font-style:italic;color:var(--text-3)">Nog niet opgeslagen</div></div>'
+      + '<span class="dkm-status-dot" style="background:#96A3BE"></span></div>';
+  }
+  if (!DK_DATA.length && html==='') {
+    list.innerHTML='<div class="dkm-empty">&#x1F6B0;<br>Nog geen duikers.<br>Klik op Toevoegen.</div>'; return;
+  }
+  DK_DATA.forEach(function(d){
+    var bc=clsMap[d.status]||'N', dc=dotClr[bc]||'#ccc';
+    var hasLoc = !!(d.rd_x&&d.rd_y);
+    var meta = [d.type_duiker, d.diameter_mm?d.diameter_mm+' mm':'', d.materiaal].filter(Boolean).join(' · ');
+    html += '<div class="dkm-item'+(d.id===dkmSelId?' active':'')+(hasLoc?' has-loc':'')+'" onclick="dkmSelect('+d.id+')">'
+      + '<div class="dkm-item-nr">'+esc(d.duiker_nr||'?')+'</div>'
+      + '<div class="dkm-item-info"><div class="dkm-item-name">'+esc(d.type_duiker||'Duiker')+(d.locatie?' — '+esc(d.locatie):'')+'</div>'
+      + '<div class="dkm-item-meta">'+esc(meta)+(hasLoc?' · ??':'')+'</div></div>'
+      + '<span class="dkm-status-dot" style="background:'+dc+'"></span></div>';
+  });
+  list.innerHTML = html;
+}
+function updateDkmProg() {
+  var n=DK_DATA.length, tot=0;
+  DK_DATA.forEach(function(d){ tot+=parseFloat(d.lengte_m)||0; });
+  document.getElementById('dkmProgLbl').textContent = n+(n===1?' duiker':' duikers');
+  document.getElementById('dkmProgFill').style.width = Math.min(100,Math.round(n/20*100))+'%';
+  document.getElementById('dkmProgPct').textContent = tot.toFixed(0)+' m totaal';
+}
+
+// ── Select / new ──
+function dkmSelect(id) {
+  dkmSelId = id;
+  var d = DK_DATA.find(function(x){ return x.id===id; });
+  if (!d) return;
+  fillDkmForm(d);
+  renderDkmList();
+}
+function dkmNew() {
+  dkmSelId = null; dkmRdX = null; dkmRdY = null;
+  var nr = 'D-'+String(DK_DATA.length+1).padStart(2,'0');
+  fillDkmForm({duiker_nr:nr,type_duiker:'Rond',locatie:'',materiaal:'Beton',diameter_mm:'',breedte_mm:'',hoogte_mm:'',lengte_m:'',bodem_hoogte_m:'',toestand:'Onbekend',beheerder:'',watergang:'',aannemer:'',startdatum:'',einddatum:'',status:'Nog te starten',vergunning_nodig:false,vergunning_datum:'',rd_x:null,rd_y:null,opmerkingen:''});
+  renderDkmList();
+}
+function fillDkmForm(d) {
+  document.getElementById('dkmNr').value       = d.duiker_nr||'';
+  document.getElementById('dkmType').value     = d.type_duiker||'Rond';
+  document.getElementById('dkmLoc').value      = d.locatie||'';
+  document.getElementById('dkmMateriaal').value = d.materiaal||'Beton';
+  document.getElementById('dkmDiam').value     = d.diameter_mm!=null?d.diameter_mm:'';
+  document.getElementById('dkmBr').value       = d.breedte_mm!=null?d.breedte_mm:'';
+  document.getElementById('dkmHo').value       = d.hoogte_mm!=null?d.hoogte_mm:'';
+  document.getElementById('dkmLen').value      = d.lengte_m!=null?d.lengte_m:'';
+  document.getElementById('dkmBodem').value    = d.bodem_hoogte_m!=null?d.bodem_hoogte_m:'';
+  document.getElementById('dkmToestand').value = d.toestand||'Onbekend';
+  document.getElementById('dkmBeheerder').value = d.beheerder||'';
+  document.getElementById('dkmWatergang').value = d.watergang||'';
+  document.getElementById('dkmAan').value      = d.aannemer||'';
+  document.getElementById('dkmSt').value       = d.startdatum||'';
+  document.getElementById('dkmEi').value       = d.einddatum||'';
+  document.getElementById('dkmVergCb').checked = !!d.vergunning_nodig;
+  document.getElementById('dkmVergDt').value   = d.vergunning_datum||'';
+  document.getElementById('dkmOpm').value      = d.opmerkingen||'';
+  dkmStatus = d.status||'Nog te starten';
+  dkmRdX = d.rd_x || null;
+  dkmRdY = d.rd_y || null;
+  dkmToggleVerg();
+  renderDkmStatBtns();
+  showDkmForm();
+  setTimeout(function(){ initDkmMap(); if(dkmRdX&&dkmRdY) placeDkmMarker(); }, 150);
+}
+function showDkmForm() {
+  var tabsEl = document.getElementById('dkmTabs'); if(tabsEl) tabsEl.style.display='flex';
+  document.getElementById('dkmFormPh').style.display = 'none';
+  document.getElementById('dkmForm').style.display   = '';
+  document.getElementById('btnDkmSave').style.display = '';
+  document.getElementById('btnDkmDel').style.display  = dkmSelId!==null?'':'none';
+  switchDkmTab('gegevens');
+}
+function hideDkmForm() {
+  var tabsEl=document.getElementById('dkmTabs'); if(tabsEl) tabsEl.style.display='none';
+  document.getElementById('dkmFormPh').style.display = 'flex';
+  document.getElementById('dkmForm').style.display   = 'none';
+  document.getElementById('btnDkmSave').style.display = 'none';
+  document.getElementById('btnDkmDel').style.display  = 'none';
+  var pg=document.getElementById('dkmPanelGegevens'); if(pg) pg.style.display='none';
+  var pk=document.getElementById('dkmPanelKaart');    if(pk) pk.style.display='none';
+}
+function switchDkmTab(tab) {
+  var g=document.getElementById('dkmPanelGegevens'),k=document.getElementById('dkmPanelKaart');
+  if(g) g.style.display = tab==='gegevens'?'flex':'none';
+  if(k) k.style.display = tab==='kaart'?'flex':'none';
+  document.getElementById('dkmTabG').classList.toggle('active', tab==='gegevens');
+  document.getElementById('dkmTabK').classList.toggle('active', tab==='kaart');
+  if(tab==='kaart') setTimeout(function(){ initDkmMap(); if(dkmRdX&&dkmRdY) placeDkmMarker(); }, 120);
+}
+
+// ── Status ──
+var DKM_STAT = {'Nog te starten':'aN','Loopt':'aL','Review':'aR','Gereed':'aG','Geblokkeerd':'aB'};
+function dkmSetStat(btn) { dkmStatus=btn.getAttribute('data-s'); renderDkmStatBtns(); }
+function renderDkmStatBtns() {
+  document.querySelectorAll('.dkm-sbtn').forEach(function(b){
+    b.className='dkm-sbtn'+(b.getAttribute('data-s')===dkmStatus?' '+(DKM_STAT[dkmStatus]||''):'');
+  });
+}
+function dkmToggleVerg() {
+  var w=document.getElementById('dkmVergWrap');
+  if(w) w.style.display=document.getElementById('dkmVergCb').checked?'':'none';
+}
+
+// ── Map: single click point marker ──
+function initDkmMap() {
+  var el=document.getElementById('dkmMap');
+  if(!el||typeof L==='undefined') return;
+  document.getElementById('dkmMapPh').style.display='none';
+  if(!dkmMapInit){
+    dkmMap=L.map('dkmMap',{center:[52.3,5.3],zoom:8,zoomControl:true,attributionControl:false});
+    MAP_LAYERS[dkmCurLayer].addTo(dkmMap);
+    L.control.attribution({prefix:false}).addTo(dkmMap);
+    dkmMap.on('click',function(e){
+      var rd=wgs2rd(e.latlng.lat,e.latlng.lng);
+      dkmRdX=rd[0]; dkmRdY=rd[1];
+      document.getElementById('dkmRdX').value=Math.round(rd[0]);
+      document.getElementById('dkmRdY').value=Math.round(rd[1]);
+      placeDkmMarker();
+      updateDkmCoordBar();
+    });
+    dkmMapInit=true;
+  }
+  dkmMap.invalidateSize();
+  if(dkmRdX&&dkmRdY) placeDkmMarker();
+}
+function setDkmLayer(name){
+  if(!dkmMap) return;
+  Object.values(MAP_LAYERS).forEach(function(l){ if(dkmMap.hasLayer(l)) dkmMap.removeLayer(l); });
+  MAP_LAYERS[name].addTo(dkmMap); dkmCurLayer=name;
+  ['pdok','osm','brt'].forEach(function(k){
+    var el=document.getElementById('btnDkmLayer_'+k); if(el) el.classList.toggle('active',k===name);
+  });
+}
+function placeDkmMarker(){
+  if(!dkmMap||!dkmRdX||!dkmRdY) return;
+  var wgs=rd2wgs(dkmRdX,dkmRdY);
+  if(dkmMarker){ dkmMap.removeLayer(dkmMarker); dkmMarker=null; }
+  var code=(document.getElementById('dkmNr')&&document.getElementById('dkmNr').value.trim())||'D';
+  var html='<div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#005580,#0070A8);border:2px solid #fff;box-shadow:0 2px 8px rgba(0,112,168,.5);display:flex;align-items:center;justify-content:center;">'
+    +'<svg width="14" height="14" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="3" ry="8" stroke="white" stroke-width="1.8"/><path d="M4 12h16" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg></div>';
+  var icon=L.divIcon({className:'',html:html,iconSize:[28,28],iconAnchor:[14,14]});
+  dkmMarker=L.marker(wgs,{icon:icon,draggable:true,zIndexOffset:1000}).addTo(dkmMap);
+  dkmMarker.bindTooltip('<b>'+esc(code)+'</b><br>RD: '+Math.round(dkmRdX)+', '+Math.round(dkmRdY),{direction:'top',offset:[0,-16]});
+  dkmMarker.on('dragend',function(e){
+    var p=e.target.getLatLng(), rd=wgs2rd(p.lat,p.lng);
+    dkmRdX=rd[0]; dkmRdY=rd[1];
+    document.getElementById('dkmRdX').value=Math.round(rd[0]);
+    document.getElementById('dkmRdY').value=Math.round(rd[1]);
+    dkmMarker.setTooltipContent('<b>'+esc(code)+'</b><br>RD: '+Math.round(rd[0])+', '+Math.round(rd[1]));
+    updateDkmCoordBar();
+  });
+  dkmMap.setView(wgs,Math.max(dkmMap.getZoom(),15));
+  updateDkmCoordBar();
+}
+function updateDkmCoordBar(){
+  var bar=document.getElementById('dkmCoordBar');
+  if(!bar||!dkmRdX||!dkmRdY){ if(bar) bar.classList.remove('show'); return; }
+  bar.classList.add('show');
+  document.getElementById('dkmCoordX').textContent=Math.round(dkmRdX).toLocaleString('nl-NL');
+  document.getElementById('dkmCoordY').textContent=Math.round(dkmRdY).toLocaleString('nl-NL');
+}
+function onDkmRdInput(){
+  dkmRdX=parseFloat(document.getElementById('dkmRdX').value)||null;
+  dkmRdY=parseFloat(document.getElementById('dkmRdY').value)||null;
+  if(!dkmMap||!dkmRdX||!dkmRdY) return;
+  if(dkmRdX<0||dkmRdX>280000||dkmRdY<300000||dkmRdY>625000) return;
+  placeDkmMarker();
+}
+
+// ── DXF export (POINT) ──
+function exportDkmDxf(){
+  if(!dkmRdX||!dkmRdY){ showToast('Geen locatie beschikbaar om te exporteren','error'); return; }
+  var code=(document.getElementById('dkmNr')&&document.getElementById('dkmNr').value.trim())||'D';
+  var lines=['0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','0','ENDSEC','0','SECTION','2','ENTITIES'];
+  lines.push('0','POINT','8','DUIKERS','10',dkmRdX.toFixed(3),'20',dkmRdY.toFixed(3),'30','0.0');
+  lines.push('0','TEXT','8','LABELS','10',(dkmRdX+1).toFixed(3),'20',(dkmRdY+2).toFixed(3),'30','0.0','40','2.0','1',code);
+  lines.push('0','ENDSEC','0','EOF');
+  var blob=new Blob([lines.join('\n')],{type:'application/dxf'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='duiker_'+code.replace(/[^a-zA-Z0-9_-]/g,'_')+'.dxf';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('\u2713 DXF gedownload','success');
+}
+
+// ── Excel export ──
+function exportDuikersExcel(){
+  if(!DK_DATA||!DK_DATA.length){ showToast('Geen duikers om te exporteren','error'); return; }
+  if(typeof XLSX==='undefined'){ showToast('Excel bibliotheek niet geladen','error'); return; }
+  var pNaam=(ROW_DATA&&ROW_DATA[2])||'Project', wp=(ROW_DATA&&ROW_DATA[5])||'';
+  var rows=[['Duiker nr.','Type','Locatie','Materiaal','Diameter (mm)','Breedte (mm)','Hoogte (mm)','Lengte (m)','Bodemhoogte (m NAP)','Toestand','Beheerder','Watergang','Aannemer','Startdatum','Einddatum','Status','Vergunning','Vergunningsdatum','X RD','Y RD','Opmerkingen']];
+  DK_DATA.forEach(function(d){
+    rows.push([d.duiker_nr||'',d.type_duiker||'',d.locatie||'',d.materiaal||'',d.diameter_mm!=null?d.diameter_mm:'',d.breedte_mm!=null?d.breedte_mm:'',d.hoogte_mm!=null?d.hoogte_mm:'',d.lengte_m!=null?d.lengte_m:'',d.bodem_hoogte_m!=null?d.bodem_hoogte_m:'',d.toestand||'',d.beheerder||'',d.watergang||'',d.aannemer||'',d.startdatum||'',d.einddatum||'',d.status||'',d.vergunning_nodig?'Ja':'Nee',d.vergunning_datum||'',d.rd_x?Math.round(d.rd_x):'',d.rd_y?Math.round(d.rd_y):'',d.opmerkingen||'']);
+  });
+  var wb=XLSX.utils.book_new();
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols']=[{wch:10},{wch:12},{wch:28},{wch:12},{wch:13},{wch:11},{wch:11},{wch:10},{wch:16},{wch:10},{wch:18},{wch:18},{wch:18},{wch:12},{wch:12},{wch:16},{wch:11},{wch:16},{wch:13},{wch:13},{wch:30}];
+  var iWs=XLSX.utils.aoa_to_sheet([['Project',pNaam],['Werkpakket',wp],['Datum export',new Date().toLocaleDateString('nl-NL')],['Aantal duikers',DK_DATA.length]]);
+  iWs['!cols']=[{wch:16},{wch:32}];
+  XLSX.utils.book_append_sheet(wb,iWs,'Projectinfo');
+  XLSX.utils.book_append_sheet(wb,ws,'Duikers');
+  var fn='duikers_'+(wp||pNaam).replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.xlsx';
+  XLSX.writeFile(wb,fn);
+  showToast('\u2713 Excel gedownload ('+DK_DATA.length+' duikers)','success');
+}
+
+// ── CSV export ──
+function exportDuikersCsv(){
+  if(!DK_DATA||!DK_DATA.length){ showToast('Geen duikers om te exporteren','error'); return; }
+  var pNaam=(ROW_DATA&&ROW_DATA[2])||'Project', wp=(ROW_DATA&&ROW_DATA[5])||'';
+  var q=function(v){ return '"'+String(v==null?'':v).replace(/"/g,'""')+'"'; };
+  var hdr=['Duiker nr.','Type','Locatie','Materiaal','Diameter (mm)','Lengte (m)','Toestand','Beheerder','Watergang','Status','X RD','Y RD','Opmerkingen'].map(q).join(',');
+  var rows=DK_DATA.map(function(d){
+    return [d.duiker_nr,d.type_duiker,d.locatie,d.materiaal,d.diameter_mm,d.lengte_m,d.toestand,d.beheerder,d.watergang,d.status,d.rd_x?Math.round(d.rd_x):'',d.rd_y?Math.round(d.rd_y):'',d.opmerkingen].map(q).join(',');
+  });
+  var csv='\ufeff'+hdr+'\r\n'+rows.join('\r\n');
+  var blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download='duikers_'+(wp||pNaam).replace(/[^a-zA-Z0-9_-]/g,'_')+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('\u2713 CSV gedownload ('+DK_DATA.length+' rijen)','success');
+}
+
+// ── Save ──
+function saveDkm(){
+  var nr=(document.getElementById('dkmNr').value||'').trim();
+  if(!nr){ showToast('\u2717 Duiker nr. is verplicht','error'); document.getElementById('dkmNr').focus(); return; }
+  var dup=DK_DATA.find(function(d){ return d.duiker_nr===nr&&d.id!==dkmSelId; });
+  if(dup){ showToast('\u2717 Duiker nr. "'+nr+'" bestaat al','error'); return; }
+  var payload={
+    werkpakket_id:ROW_IDX, duiker_nr:nr,
+    type_duiker:  document.getElementById('dkmType').value||null,
+    locatie:      document.getElementById('dkmLoc').value||null,
+    materiaal:    document.getElementById('dkmMateriaal').value||null,
+    diameter_mm:  parseFloat(document.getElementById('dkmDiam').value)||null,
+    breedte_mm:   parseFloat(document.getElementById('dkmBr').value)||null,
+    hoogte_mm:    parseFloat(document.getElementById('dkmHo').value)||null,
+    lengte_m:     parseFloat(document.getElementById('dkmLen').value)||null,
+    bodem_hoogte_m: parseFloat(document.getElementById('dkmBodem').value)||null,
+    toestand:     document.getElementById('dkmToestand').value||null,
+    beheerder:    document.getElementById('dkmBeheerder').value||null,
+    watergang:    document.getElementById('dkmWatergang').value||null,
+    aannemer:     document.getElementById('dkmAan').value||null,
+    startdatum:   document.getElementById('dkmSt').value||null,
+    einddatum:    document.getElementById('dkmEi').value||null,
+    status:       dkmStatus,
+    vergunning_nodig: document.getElementById('dkmVergCb').checked,
+    vergunning_datum: document.getElementById('dkmVergDt').value||null,
+    rd_x: dkmRdX||null, rd_y: dkmRdY||null,
+    updated_by:currentUser, updated_at:new Date().toISOString()
+  };
+  document.getElementById('btnDkmSave').disabled=true;
+  showSaving(true);
+  var p;
+  if(dkmSelId!==null){
+    p=dkPatch(dkmSelId,payload).then(function(){
+      var idx=DK_DATA.findIndex(function(d){return d.id===dkmSelId;});
+      if(idx>=0) DK_DATA[idx]=Object.assign(DK_DATA[idx],payload);
+      showToast('\u2713 Duiker opgeslagen','success');
+    });
+  } else {
+    payload.created_by=currentUser; payload.created_at=new Date().toISOString();
+    p=dkInsert(payload).then(function(ins){
+      var ret=(Array.isArray(ins)?ins[0]:ins)||{};
+      if(!ret.id) throw new Error('Geen ID ontvangen. Is de duikers tabel aangemaakt in Supabase?');
+      var newD=Object.assign({},payload,ret);
+      DK_DATA.push(newD); dkmSelId=ret.id;
+      showToast('\u2713 Duiker toegevoegd','success');
+    }).catch(function(err){ dkmSelId=null; throw err; });
+  }
+  p.then(function(){
+    showSaving(false); document.getElementById('btnDkmSave').disabled=false;
+    renderDkmList(); updateDkmProg(); renderDuikers();
+    var saved=DK_DATA.find(function(d){return d.id===dkmSelId;});
+    if(saved) fillDkmForm(saved); else showDkmForm();
+  }).catch(function(err){
+    showSaving(false); document.getElementById('btnDkmSave').disabled=false;
+    console.error('Opslaan duiker mislukt:',err);
+    showToast('\u2717 Opslaan mislukt: '+(err.message||'Onbekende fout'),'error');
+  });
+}
+
+// ── Delete ──
+function deleteDkm(){
+  if(dkmSelId===null) return;
+  var d=DK_DATA.find(function(x){return x.id===dkmSelId;});
+  var nr=d?d.duiker_nr:'deze duiker';
+  if(!confirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?')) return;
+  showSaving(true);
+  dkDel(dkmSelId).then(function(){
+    DK_DATA=DK_DATA.filter(function(x){return x.id!==dkmSelId;});
+    dkmSelId=null; dkmRdX=null; dkmRdY=null;
+    showSaving(false);
+    showToast('\u2713 Duiker verwijderd','success');
+    renderDkmList(); updateDkmProg(); hideDkmForm(); renderDuikers();
+  }).catch(function(err){
+    showSaving(false);
+    showToast('\u2717 Verwijderen mislukt: '+err.message,'error');
+  });
+}
+
 function toggleBorWrap() {
   var w = document.getElementById('borWrap');
   if (w) w.classList.toggle('collapsed');
@@ -4443,5 +5018,282 @@ async function deleteBorm() {
   </div>
 </div>
 
+
+<!-- ══ DUIKERS MODAL ══ -->
+<div class="dkm-overlay" id="dkmOverlay" onclick="if(event.target===this)closeDkmModal()">
+  <div class="dkm-modal">
+
+    <!-- Header -->
+    <div class="dkm-mhead">
+      <div class="dkm-micon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <ellipse cx="12" cy="12" rx="3" ry="10" stroke="white" stroke-width="1.8"/>
+          <path d="M2 12h20M4 7c2 1.5 4 2 8 2s6-.5 8-2M4 17c2-1.5 4-2 8-2s6 .5 8 2" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="dkm-mtitle" id="dkmTitle">Duikers</div>
+        <div class="dkm-msub">Klik op de kaart om een locatie in te meten &middot; Sleep de marker om te corrigeren</div>
+      </div>
+      <button class="dkm-close" onclick="closeDkmModal()">&#x2715;</button>
+    </div>
+
+    <!-- Progress -->
+    <div class="dkm-prog-row">
+      <span class="dkm-prog-lbl" id="dkmProgLbl">0 duikers</span>
+      <div class="dkm-prog-track"><div class="dkm-prog-fill" id="dkmProgFill" style="width:0%"></div></div>
+      <span class="dkm-prog-pct" id="dkmProgPct">0 m totaal</span>
+    </div>
+
+    <!-- Body -->
+    <div class="dkm-body">
+
+      <!-- Lijst -->
+      <div class="dkm-list-pane">
+        <div class="dkm-list-head">
+          <span>Duikers</span>
+          <button class="btn-dkm-add" onclick="dkmNew()">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Toevoegen
+          </button>
+        </div>
+        <div class="dkm-list" id="dkmList">
+          <div class="dkm-empty">&#x1F6B0;<br>Nog geen duikers.<br>Klik op Toevoegen.</div>
+        </div>
+      </div>
+
+      <!-- Rechter pane -->
+      <div class="dkm-right">
+
+        <!-- Placeholder -->
+        <div class="dkm-form-ph" id="dkmFormPh" style="display:flex">
+          <span style="font-size:32px">&#x1F448;</span>
+          <span>Selecteer een duiker of voeg er een toe</span>
+        </div>
+
+        <!-- Tabs -->
+        <div class="dkm-tabs" id="dkmTabs" style="display:none">
+          <button class="dkm-tab active" id="dkmTabG" onclick="switchDkmTab('gegevens')">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Gegevens
+          </button>
+          <button class="dkm-tab" id="dkmTabK" onclick="switchDkmTab('kaart')">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="7" r="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 11l4-3 3 2 4-4 3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Kaart &amp; Export
+          </button>
+        </div>
+
+        <!-- PANEL: Gegevens -->
+        <div id="dkmPanelGegevens" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="dkm-form-pane">
+          <div id="dkmForm" style="display:none">
+
+            <div class="dkm-sec">Identificatie</div>
+            <div class="dkm-fg">
+              <div class="dkm-field">
+                <label class="dkm-fl">Duiker nr.</label>
+                <input class="dkm-in" id="dkmNr" type="text" placeholder="bijv. D-01" maxlength="20"
+                  oninput="renderDkmList()">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Type</label>
+                <select class="dkm-sel" id="dkmType" onchange="renderDkmList()">
+                  <option value="Rond">Rond</option>
+                  <option value="Rechthoekig">Rechthoekig</option>
+                  <option value="Koker">Koker</option>
+                  <option value="Gewelf">Gewelf</option>
+                  <option value="Ovaal">Ovaal</option>
+                  <option value="Anders">Anders</option>
+                </select>
+              </div>
+              <div class="dkm-field full">
+                <label class="dkm-fl">Locatie omschrijving</label>
+                <input class="dkm-in" id="dkmLoc" type="text" placeholder="bijv. Kruising Emmerweg / Hoofdvaart">
+              </div>
+            </div>
+
+            <div class="dkm-sec">Afmetingen</div>
+            <div class="dkm-fg c3">
+              <div class="dkm-field">
+                <label class="dkm-fl">&#216; Diameter (mm)</label>
+                <input class="dkm-in" id="dkmDiam" type="number" placeholder="bijv. 800" min="0">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Breedte (mm)</label>
+                <input class="dkm-in" id="dkmBr" type="number" placeholder="voor koker" min="0">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Hoogte (mm)</label>
+                <input class="dkm-in" id="dkmHo" type="number" placeholder="voor koker" min="0">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Lengte (m)</label>
+                <input class="dkm-in" id="dkmLen" type="number" placeholder="0" min="0" step="0.1">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Bodemhoogte (m NAP)</label>
+                <input class="dkm-in" id="dkmBodem" type="number" placeholder="bijv. -1.20" step="0.01">
+              </div>
+            </div>
+
+            <div class="dkm-sec">Materiaal &amp; Toestand</div>
+            <div class="dkm-fg">
+              <div class="dkm-field">
+                <label class="dkm-fl">Materiaal</label>
+                <select class="dkm-sel" id="dkmMateriaal">
+                  <option value="Beton">Beton</option>
+                  <option value="PVC">PVC</option>
+                  <option value="HDPE">HDPE</option>
+                  <option value="Staal">Staal</option>
+                  <option value="Gietijzer">Gietijzer</option>
+                  <option value="Steen">Steen (gemetseld)</option>
+                  <option value="Onbekend">Onbekend</option>
+                </select>
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Toestand</label>
+                <select class="dkm-sel" id="dkmToestand">
+                  <option value="Goed">Goed</option>
+                  <option value="Matig">Matig</option>
+                  <option value="Slecht">Slecht</option>
+                  <option value="Onbekend">Onbekend</option>
+                </select>
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Beheerder</label>
+                <input class="dkm-in" id="dkmBeheerder" type="text" placeholder="bijv. Waterschap Drents Overijsselse Delta">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Watergang</label>
+                <input class="dkm-in" id="dkmWatergang" type="text" placeholder="naam watergang">
+              </div>
+            </div>
+
+            <div class="dkm-sec">Uitvoering</div>
+            <div class="dkm-fg">
+              <div class="dkm-field">
+                <label class="dkm-fl">Aannemer</label>
+                <input class="dkm-in" id="dkmAan" type="text" placeholder="naam aannemer">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Startdatum</label>
+                <input class="dkm-in" id="dkmSt" type="date">
+              </div>
+              <div class="dkm-field">
+                <label class="dkm-fl">Einddatum</label>
+                <input class="dkm-in" id="dkmEi" type="date">
+              </div>
+            </div>
+
+            <div class="dkm-sec">Status</div>
+            <div class="dkm-stat-row">
+              <button class="dkm-sbtn" data-s="Nog te starten" onclick="dkmSetStat(this)">&#x2014; Nog te starten</button>
+              <button class="dkm-sbtn" data-s="Loopt"          onclick="dkmSetStat(this)">&#x25B6; Loopt</button>
+              <button class="dkm-sbtn" data-s="Review"         onclick="dkmSetStat(this)">&#x1F441; Review</button>
+              <button class="dkm-sbtn" data-s="Gereed"         onclick="dkmSetStat(this)">&#x2713; Gereed</button>
+              <button class="dkm-sbtn" data-s="Geblokkeerd"    onclick="dkmSetStat(this)">&#x2717; Geblokkeerd</button>
+            </div>
+
+            <div class="dkm-sec">Vergunning</div>
+            <div class="dkm-fg">
+              <div class="dkm-field full">
+                <label class="dkm-cb-row">
+                  <input type="checkbox" id="dkmVergCb" onchange="dkmToggleVerg()">
+                  <span class="dkm-cb-lbl">Vergunning benodigd</span>
+                </label>
+              </div>
+              <div class="dkm-field" id="dkmVergWrap" style="display:none">
+                <label class="dkm-fl">Vergunningsdatum</label>
+                <input class="dkm-in" id="dkmVergDt" type="date">
+              </div>
+            </div>
+
+            <div class="dkm-sec">Opmerkingen</div>
+            <div class="dkm-field">
+              <textarea class="dkm-ta" id="dkmOpm" placeholder="Bijzonderheden, afwijkingen, schade..." maxlength="1000"></textarea>
+            </div>
+
+          </div><!-- /#dkmForm -->
+        </div><!-- /.dkm-form-pane -->
+        </div><!-- /dkmPanelGegevens -->
+
+        <!-- PANEL: Kaart & Export -->
+        <div id="dkmPanelKaart" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+
+          <!-- Achtergrondkaart -->
+          <div style="padding:.375rem .75rem .25rem;border-bottom:1px solid var(--border);background:var(--surface2)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:.25rem">Achtergrondkaart</div>
+            <div class="map-layer-btns">
+              <button class="map-lbtn active" id="btnDkmLayer_pdok" onclick="setDkmLayer('pdok')">PDOK Luchtfoto</button>
+              <button class="map-lbtn"        id="btnDkmLayer_osm"  onclick="setDkmLayer('osm')">OpenStreetMap</button>
+              <button class="map-lbtn"        id="btnDkmLayer_brt"  onclick="setDkmLayer('brt')">BRT (topografisch)</button>
+            </div>
+          </div>
+
+          <!-- Kaart -->
+          <div class="dkm-map-pane" id="dkmMapPane">
+            <div class="dkm-map-ph" id="dkmMapPh">
+              <span style="font-size:30px">&#x1F5FA;&#xFE0F;</span>
+              <span>Klik op de kaart om de duikerlocatie in te meten</span>
+            </div>
+            <div id="dkmMap"></div>
+
+            <!-- Coord bar -->
+            <div class="dkm-coord-bar" id="dkmCoordBar">
+              <span class="dkm-coord-lbl">RD New</span>
+              <span>X:</span><span class="dkm-coord-val" id="dkmCoordX">&#x2014;</span>
+              <span style="color:var(--text-3)">&nbsp;Y:</span><span class="dkm-coord-val" id="dkmCoordY">&#x2014;</span>
+              <span class="dkm-coord-hint">Sleep de marker om te corrigeren</span>
+            </div>
+          </div>
+
+          <!-- RD handmatig invoeren -->
+          <div style="padding:.5rem .875rem;border-bottom:1px solid var(--border);background:var(--surface2)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:.375rem">Of voer RD New co&#246;rdinaten handmatig in</div>
+            <div style="display:flex;gap:.5rem;align-items:center;flex-wrap:wrap">
+              <div style="display:flex;align-items:center;gap:6px">
+                <label style="font-size:11px;color:var(--text-2);white-space:nowrap">X (m Oost):</label>
+                <input class="dkm-in" id="dkmRdX" type="number" placeholder="bijv. 192323" style="width:120px" oninput="onDkmRdInput()">
+              </div>
+              <div style="display:flex;align-items:center;gap:6px">
+                <label style="font-size:11px;color:var(--text-2);white-space:nowrap">Y (m Noord):</label>
+                <input class="dkm-in" id="dkmRdY" type="number" placeholder="bijv. 559081" style="width:120px" oninput="onDkmRdInput()">
+              </div>
+            </div>
+          </div>
+
+          <!-- Export -->
+          <div class="dkm-export-row">
+            <div class="map-fsec" style="margin-bottom:.25rem">Exporteren</div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn-export-map" onclick="exportDkmDxf()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                DXF downloaden
+              </button>
+              <button class="btn-export-map btn-export-xl" onclick="exportDuikersExcel()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Excel overzicht
+              </button>
+              <button class="btn-export-map" style="background:var(--surface2);color:var(--text-2)" onclick="exportDuikersCsv()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                CSV
+              </button>
+            </div>
+          </div>
+
+        </div><!-- /dkmPanelKaart -->
+
+      </div><!-- /.dkm-right -->
+    </div><!-- /.dkm-body -->
+
+    <!-- Footer -->
+    <div class="dkm-mfoot">
+      <button class="btn-dkm-del"    id="btnDkmDel"  onclick="deleteDkm()"     style="display:none">&#x1F5D1; Verwijderen</button>
+      <button class="btn-dkm-cancel"                  onclick="closeDkmModal()">Sluiten</button>
+      <button class="btn-dkm-save"   id="btnDkmSave" onclick="saveDkm()"       style="display:none">Opslaan</button>
+    </div>
+
+  </div>
+</div>
 
 </body>
