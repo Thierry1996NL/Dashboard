@@ -498,7 +498,7 @@
   .psm-empty-icon { font-size:28px; margin-bottom:.5rem; display:block; }
   .psm-right { flex:1; display:flex; flex-direction:column; overflow:hidden; }
   /* Map pane */
-  .psm-map-pane { height:255px; flex-shrink:0; border-bottom:1px solid var(--border); position:relative; overflow:hidden; background:#e8f0e8; }
+  .psm-map-pane { height:290px; flex-shrink:0; border-bottom:1px solid var(--border); position:relative; overflow:hidden; background:#e8f0e8; }
   .psm-map-ph { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; color:var(--text-3); font-size:12px; pointer-events:none; }
   .psm-map-ph-icon { font-size:32px; }
   #psmMap { width:100%; height:100%; z-index:1; }
@@ -1087,13 +1087,15 @@ var PS_DATA     = [];   // proefsleuven voor dit project
 var psmSelId    = null;
 var psmStatus   = 'Nog te starten';
 var psmResultaat = 'N.v.t.';
-var psmMap      = null;
-var psmMapInit  = false;
-var psmPolyline = null;
-var psmMarkers  = [];
-var psmCoords   = [];
-var psmDrawing  = false;
-var psmTempLine = null;
+var psmMap         = null;
+var psmMapInit     = false;
+var psmPolyline    = null;
+var psmMarkers     = [];
+var psmCoords      = [];
+var psmDrawing     = false;
+var psmTempLine    = null;
+var psmCurrentLayer = 'pdok';
+var psmLabelMarker  = null;
 
 // ══ INIT ══
 window.addEventListener('load', async function() {
@@ -3014,11 +3016,19 @@ function fillPsmForm(s) {
   document.getElementById('psmOpm').value      = s.opmerkingen || '';
   psmStatus    = s.status    || 'Nog te starten';
   psmResultaat = s.resultaat || 'N.v.t.';
+  // BUGFIX: laad bestaande coordinaten zodat ze niet overschreven worden bij opslaan
+  psmCoords = (s.coordinaten && Array.isArray(s.coordinaten)) ? s.coordinaten : [];
   psmToggleVerg();
   psmRenderStatBtns();
   psmRenderResBtns();
   showPsmForm();
-  setTimeout(initPsmMap, 100);
+  setTimeout(function() {
+    initPsmMap();
+    if (psmCoords.length > 1) {
+      psmRenderPolyline();
+      psmRenderCoordTable();
+    }
+  }, 150);
 }
 
 function showPsmForm() {
@@ -3028,6 +3038,7 @@ function showPsmForm() {
   document.getElementById('btnPsmDel').style.display    = psmSelId !== null ? '' : 'none';
   document.getElementById('psmDrawBar').style.display   = '';
   document.getElementById('psmMapPh').style.display     = 'none';
+  var lb = document.getElementById('psmLayerBar'); if (lb) lb.style.display = '';
 }
 function hidePsmForm() {
   document.getElementById('psmFormPh').style.display    = '';
@@ -3036,7 +3047,9 @@ function hidePsmForm() {
   document.getElementById('btnPsmDel').style.display    = 'none';
   document.getElementById('psmDrawBar').style.display   = 'none';
   document.getElementById('psmCoordStrip').style.display = 'none';
+  var ct = document.getElementById('psmCoordTable'); if (ct) ct.style.display = 'none';
   document.getElementById('psmMapPh').style.display     = '';
+  var lb = document.getElementById('psmLayerBar'); if (lb) lb.style.display = 'none';
 }
 
 // ── Status & Resultaat ──
@@ -3065,8 +3078,8 @@ function initPsmMap() {
   document.getElementById('psmMapPh').style.display = 'none';
   if (!psmMapInit) {
     psmMap = L.map('psmMap', { center:[52.9,6.6], zoom:12, zoomControl:true, attributionControl:false });
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:20 }).addTo(psmMap);
-    L.control.attribution({ prefix:'© OpenStreetMap' }).addTo(psmMap);
+    MAP_LAYERS[psmCurrentLayer].addTo(psmMap);
+    L.control.attribution({ prefix:false }).addTo(psmMap);
     psmMap.on('click', function(e) {
       if (!psmDrawing) return;
       psmCoords.push({ lat:e.latlng.lat, lng:e.latlng.lng });
@@ -3116,6 +3129,7 @@ function stopPsmDraw(keep) {
     var lEl  = document.getElementById('psmLen');
     if (!lEl.value || parseFloat(lEl.value) === 0) lEl.value = calc.toFixed(1);
     psmRenderCoordStrip();
+    psmRenderCoordTable();
   } else if (!keep) {
     psmCoords = []; psmRenderPolyline(); psmRenderCoordStrip();
   }
@@ -3131,19 +3145,85 @@ function psmClearDraw() {
 // ── Kaart render ──
 function psmRenderPolyline() {
   if (!psmMap) return;
-  if (psmPolyline) { psmMap.removeLayer(psmPolyline); psmPolyline = null; }
+  // Verwijder bestaande lagen
+  if (psmPolyline)    { psmMap.removeLayer(psmPolyline); psmPolyline = null; }
+  if (psmLabelMarker) { psmMap.removeLayer(psmLabelMarker); psmLabelMarker = null; }
   psmMarkers.forEach(function(m){ psmMap.removeLayer(m); }); psmMarkers = [];
   if (!psmCoords.length) return;
-  var ll = psmCoords.map(function(c){ return [c.lat,c.lng]; });
-  psmPolyline = L.polyline(ll,{color:'#1A7F3C',weight:4,opacity:.85,lineCap:'round',lineJoin:'round'}).addTo(psmMap);
-  psmMarkers.push(L.circleMarker(ll[0],{radius:7,fillColor:'#1A7F3C',color:'#fff',weight:2,fillOpacity:1}).bindTooltip('Start',{direction:'top'}).addTo(psmMap));
+  var ll   = psmCoords.map(function(c){ return [c.lat, c.lng]; });
+  var code = (document.getElementById('psmNr') && document.getElementById('psmNr').value.trim()) || '';
+
+  // ── Lijn (oranje gestippeld — zelfde als boringen) ──
+  psmPolyline = L.polyline(ll, {
+    color:'#FF4500', weight:4, opacity:.95, dashArray:'6 4'
+  }).addTo(psmMap);
+
+  // ── Punt 1: blauw pin (start, draggable) ──
+  var icon1 = L.divIcon({ className:'', html:markerHtmlPin('1','#0057FF'), iconSize:[26,34], iconAnchor:[13,32] });
+  var m1    = L.marker(ll[0], { icon:icon1, draggable:true, zIndexOffset:1000 }).addTo(psmMap);
+  var rd1   = wgs2rd(ll[0][0], ll[0][1]);
+  m1.bindTooltip('<b>Punt 1 &mdash; Start</b>' + (code ? '<br>' + esc(code) : '') + '<br>RD: ' + Math.round(rd1[0]) + ', ' + Math.round(rd1[1]),
+    { direction:'top', offset:[0,-34] });
+  m1.on('dragend', function(e) {
+    var p  = e.target.getLatLng();
+    psmCoords[0] = { lat:p.lat, lng:p.lng };
+    psmRenderPolyline();
+    psmRenderCoordTable();
+  });
+  psmMarkers.push(m1);
+
+  // ── Punt 2: rood pin (eind) ──
   if (ll.length > 1) {
-    psmMarkers.push(L.circleMarker(ll[ll.length-1],{radius:7,fillColor:'#C8001A',color:'#fff',weight:2,fillOpacity:1}).bindTooltip('Eind',{direction:'top'}).addTo(psmMap));
+    var lastLl = ll[ll.length - 1];
+    var icon2  = L.divIcon({ className:'', html:markerHtmlPin('2','#D70015'), iconSize:[26,34], iconAnchor:[13,32] });
+    var m2     = L.marker(lastLl, { icon:icon2, draggable:true, zIndexOffset:999 }).addTo(psmMap);
+    var rd2c   = wgs2rd(lastLl[0], lastLl[1]);
+    m2.bindTooltip('<b>Punt 2 &mdash; Eind</b>' + (code ? '<br>' + esc(code) : '') + '<br>RD: ' + Math.round(rd2c[0]) + ', ' + Math.round(rd2c[1]),
+      { direction:'top', offset:[0,-34] });
+    m2.on('dragend', function(e) {
+      var p  = e.target.getLatLng();
+      psmCoords[psmCoords.length - 1] = { lat:p.lat, lng:p.lng };
+      psmRenderPolyline();
+      psmRenderCoordTable();
+    });
+    psmMarkers.push(m2);
+
+    // ── Label in het midden ──
+    if (code) {
+      var mid = [(ll[0][0] + lastLl[0]) / 2, (ll[0][1] + lastLl[1]) / 2];
+      var lIcon = L.divIcon({ className:'', html:markerHtmlLabel(code, '#1D1D2E'), iconSize:[0,0], iconAnchor:[0,0] });
+      psmLabelMarker = L.marker(mid, { icon:lIcon, interactive:false, zIndexOffset:2000 }).addTo(psmMap);
+    }
   }
-  for (var i=1;i<ll.length-1;i++) {
-    psmMarkers.push(L.circleMarker(ll[i],{radius:4,fillColor:'#fff',color:'#1A7F3C',weight:2,fillOpacity:1}).addTo(psmMap));
+
+  psmRenderCoordTable();
+  try { psmMap.fitBounds(psmPolyline.getBounds(), { padding:[32,32], maxZoom:17 }); } catch(e) {}
+}
+
+// ── Coördinatentabel (RD New) ──
+function psmRenderCoordTable() {
+  var tbl  = document.getElementById('psmCoordTable');
+  var lenEl = document.getElementById('psmLenAuto');
+  if (!tbl) return;
+  if (!psmCoords || psmCoords.length < 2) {
+    tbl.style.display = 'none';
+    if (lenEl) lenEl.textContent = '';
+    return;
   }
-  try { psmMap.fitBounds(psmPolyline.getBounds(),{padding:[20,20],maxZoom:17}); } catch(e){}
+  tbl.style.display = '';
+  var p1  = psmCoords[0];
+  var p2  = psmCoords[psmCoords.length - 1];
+  var rd1 = wgs2rd(p1.lat, p1.lng);
+  var rd2 = wgs2rd(p2.lat, p2.lng);
+  var fmt = function(v) { return Math.round(v).toLocaleString('nl-NL'); };
+  document.getElementById('psmCoordP1X').textContent = fmt(rd1[0]);
+  document.getElementById('psmCoordP1Y').textContent = fmt(rd1[1]);
+  document.getElementById('psmCoordP2X').textContent = fmt(rd2[0]);
+  document.getElementById('psmCoordP2Y').textContent = fmt(rd2[1]);
+  if (lenEl) {
+    var len = psmHaverLen(psmCoords);
+    lenEl.innerHTML = '&asymp; <strong>' + len.toFixed(1) + ' m</strong>';
+  }
 }
 
 function psmRenderCoordStrip() {
@@ -3163,6 +3243,26 @@ function psmRenderCoordStrip() {
     var len = psmHaverLen(psmCoords);
     lenEl.innerHTML = '≈ <strong>'+len.toFixed(1)+' m</strong>';
   } else { lenEl.textContent = ''; }
+}
+
+function setPsmLayer(name) {
+  if (!psmMap) return;
+  Object.values(MAP_LAYERS).forEach(function(l){ if(psmMap.hasLayer(l)) psmMap.removeLayer(l); });
+  MAP_LAYERS[name].addTo(psmMap);
+  psmCurrentLayer = name;
+  var btns = { pdok:'btnPsmPdok', osm:'btnPsmOsm', brt:'btnPsmBrt' };
+  Object.keys(btns).forEach(function(k){
+    var el = document.getElementById(btns[k]);
+    if (el) el.classList.toggle('active', k === name);
+  });
+}
+
+function swapPsmPoints() {
+  if (!psmCoords || psmCoords.length < 2) return;
+  psmCoords = psmCoords.slice().reverse();
+  psmRenderPolyline();
+  psmRenderCoordTable();
+  showToast('⇅ Punt 1 en 2 omgedraaid', 'info');
 }
 
 function psmHaverLen(coords) {
@@ -3200,7 +3300,7 @@ function savePsm() {
     vergunning_nodig: document.getElementById('psmVergCb').checked,
     vergunning_datum: document.getElementById('psmVergDt').value || null,
     opmerkingen:      document.getElementById('psmOpm').value    || null,
-    coordinaten:      psmCoords.length > 1 ? psmCoords : null,
+    coordinaten:      psmCoords.length > 1 ? psmCoords : (psmSelId !== null ? undefined : null),
     updated_by:       currentUser,
     updated_at:       new Date().toISOString()
   };
@@ -3210,6 +3310,8 @@ function savePsm() {
 
   var p;
   if (psmSelId !== null) {
+    // Verwijder undefined velden (coordinaten behoud bij geen hertekening)
+    Object.keys(payload).forEach(function(k){ if (payload[k] === undefined) delete payload[k]; });
     p = psPatch(psmSelId, payload).then(function() {
       var idx = PS_DATA.findIndex(function(s){ return s.id===psmSelId; });
       if (idx>=0) PS_DATA[idx] = Object.assign(PS_DATA[idx], payload);
@@ -3785,14 +3887,29 @@ async function deleteBorm() {
       <!-- Rechter kolom: kaart + formulier -->
       <div class="psm-right">
 
-        <!-- Kaart -->
+        <!-- Kaart (zelfde opzet als boringen) -->
         <div class="psm-map-pane" id="psmMapPane">
+
+          <!-- Achtergrondkaart kiezer -->
+          <div id="psmLayerBar" style="display:none;padding:.375rem .75rem .25rem;border-bottom:1px solid var(--border);background:var(--surface2)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:.25rem">Achtergrondkaart</div>
+            <div class="map-layer-btns">
+              <button class="map-lbtn active" id="btnPsmPdok" onclick="setPsmLayer('pdok')">PDOK Luchtfoto</button>
+              <button class="map-lbtn"        id="btnPsmOsm"  onclick="setPsmLayer('osm')">OpenStreetMap</button>
+              <button class="map-lbtn"        id="btnPsmBrt"  onclick="setPsmLayer('brt')">BRT (topografisch)</button>
+            </div>
+          </div>
+
+          <!-- Placeholder -->
           <div class="psm-map-ph" id="psmMapPh">
-            <span class="psm-map-ph-icon">🗺️</span>
+            <span class="psm-map-ph-icon">&#128506;</span>
             <span>Selecteer een proefsleuf om de locatie te zien</span>
           </div>
+
+          <!-- Leaflet map -->
           <div id="psmMap"></div>
 
+          <!-- Teken toolbar -->
           <div class="psm-draw-bar" id="psmDrawBar" style="display:none">
             <button class="btn-psm-draw" id="psmDrawBtn" onclick="togglePsmDraw()">
               <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 14l3-1 8-8-2-2-8 8-1 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
@@ -3804,13 +3921,48 @@ async function deleteBorm() {
             </button>
           </div>
 
-          <div class="psm-draw-hint" id="psmDrawHint">Klik voor beginpunt · klik opnieuw voor eindpunt</div>
+          <!-- Tekenhinttekst -->
+          <div class="psm-draw-hint" id="psmDrawHint">Klik voor beginpunt &middot; klik opnieuw voor eindpunt</div>
 
-          <div class="psm-coord-strip" id="psmCoordStrip" style="display:none">
-            <span class="psm-coord-lbl">Coördinaten</span>
-            <div class="psm-coord-list" id="psmCoordList"></div>
-            <span class="psm-len-auto" id="psmLenAuto"></span>
+          <!-- Coördinaten tabel (RD New) — zichtbaar na intekenen -->
+          <div id="psmCoordTable" style="display:none;padding:.375rem .75rem .5rem;border-top:1px solid var(--border);background:rgba(255,255,255,.95)">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.375rem">
+              <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3)">Co&ouml;rdinaten sleufas (RD New)</div>
+              <div style="display:flex;align-items:center;gap:.5rem">
+                <span class="psm-len-auto" id="psmLenAuto" style="font-size:10px;color:var(--text-3)"></span>
+                <button class="btn-swap-pts" onclick="swapPsmPoints()" title="Punt 1 en 2 omdraaien" style="font-size:10px;padding:3px 8px">
+                  <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 5h10M9 2l3 3-3 3M14 11H4M7 8l-3 3 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Omdraaien
+                </button>
+              </div>
+            </div>
+            <div class="coord-table">
+              <div class="coord-row coord-row-head">
+                <div class="coord-cell-pin"></div>
+                <div class="coord-cell-lbl">Punt</div>
+                <div class="coord-cell-x">X (m Oost)</div>
+                <div class="coord-cell-y">Y (m Noord)</div>
+              </div>
+              <div class="coord-row">
+                <div class="coord-cell-pin"><div class="coord-pin p1">1</div></div>
+                <div class="coord-cell-lbl coord-pt-lbl">Start</div>
+                <div class="coord-cell-x"><span class="coord-val" id="psmCoordP1X">&mdash;</span></div>
+                <div class="coord-cell-y"><span class="coord-val" id="psmCoordP1Y">&mdash;</span></div>
+              </div>
+              <div class="coord-row">
+                <div class="coord-cell-pin"><div class="coord-pin p2">2</div></div>
+                <div class="coord-cell-lbl coord-pt-lbl">Eind</div>
+                <div class="coord-cell-x"><span class="coord-val" id="psmCoordP2X">&mdash;</span></div>
+                <div class="coord-cell-y"><span class="coord-val" id="psmCoordP2Y">&mdash;</span></div>
+              </div>
+            </div>
           </div>
+
+          <!-- Oud coord-strip (verborgen, kept for compat) -->
+          <div id="psmCoordStrip" style="display:none">
+            <div id="psmCoordList"></div>
+          </div>
+
         </div>
 
         <!-- Formulier -->
