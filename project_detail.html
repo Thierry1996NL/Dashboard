@@ -415,6 +415,22 @@
 
 
   /* ══ PROEFSLEUVEN ══ */
+  /* PSM tabs */
+  .psm-tabs { display:flex; border-bottom:1px solid var(--border); flex-shrink:0; padding:0 1.25rem; gap:0; }
+  .psm-tab { display:inline-flex; align-items:center; gap:5px; padding:.625rem .875rem; font-size:12px; font-weight:400; color:var(--text-3); cursor:pointer; border-bottom:2px solid transparent; margin-bottom:-1px; transition:all .12s; background:none; border-top:none; border-left:none; border-right:none; font-family:'DM Sans',sans-serif; white-space:nowrap; }
+  .psm-tab:hover { color:var(--text-2); }
+  .psm-tab.active { color:var(--g-fg); border-bottom-color:var(--g-fg); font-weight:600; }
+  /* PSM DXF upload */
+  .psm-dxf-area { border:2px dashed var(--border-strong); border-radius:var(--r-lg); padding:.875rem 1rem; text-align:center; cursor:pointer; transition:all .12s; user-select:none; background:var(--surface2); }
+  .psm-dxf-area:hover { border-color:var(--g-fg); background:#EDF9F1; }
+  .psm-dxf-area.has-file { border-color:var(--g-fg); background:#EDF9F1; }
+  .psm-dxf-icon { font-size:22px; margin-bottom:.25rem; }
+  .psm-dxf-lbl { font-size:12px; font-weight:500; color:var(--text-2); }
+  .psm-dxf-sub { font-size:10px; color:var(--text-3); margin-top:2px; }
+  .psm-dxf-status { font-size:11px; padding:5px 10px; border-radius:var(--r); margin-top:.375rem; }
+  .psm-dxf-status.ok  { background:var(--g-bg); color:var(--g-fg); }
+  .psm-dxf-status.err { background:var(--b-bg); color:var(--b-fg); }
+  .psm-dxf-status.info { background:var(--l-bg); color:var(--l-fg); }
   .ps-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); margin-bottom:1.5rem; }
   .ps-hdr { display:flex; align-items:center; gap:.625rem; padding:.625rem 1.25rem; background:linear-gradient(135deg,rgba(26,127,60,0.06),rgba(26,127,60,0.02)); border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
   .ps-hdr:hover { background:linear-gradient(135deg,rgba(26,127,60,0.11),rgba(26,127,60,0.05)); }
@@ -1096,6 +1112,7 @@ var psmDrawing     = false;
 var psmTempLine    = null;
 var psmCurrentLayer = 'pdok';
 var psmLabelMarker  = null;
+var psmDxf          = null;   // RD New [[x,y],...] geladen via DXF import
 
 // ══ INIT ══
 window.addEventListener('load', async function() {
@@ -2785,6 +2802,277 @@ function renderBoringen() {
   el.innerHTML = h;
 }
 
+
+// ══════════════════════════════════════════════════════════════════
+// PROEFSLEUVEN — TABS
+// ══════════════════════════════════════════════════════════════════
+function switchPsmTab(tab) {
+  var gegevens = document.getElementById('psmPanelGegevens');
+  var kaart    = document.getElementById('psmPanelKaart');
+  if (gegevens) gegevens.style.display = tab === 'gegevens' ? 'flex' : 'none';
+  if (kaart)    kaart.style.display    = tab === 'kaart'    ? 'flex' : 'none';
+  document.getElementById('psmTabGegevens').classList.toggle('active', tab === 'gegevens');
+  document.getElementById('psmTabKaart').classList.toggle('active',    tab === 'kaart');
+  if (tab === 'kaart') {
+    setTimeout(function() {
+      initPsmMap();
+      if (psmCoords.length > 1) { psmRenderPolyline(); psmRenderCoordTable(); }
+    }, 120);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROEFSLEUVEN — DXF IMPORT (zelfde parser als boringen)
+// ══════════════════════════════════════════════════════════════════
+function handlePsmDxfDrop(e) {
+  e.preventDefault();
+  document.getElementById('psmDxfDrop').style.borderColor = '';
+  var file = e.dataTransfer.files[0];
+  if (file) handlePsmDxfFile(file);
+}
+
+function handlePsmDxfFile(file) {
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.dxf')) {
+    showPsmDxfStatus('Alleen .dxf bestanden worden ondersteund.', 'err'); return;
+  }
+  showPsmDxfStatus('Bestand wordt gelezen...', 'info');
+  var reader = new FileReader();
+  reader.onload = function(e) { parsePsmDxf(e.target.result, file.name); };
+  reader.readAsText(file);
+}
+
+function parsePsmDxf(text, filename) {
+  try {
+    var lines = text.split(/\r?\n/).map(function(l){ return l.trim(); });
+    var polylines = [];
+    var entStart = lines.indexOf('ENTITIES');
+    if (entStart < 0) entStart = 0;
+    var i = entStart;
+    while (i < lines.length) {
+      if (lines[i] === 'LWPOLYLINE' || (lines[i]==='0' && lines[i+1]==='LWPOLYLINE')) {
+        var pts = parseLwPolyline(lines, i);  // hergebruik boringen parser
+        if (pts.length >= 2) polylines.push(pts);
+      }
+      if (lines[i] === 'POLYLINE' || (lines[i]==='0' && lines[i+1]==='POLYLINE')) {
+        var pts2 = parsePolyline(lines, i);
+        if (pts2.length >= 2) polylines.push(pts2);
+      }
+      if (lines[i-1]==='0' && lines[i]==='LINE') {
+        var ln = parseLine(lines, i);
+        if (ln) polylines.push(ln);
+      }
+      i++;
+    }
+    if (!polylines.length) {
+      showPsmDxfStatus('Geen polylines of lijnen gevonden. Controleer LWPOLYLINE/LINE in RD New.', 'err'); return;
+    }
+    polylines.sort(function(a,b){ return b.length - a.length; });
+    psmDxf = polylines[0];
+
+    var inRd = psmDxf.every(function(p){ return p[0]>0&&p[0]<300000&&p[1]>250000&&p[1]<650000; });
+    if (!inRd) {
+      showPsmDxfStatus('⚠ Coördinaten lijken niet in RD New te staan.', 'err');
+      psmDxf = null; return;
+    }
+
+    // Converteer RD -> WGS84 voor psmCoords
+    psmCoords = psmDxf.map(function(p) {
+      var wgs = rd2wgs(p[0], p[1]);
+      return { lat: wgs[0], lng: wgs[1] };
+    });
+
+    // Lengte berekenen
+    var totLen = 0;
+    for (var j=1; j<psmDxf.length; j++) {
+      var dx=psmDxf[j][0]-psmDxf[j-1][0], dy=psmDxf[j][1]-psmDxf[j-1][1];
+      totLen += Math.sqrt(dx*dx+dy*dy);
+    }
+    // Auto-lengte invullen
+    var lEl = document.getElementById('psmLen');
+    if (lEl && (!lEl.value || parseFloat(lEl.value) === 0)) lEl.value = Math.round(totLen);
+
+    psmRenderPolyline();
+    psmRenderCoordTable();
+
+    document.getElementById('psmDxfDrop').classList.add('has-file');
+    document.getElementById('psmDxfLabel').textContent = filename;
+    document.getElementById('btnClearPsmDxf').style.display = '';
+    showPsmDxfStatus('✓ ' + psmDxf.length + ' punten geladen · ' + Math.round(totLen) + ' m', 'ok');
+  } catch(err) {
+    showPsmDxfStatus('Parseerfout: ' + err.message, 'err');
+  }
+}
+
+function showPsmDxfStatus(msg, type) {
+  var el = document.getElementById('psmDxfStatus');
+  if (!el) return;
+  el.textContent = msg;
+  el.className   = 'psm-dxf-status ' + type;
+  el.style.display = '';
+}
+
+function clearPsmDxf() {
+  psmDxf = null;
+  psmCoords = [];
+  psmRenderPolyline();
+  psmRenderCoordTable();
+  var drop = document.getElementById('psmDxfDrop');
+  if (drop) { drop.classList.remove('has-file'); }
+  document.getElementById('psmDxfLabel').textContent = 'Klik of sleep een DXF bestand hierheen';
+  document.getElementById('btnClearPsmDxf').style.display = 'none';
+  document.getElementById('psmDxfStatus').style.display   = 'none';
+  document.getElementById('psmDxfInput').value            = '';
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROEFSLEUVEN — EXPORT DXF
+// ══════════════════════════════════════════════════════════════════
+function exportPsmDxf() {
+  var code = (document.getElementById('psmNr') && document.getElementById('psmNr').value.trim()) || 'PS';
+  // Gebruik psmDxf (RD New) of converteer psmCoords (WGS84 -> RD)
+  var pts;
+  if (psmDxf && psmDxf.length >= 2) {
+    pts = psmDxf;
+  } else if (psmCoords.length >= 2) {
+    pts = psmCoords.map(function(c) { var rd = wgs2rd(c.lat, c.lng); return [rd[0], rd[1]]; });
+  } else {
+    showToast('Geen coördinaten beschikbaar om te exporteren', 'error'); return;
+  }
+
+  var lines = [];
+  lines.push('0','SECTION','2','HEADER','9','$ACADVER','1','AC1015','0','ENDSEC');
+  lines.push('0','SECTION','2','ENTITIES');
+
+  // LWPOLYLINE
+  lines.push('0','LWPOLYLINE','5','1','8','PROEFSLEUVEN');
+  lines.push('100','AcDbEntity','100','AcDbPolyline');
+  lines.push('90', String(pts.length),'70','0');
+  pts.forEach(function(pt) {
+    lines.push('10', pt[0].toFixed(3));
+    lines.push('20', pt[1].toFixed(3));
+  });
+
+  // Label op middelpunt
+  var mi = Math.floor(pts.length / 2);
+  var mx = pts[mi][0], my = pts[mi][1];
+  lines.push('0','TEXT','8','LABELS',
+    '10',mx.toFixed(3),'20',my.toFixed(3),'30','0.0',
+    '40','2.0','1',code,'72','1',
+    '11',mx.toFixed(3),'21',my.toFixed(3),'31','0.0');
+
+  lines.push('0','ENDSEC','0','EOF');
+  var blob = new Blob([lines.join('\n')], { type:'application/dxf' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'proefsleuf_' + code.replace(/[^a-zA-Z0-9_-]/g,'_') + '.dxf';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('✓ DXF gedownload', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROEFSLEUVEN — EXPORT EXCEL
+// ══════════════════════════════════════════════════════════════════
+function exportProefsleuvenExcel() {
+  if (!PS_DATA || !PS_DATA.length) { showToast('Geen proefsleuven om te exporteren', 'error'); return; }
+  if (typeof XLSX === 'undefined') { showToast('Excel bibliotheek niet geladen', 'error'); return; }
+  var projectNaam = (ROW_DATA && ROW_DATA[2]) ? ROW_DATA[2] : 'Project';
+  var wp          = (ROW_DATA && ROW_DATA[5]) ? ROW_DATA[5] : '';
+
+  var rows = [[
+    'Sleuf nr.','Doeleinde','Locatie','Status','Resultaat',
+    'Lengte (m)','Breedte (m)','Diepte (m)','Grondsoort',
+    'Aannemer','Startdatum','Einddatum',
+    'Vergunning nodig','Vergunningsdatum',
+    'Punt 1 X (RD)','Punt 1 Y (RD)',
+    'Punt 2 X (RD)','Punt 2 Y (RD)',
+    'Aantal punten','Opmerkingen'
+  ]];
+
+  PS_DATA.forEach(function(s) {
+    var coords = s.coordinaten;
+    var p1x='',p1y='',p2x='',p2y='',nPts='';
+    if (coords && Array.isArray(coords) && coords.length >= 2) {
+      var rd1 = wgs2rd(coords[0].lat, coords[0].lng);
+      var rd2 = wgs2rd(coords[coords.length-1].lat, coords[coords.length-1].lng);
+      p1x = Math.round(rd1[0]); p1y = Math.round(rd1[1]);
+      p2x = Math.round(rd2[0]); p2y = Math.round(rd2[1]);
+      nPts = coords.length;
+    }
+    rows.push([
+      s.sleuf_nr||'', s.doeleinde||'', s.locatie||'', s.status||'', s.resultaat||'',
+      s.lengte_m!=null?s.lengte_m:'', s.breedte_m!=null?s.breedte_m:'', s.diepte_m!=null?s.diepte_m:'',
+      s.grondsoort||'', s.aannemer||'', s.startdatum||'', s.einddatum||'',
+      s.vergunning_nodig?'Ja':'Nee', s.vergunning_datum||'',
+      p1x,p1y,p2x,p2y,nPts, s.opmerkingen||''
+    ]);
+  });
+
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = [
+    {wch:10},{wch:18},{wch:28},{wch:16},{wch:14},{wch:10},{wch:11},{wch:10},
+    {wch:12},{wch:20},{wch:12},{wch:12},{wch:16},{wch:16},
+    {wch:13},{wch:13},{wch:13},{wch:13},{wch:12},{wch:30}
+  ];
+  var infoWs = XLSX.utils.aoa_to_sheet([
+    ['Project', projectNaam], ['Werkpakket', wp],
+    ['Datum export', new Date().toLocaleDateString('nl-NL')],
+    ['Aantal proefsleuven', PS_DATA.length]
+  ]);
+  infoWs['!cols'] = [{wch:18},{wch:32}];
+  XLSX.utils.book_append_sheet(wb, infoWs, 'Projectinfo');
+  XLSX.utils.book_append_sheet(wb, ws, 'Proefsleuven');
+  var fn = 'proefsleuven_' + (wp||projectNaam).replace(/[^a-zA-Z0-9_-]/g,'_')
+         + '_' + new Date().toISOString().slice(0,10) + '.xlsx';
+  XLSX.writeFile(wb, fn);
+  showToast('✓ Excel gedownload (' + PS_DATA.length + ' proefsleuven)', 'success');
+}
+
+// ══════════════════════════════════════════════════════════════════
+// PROEFSLEUVEN — EXPORT CSV
+// ══════════════════════════════════════════════════════════════════
+function exportProefsleuvenCsv() {
+  if (!PS_DATA || !PS_DATA.length) { showToast('Geen proefsleuven om te exporteren', 'error'); return; }
+  var projectNaam = (ROW_DATA && ROW_DATA[2]) ? ROW_DATA[2] : 'Project';
+  var wp          = (ROW_DATA && ROW_DATA[5]) ? ROW_DATA[5] : '';
+  var q = function(v) { return '"' + String(v==null?'':v).replace(/"/g,'""') + '"'; };
+
+  var header = ['Sleuf nr.','Doeleinde','Locatie','Status','Resultaat',
+    'Lengte (m)','Breedte (m)','Diepte (m)','Grondsoort',
+    'Aannemer','Startdatum','Einddatum',
+    'Vergunning nodig','Vergunningsdatum',
+    'Punt 1 X RD','Punt 1 Y RD','Punt 2 X RD','Punt 2 Y RD',
+    'Opmerkingen'].map(q).join(',');
+
+  var dataRows = PS_DATA.map(function(s) {
+    var coords = s.coordinaten;
+    var p1x='',p1y='',p2x='',p2y='';
+    if (coords && Array.isArray(coords) && coords.length >= 2) {
+      var rd1 = wgs2rd(coords[0].lat, coords[0].lng);
+      var rd2 = wgs2rd(coords[coords.length-1].lat, coords[coords.length-1].lng);
+      p1x=Math.round(rd1[0]); p1y=Math.round(rd1[1]);
+      p2x=Math.round(rd2[0]); p2y=Math.round(rd2[1]);
+    }
+    return [
+      s.sleuf_nr,s.doeleinde,s.locatie,s.status,s.resultaat,
+      s.lengte_m,s.breedte_m,s.diepte_m,s.grondsoort,
+      s.aannemer,s.startdatum,s.einddatum,
+      s.vergunning_nodig?'Ja':'Nee',s.vergunning_datum,
+      p1x,p1y,p2x,p2y,s.opmerkingen
+    ].map(q).join(',');
+  });
+
+  var csv = '﻿' + header + '\r\n' + dataRows.join('\r\n');
+  var blob = new Blob([csv], { type:'text/csv;charset=utf-8;' });
+  var a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'proefsleuven_' + (wp||projectNaam).replace(/[^a-zA-Z0-9_-]/g,'_')
+             + '_' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(a.href);
+  showToast('✓ CSV gedownload (' + PS_DATA.length + ' rijen)', 'success');
+}
+
 function toggleBorWrap() {
   var w = document.getElementById('borWrap');
   if (w) w.classList.toggle('collapsed');
@@ -2979,6 +3267,12 @@ function psmSelectSleuf(id) {
   psmSelId = id;
   var s = PS_DATA.find(function(x){ return x.id === id; });
   if (!s) return;
+  // Reset DXF state for new selection
+  psmDxf = null;
+  document.getElementById('psmDxfLabel').textContent = 'Klik of sleep een DXF bestand hierheen';
+  document.getElementById('psmDxfDrop').classList.remove('has-file');
+  document.getElementById('btnClearPsmDxf').style.display = 'none';
+  document.getElementById('psmDxfStatus').style.display   = 'none';
   fillPsmForm(s);
   renderPsmList();
   psmCoords = (s.coordinaten && Array.isArray(s.coordinaten)) ? s.coordinaten : [];
@@ -3032,24 +3326,24 @@ function fillPsmForm(s) {
 }
 
 function showPsmForm() {
+  // Show tabs + default to Gegevens
+  var tabsEl = document.getElementById('psmTabs');
+  if (tabsEl) tabsEl.style.display = 'flex';
   document.getElementById('psmFormPh').style.display    = 'none';
   document.getElementById('psmForm').style.display      = '';
   document.getElementById('btnPsmSave').style.display   = '';
   document.getElementById('btnPsmDel').style.display    = psmSelId !== null ? '' : 'none';
-  document.getElementById('psmDrawBar').style.display   = '';
-  document.getElementById('psmMapPh').style.display     = 'none';
-  var lb = document.getElementById('psmLayerBar'); if (lb) lb.style.display = '';
+  switchPsmTab('gegevens');
 }
 function hidePsmForm() {
-  document.getElementById('psmFormPh').style.display    = '';
+  var tabsEl2 = document.getElementById('psmTabs');
+  if (tabsEl2) tabsEl2.style.display = 'none';
+  document.getElementById('psmFormPh').style.display    = 'flex';
   document.getElementById('psmForm').style.display      = 'none';
   document.getElementById('btnPsmSave').style.display   = 'none';
   document.getElementById('btnPsmDel').style.display    = 'none';
-  document.getElementById('psmDrawBar').style.display   = 'none';
-  document.getElementById('psmCoordStrip').style.display = 'none';
-  var ct = document.getElementById('psmCoordTable'); if (ct) ct.style.display = 'none';
-  document.getElementById('psmMapPh').style.display     = '';
-  var lb = document.getElementById('psmLayerBar'); if (lb) lb.style.display = 'none';
+  var pg = document.getElementById('psmPanelGegevens'); if (pg) pg.style.display = 'none';
+  var pk = document.getElementById('psmPanelKaart');    if (pk) pk.style.display = 'none';
 }
 
 // ── Status & Resultaat ──
@@ -3884,8 +4178,29 @@ async function deleteBorm() {
         </div>
       </div>
 
-      <!-- Rechter kolom: kaart + formulier -->
+      <!-- Rechter kolom: tabs + inhoud -->
       <div class="psm-right">
+
+        <!-- TAB BAR -->
+        <div class="psm-tabs" id="psmTabs" style="display:none">
+          <button class="psm-tab active" id="psmTabGegevens" onclick="switchPsmTab('gegevens')">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 6h8M4 9h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            Gegevens
+          </button>
+          <button class="psm-tab" id="psmTabKaart" onclick="switchPsmTab('kaart')">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="12" rx="1.5" stroke="currentColor" stroke-width="1.4"/><circle cx="6" cy="7" r="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 11l4-3 3 2 4-4 3 2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Kaart &amp; DXF
+          </button>
+        </div>
+
+        <!-- PLACEHOLDER (geen selectie) -->
+        <div class="psm-form-ph" id="psmFormPh" style="flex:1;display:flex">
+          <span class="psm-form-ph-icon">&#x1F448;</span>
+          <span>Selecteer een proefsleuf of voeg er een toe</span>
+        </div>
+
+        <!-- PANEL: Kaart & DXF -->
+        <div id="psmPanelKaart" style="display:none;flex-direction:column;flex:1;overflow:hidden">
 
         <!-- Kaart (zelfde opzet als boringen) -->
         <div class="psm-map-pane" id="psmMapPane">
@@ -3965,13 +4280,45 @@ async function deleteBorm() {
 
         </div>
 
-        <!-- Formulier -->
-        <div class="psm-form-pane">
-          <div class="psm-form-ph" id="psmFormPh">
-            <span class="psm-form-ph-icon">👈</span>
-            <span>Selecteer een proefsleuf of voeg er een toe</span>
+          <!-- DXF upload + export (binnen psmPanelKaart, na kaart) -->
+          <div style="padding:.625rem .875rem;display:flex;flex-direction:column;gap:.5rem;overflow-y:auto">
+            <div class="map-fsec" style="margin-bottom:.25rem">Sleufas &mdash; DXF importeren
+              <span style="font-size:9px;font-weight:400;color:var(--text-3);margin-left:.5rem">(LWPOLYLINE of LINE in RD New)</span>
+            </div>
+            <div class="psm-dxf-area" id="psmDxfDrop"
+              onclick="document.getElementById('psmDxfInput').click()"
+              ondragover="event.preventDefault();this.style.borderColor='var(--g-fg)'"
+              ondragleave="this.style.borderColor=''"
+              ondrop="handlePsmDxfDrop(event)">
+              <div class="psm-dxf-icon">&#x1F4D0;</div>
+              <div class="psm-dxf-lbl" id="psmDxfLabel">Klik of sleep een DXF bestand hierheen</div>
+              <div class="psm-dxf-sub">LWPOLYLINE, POLYLINE, LINE in RD New</div>
+            </div>
+            <input type="file" id="psmDxfInput" accept=".dxf" style="display:none" onchange="handlePsmDxfFile(this.files[0])">
+            <div id="psmDxfStatus" style="display:none" class="psm-dxf-status"></div>
+            <button id="btnClearPsmDxf" onclick="clearPsmDxf()" style="display:none;padding:3px 9px;font-size:10px;font-weight:600;border:1px solid var(--b-mid);border-radius:20px;background:var(--b-bg);color:var(--b-fg);cursor:pointer;font-family:'DM Sans',sans-serif;align-self:flex-start">&times; DXF verwijderen</button>
+            <div class="map-fsec" style="margin-top:.25rem">Exporteren</div>
+            <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+              <button class="btn-export-map" onclick="exportPsmDxf()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                DXF downloaden
+              </button>
+              <button class="btn-export-map btn-export-xl" onclick="exportProefsleuvenExcel()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Excel overzicht
+              </button>
+              <button class="btn-export-map" style="background:var(--surface2);color:var(--text-2)" onclick="exportProefsleuvenCsv()">
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                CSV
+              </button>
+            </div>
           </div>
 
+        </div><!-- /psmPanelKaart -->
+
+        <!-- PANEL: Gegevens -->
+        <div id="psmPanelGegevens" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+        <div class="psm-form-pane">
           <div id="psmForm" style="display:none">
 
             <div class="psm-sec-title">Identificatie</div>
@@ -4047,6 +4394,7 @@ async function deleteBorm() {
 
           </div><!-- /#psmForm -->
         </div><!-- /.psm-form-pane -->
+        </div><!-- /psmPanelGegevens -->
 
       </div><!-- /.psm-right -->
     </div><!-- /.psm-body -->
