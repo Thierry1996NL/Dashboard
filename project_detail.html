@@ -1842,33 +1842,35 @@ function fmtShortG(d) {
   return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getFullYear()).slice(2);
 }
 
+
 function buildGanttHTML() {
-  return '<div class="fase-nav" id="unifiedFilter">'
-    // Row 0: Alle fases
+  return '<div class="gantt-wrap" id="ganttWrap">'
+    + '<div class="gantt-title">'
+    + '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'
+    + 'Gantt overzicht</div>'
+    + '<div id="ganttChart"></div>'
+    + '</div>'
+    // Fase filter BELOW the gantt
+    + '<div class="fase-nav" id="unifiedFilter" style="margin-top:.75rem">'
     + '<div class="fase-nav-row" style="padding-top:0;border-bottom:1px solid var(--border);padding-bottom:5px">'
     + '<button class="dtab active" id="uf-alle" onclick="applyFilters(\'alle\',null,this)">Alle fases</button>'
     + '</div>'
-    // Row 1: Fasering
     + '<div class="fase-nav-row"><span class="fase-nav-label">Fasering</span>'
     + ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].map(function(f){
         return '<button class="dtab" onclick="applyFilters(\''+f+'\',null,this)">'+f+'</button>';
       }).join('')
     + '</div>'
-    // Row 2: Omgevingsmanagement
     + '<div class="fase-nav-row"><span class="fase-nav-label">Omgevingsmanagement</span>'
     + ['Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch'].map(function(f){
         return '<button class="dtab" onclick="applyFilters(\''+f+'\',null,this)">'+f+'</button>';
       }).join('')
     + '</div>'
-    // Row 3: Vergunningen
     + '<div class="fase-nav-row"><span class="fase-nav-label">Vergunningen</span>'
     + '<button class="dtab" onclick="applyFilters(\'Vergunningen\',null,this)">Vergunningen</button>'
     + '</div>'
-    // Row 4: Sleufloze
     + '<div class="fase-nav-row" style="border-bottom:1px solid var(--border);padding-bottom:5px"><span class="fase-nav-label">Sleufloze technieken</span>'
     + '<button class="dtab" onclick="applyFilters(\'Sleufloze technieken\',null,this)">Sleufloze technieken</button>'
     + '</div>'
-    // Row 5: Rol
     + '<div class="fase-nav-row" style="border-bottom:none">'
     + '<span class="fase-nav-label">Rol</span>'
     + '<button class="rolf-btn rb-eng"  id="drfEng"  onclick="applyFilters(null,\'engineer\')">      <span class="rolf-dot" style="background:#0071E3"></span>Engineer</button>'
@@ -1876,13 +1878,6 @@ function buildGanttHTML() {
     + '<button class="rolf-btn rb-uitv" id="drfUitv" onclick="applyFilters(null,\'uitvoerder\')">    <span class="rolf-dot" style="background:#7A4800"></span>Uitvoerder</button>'
     + '<button class="rolf-btn rb-wb"   id="drfWb"   onclick="applyFilters(null,\'werkvoorbereider\')"><span class="rolf-dot" style="background:#6F35CE"></span>Werkvoorbereider</button>'
     + '</div>'
-    + '</div>'
-    // Gantt chart below filter
-    + '<div class="gantt-wrap" id="ganttWrap">'
-    + '<div class="gantt-title">'
-    + '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>'
-    + 'Gantt overzicht</div>'
-    + '<div id="ganttChart"></div>'
     + '</div>';
 }
 
@@ -3845,15 +3840,6 @@ function renderProefsleuven() {
 
   h += '<div class="ps-content">';
 
-  // Progress bar
-  if (n > 0) {
-    var pct = Math.round(ger / n * 100);
-    h += '<div class="ps-prog-row">'
-      + '<span class="ps-prog-lbl">' + ger + ' van ' + n + ' gereed' + (ingetknd ? ' · ' + ingetknd + ' ingetekend' : '') + '</span>'
-      + '<div class="ps-prog-track"><div class="ps-prog-fill" style="width:' + pct + '%"></div></div>'
-      + ''
-      + '</div>';
-  }
 
   if (!n) {
     h += '<div class="ps-empty-state">'
