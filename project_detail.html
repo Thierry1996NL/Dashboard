@@ -2921,26 +2921,44 @@ function closePsmModal() {
 // ── Lijst renderen ──
 function renderPsmList() {
   var list = document.getElementById('psmList');
-  if (!PS_DATA.length) {
-    list.innerHTML = '<div class="psm-empty"><span class="psm-empty-icon">⬛</span>Nog geen proefsleuven.<br>Klik op Toevoegen.</div>';
-    return;
-  }
   var clsMap = {'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
   var dotClr = {G:'#1A7F3C',L:'#004FCC',R:'#7A4800',B:'#B81518',N:'#96A3BE'};
   var html = '';
-  PS_DATA.forEach(function(s) {
-    var bc = clsMap[s.status] || 'N';
-    var dc = dotClr[bc] || '#ccc';
-    var hasC = s.coordinaten && Array.isArray(s.coordinaten) && s.coordinaten.length > 1;
-    var meta = [s.doeleinde, s.lengte_m ? s.lengte_m+' m' : '', s.grondsoort].filter(Boolean).join(' · ');
-    html += '<div class="psm-item'+(s.id===psmSelId?' active':'')+(hasC?' has-map':'')+'" onclick="psmSelectSleuf('+s.id+')">'
-      + '<div class="psm-item-nr">'+esc(s.sleuf_nr||'?')+'</div>'
+  // Pending row voor nieuwe onopgeslagen sleuf
+  var frmEl = document.getElementById('psmForm');
+  if (psmSelId === null && frmEl && frmEl.style.display !== 'none') {
+    var nrEl   = document.getElementById('psmNr');
+    var doelEl = document.getElementById('psmDoel');
+    var pNr   = (nrEl && nrEl.value.trim()) || '...';
+    var pDoel = (doelEl && doelEl.value) || 'Nieuw';
+    html += '<div class="psm-item active" style="opacity:.85">'
+      + '<div class="psm-item-nr" style="background:var(--g-fg);color:#fff;font-size:9px">' + esc(pNr.slice(0,8)) + '</div>'
       + '<div class="psm-item-info">'
-      +   '<div class="psm-item-name">'+esc(s.doeleinde||'Sleuf')+(s.locatie?' — '+esc(s.locatie):'')+'</div>'
-      +   '<div class="psm-item-meta">'+esc(meta)+(hasC?' · 📍':'')+'</div>'
+      + '<div class="psm-item-name">' + esc(pDoel) + '</div>'
+      + '<div class="psm-item-meta" style="font-style:italic;color:var(--text-3)">Nog niet opgeslagen</div>'
       + '</div>'
-      + '<span class="psm-status-dot" style="background:'+dc+'"></span>'
+      + '<span class="psm-status-dot" style="background:#96A3BE"></span>'
       + '</div>';
+  }
+  if (!PS_DATA.length && html === '') {
+    list.innerHTML = '<div class="psm-empty"><span class="psm-empty-icon">&#x2B1B;</span>Nog geen proefsleuven.<br>Klik op Toevoegen.</div>';
+    return;
+  }
+  PS_DATA.forEach(function(s) {
+    var bc   = clsMap[s.status] || 'N';
+    var dc   = dotClr[bc] || '#ccc';
+    var hasC = s.coordinaten && Array.isArray(s.coordinaten) && s.coordinaten.length > 1;
+    var nr   = s.sleuf_nr || s.sleuf_number || s.nr || s.nummer || '?';
+    var doel = s.doeleinde || s.doel || s.type || 'Sleuf';
+    var meta = [doel, s.lengte_m ? s.lengte_m + ' m' : '', s.grondsoort].filter(Boolean).join(' &middot; ');
+    html += '<div class="psm-item' + (s.id === psmSelId ? ' active' : '') + (hasC ? ' has-map' : '') + '" onclick="psmSelectSleuf(' + s.id + ')">';
+    html += '<div class="psm-item-nr">' + esc(nr) + '</div>';
+    html += '<div class="psm-item-info">';
+    html += '<div class="psm-item-name">' + esc(doel) + (s.locatie ? ' &mdash; ' + esc(s.locatie) : '') + '</div>';
+    html += '<div class="psm-item-meta">' + esc(meta) + (hasC ? ' &#128205;' : '') + '</div>';
+    html += '</div>';
+    html += '<span class="psm-status-dot" style="background:' + dc + '"></span>';
+    html += '</div>';
   });
   list.innerHTML = html;
 }
@@ -3054,12 +3072,10 @@ function initPsmMap() {
       psmCoords.push({ lat:e.latlng.lat, lng:e.latlng.lng });
       psmRenderPolyline();
       psmRenderCoordStrip();
-    });
-    psmMap.on('dblclick', function(e) {
-      if (!psmDrawing) return;
-      e.originalEvent.preventDefault();
-      if (psmCoords.length > 1) psmCoords.pop();
-      stopPsmDraw(true);
+      // Na 2e klik automatisch afronden
+      if (psmCoords.length >= 2) {
+        stopPsmDraw(true);
+      }
     });
     psmMap.on('mousemove', function(e) {
       if (!psmDrawing || psmCoords.length === 0) return;
@@ -3203,9 +3219,12 @@ function savePsm() {
     payload.created_by = currentUser;
     payload.created_at = new Date().toISOString();
     p = psInsert(payload).then(function(ins) {
-      var newS = Array.isArray(ins)?ins[0]:ins;
+      // Merge payload + DB return: garandeert sleuf_nr altijd aanwezig
+      var ret  = (Array.isArray(ins) ? ins[0] : ins) || {};
+      var newS = Object.assign({}, payload, ret);
+      if (!newS.sleuf_nr && payload.sleuf_nr) newS.sleuf_nr = payload.sleuf_nr;
       PS_DATA.push(newS);
-      psmSelId = newS.id;
+      psmSelId = newS.id || ret.id;
       showToast('✓ Proefsleuf toegevoegd','success');
     });
   }
@@ -3736,7 +3755,7 @@ async function deleteBorm() {
       </div>
       <div>
         <div class="psm-mtitle" id="psmTitle">Proefsleuven</div>
-        <div class="psm-msub">Klik punten op de kaart om te tekenen · Dubbelklik om af te ronden</div>
+        <div class="psm-msub">Klik voor beginpunt · klik opnieuw voor eindpunt</div>
       </div>
       <button class="psm-close" onclick="closePsmModal()">✕</button>
     </div>
@@ -3785,7 +3804,7 @@ async function deleteBorm() {
             </button>
           </div>
 
-          <div class="psm-draw-hint" id="psmDrawHint">Klik punten · Dubbelklik om te voltooien</div>
+          <div class="psm-draw-hint" id="psmDrawHint">Klik voor beginpunt · klik opnieuw voor eindpunt</div>
 
           <div class="psm-coord-strip" id="psmCoordStrip" style="display:none">
             <span class="psm-coord-lbl">Coördinaten</span>
