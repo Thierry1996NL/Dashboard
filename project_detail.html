@@ -413,6 +413,148 @@
   .bor-sum-n { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; }
   .bor-sum-l { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
 
+
+  /* ══ PROEFSLEUVEN ══ */
+  .ps-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); margin-bottom:1.5rem; }
+  .ps-hdr { display:flex; align-items:center; gap:.625rem; padding:.625rem 1.25rem; background:linear-gradient(135deg,rgba(26,127,60,0.06),rgba(26,127,60,0.02)); border-bottom:1px solid var(--border); cursor:pointer; user-select:none; }
+  .ps-hdr:hover { background:linear-gradient(135deg,rgba(26,127,60,0.11),rgba(26,127,60,0.05)); }
+  .ps-hdr-ico { width:28px; height:28px; border-radius:8px; background:linear-gradient(135deg,#155c28,#1A7F3C); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ps-hdr-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); flex:1; }
+  .ps-hdr-cnt { font-size:10px; font-weight:600; padding:2px 8px; border-radius:20px; background:var(--g-bg); color:var(--g-fg); }
+  .ps-hdr-chev { font-size:9px; color:var(--text-3); transition:transform .18s; }
+  .ps-wrap.collapsed .ps-hdr-chev { transform:rotate(-90deg); }
+  .ps-wrap.collapsed .ps-content { display:none; }
+  .btn-ps-open { display:inline-flex; align-items:center; gap:4px; padding:4px 13px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--g-fg); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s; white-space:nowrap; }
+  .btn-ps-open:hover { background:#145c26; }
+
+  .ps-prog-row { display:flex; align-items:center; gap:.75rem; padding:.4rem 1.25rem; border-bottom:1px solid var(--border); background:var(--surface2); }
+  .ps-prog-lbl { font-size:11px; color:var(--text-2); white-space:nowrap; }
+  .ps-prog-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .ps-prog-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#1A7F3C,#34C759); transition:width .3s; }
+  .ps-prog-pct { font-size:11px; font-weight:700; color:var(--g-fg); white-space:nowrap; font-family:'DM Mono',monospace; }
+
+  .ps-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:.625rem; padding:1rem 1.25rem; }
+  .ps-card { background:var(--surface2); border:1px solid var(--border); border-radius:var(--r-lg); padding:.75rem .875rem; transition:all .1s; position:relative; cursor:pointer; }
+  .ps-card:hover { border-color:var(--g-fg); background:var(--g-bg); box-shadow:var(--sh-sm); }
+  .ps-card.has-map::after { content:'📍'; position:absolute; top:8px; right:10px; font-size:11px; }
+  .ps-card-head { display:flex; align-items:center; gap:.5rem; margin-bottom:.5rem; }
+  .ps-card-nr { width:30px; height:30px; border-radius:7px; background:linear-gradient(135deg,#155c28,#1A7F3C); color:#fff; font-size:10px; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-family:'DM Mono',monospace; }
+  .ps-card-doel { font-size:12px; font-weight:600; color:var(--text); flex:1; }
+  .ps-card-loc { font-size:10px; color:var(--text-3); margin-bottom:.5rem; }
+  .ps-card-specs { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; margin-bottom:.5rem; }
+  .ps-spec-lbl { font-size:8px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+  .ps-spec-val { font-size:11px; color:var(--text); font-family:'DM Mono',monospace; }
+  .ps-card-foot { display:flex; align-items:center; gap:.5rem; padding-top:.375rem; border-top:1px solid var(--border); flex-wrap:wrap; }
+  .ps-aannemer { font-size:10px; color:var(--text-3); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ps-res-badge { display:inline-flex; align-items:center; gap:3px; font-size:9px; font-weight:600; padding:1px 6px; border-radius:20px; }
+  .ps-res-badge.vrij     { background:var(--g-bg); color:var(--g-fg); }
+  .ps-res-badge.aandacht { background:var(--r-bg); color:var(--r-fg); }
+  .ps-res-badge.stop     { background:var(--b-bg); color:var(--b-fg); }
+  .ps-card-opm { margin-top:.375rem; font-size:10px; color:var(--text-2); background:#FFFBEB; border-radius:3px; padding:3px 7px; border-left:2px solid #D4880A; }
+  .ps-empty-state { padding:2rem 1.25rem; text-align:center; color:var(--text-3); font-size:12px; }
+  .ps-empty-icon { font-size:30px; margin-bottom:.5rem; display:block; }
+  .btn-ps-first { display:inline-flex; align-items:center; gap:4px; margin-top:.75rem; padding:7px 18px; font-size:12px; font-weight:600; border:none; border-radius:20px; background:var(--g-fg); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; }
+  .btn-ps-first:hover { background:#145c26; }
+  .ps-summary { display:flex; gap:1.5rem; padding:.5rem 1.25rem; border-top:1px solid var(--border); background:var(--surface2); flex-wrap:wrap; }
+  .ps-sum-item { display:flex; align-items:baseline; gap:4px; }
+  .ps-sum-n { font-size:18px; font-weight:300; color:var(--text); font-variant-numeric:tabular-nums; }
+  .ps-sum-l { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); }
+
+  /* PROEFSLEUVEN MODAL */
+  .psm-overlay { position:fixed; inset:0; background:rgba(10,15,46,.55); backdrop-filter:blur(4px); z-index:900; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
+  .psm-overlay.open { opacity:1; pointer-events:all; }
+  .psm-modal { background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:980px; max-height:93vh; display:flex; flex-direction:column; box-shadow:0 32px 80px rgba(10,15,46,.22),0 8px 28px rgba(10,15,46,.14); border:1px solid var(--border-md); transform:translateY(10px); transition:transform .18s cubic-bezier(.34,1.2,.64,1); }
+  .psm-overlay.open .psm-modal { transform:translateY(0); }
+  .psm-mhead { padding:.875rem 1.25rem .75rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; }
+  .psm-micon { width:36px; height:36px; border-radius:10px; background:linear-gradient(135deg,#155c28,#1A7F3C); display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 10px rgba(26,127,60,.35); }
+  .psm-mtitle { font-size:14px; font-weight:600; color:var(--text); }
+  .psm-msub { font-size:10px; color:var(--text-3); margin-top:1px; }
+  .psm-close { margin-left:auto; background:none; border:none; cursor:pointer; color:var(--text-3); font-size:16px; padding:4px 7px; border-radius:6px; transition:all .1s; line-height:1; }
+  .psm-close:hover { background:var(--surface2); color:var(--text); }
+  .psm-prog-row { padding:.4rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; flex-shrink:0; background:var(--surface2); }
+  .psm-prog-lbl { font-size:11px; color:var(--text-2); white-space:nowrap; }
+  .psm-prog-track { flex:1; height:5px; background:var(--surface3); border-radius:3px; overflow:hidden; }
+  .psm-prog-fill { height:100%; border-radius:3px; background:linear-gradient(90deg,#1A7F3C,#34C759); transition:width .3s; }
+  .psm-prog-pct { font-size:11px; font-weight:700; color:var(--g-fg); font-family:'DM Mono',monospace; white-space:nowrap; }
+  .psm-body { display:flex; flex:1; overflow:hidden; min-height:0; }
+  .psm-list-pane { width:260px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+  .psm-list-head { padding:.625rem .875rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); flex-shrink:0; }
+  .btn-psm-add { display:inline-flex; align-items:center; gap:3px; padding:4px 11px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--g-fg); color:#fff; cursor:pointer; transition:all .12s; font-family:'DM Sans',sans-serif; }
+  .btn-psm-add:hover { background:#145c26; }
+  .psm-list { flex:1; overflow-y:auto; padding:5px 0; }
+  .psm-list::-webkit-scrollbar { width:4px; }
+  .psm-list::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .psm-item { display:flex; align-items:center; gap:8px; padding:6px 10px; margin:2px 5px; border-radius:var(--r-md); cursor:pointer; border:1px solid transparent; transition:all .09s; }
+  .psm-item:hover { background:var(--surface2); border-color:var(--border); }
+  .psm-item.active { background:#EDF9F1; border-color:#9EE3B5; }
+  .psm-item-nr { width:34px; height:34px; border-radius:8px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; background:var(--surface3); color:var(--text-2); font-family:'DM Mono',monospace; }
+  .psm-item.active .psm-item-nr { background:var(--g-fg); color:#fff; }
+  .psm-item.has-map .psm-item-nr { outline:2px solid var(--g-fg); outline-offset:1px; }
+  .psm-item-info { flex:1; min-width:0; }
+  .psm-item-name { font-size:12px; font-weight:500; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .psm-item-meta { font-size:10px; color:var(--text-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .psm-status-dot { width:8px; height:8px; border-radius:2px; display:inline-block; }
+  .psm-empty { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
+  .psm-empty-icon { font-size:28px; margin-bottom:.5rem; display:block; }
+  .psm-right { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  /* Map pane */
+  .psm-map-pane { height:255px; flex-shrink:0; border-bottom:1px solid var(--border); position:relative; overflow:hidden; background:#e8f0e8; }
+  .psm-map-ph { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.5rem; color:var(--text-3); font-size:12px; pointer-events:none; }
+  .psm-map-ph-icon { font-size:32px; }
+  #psmMap { width:100%; height:100%; z-index:1; }
+  .psm-draw-bar { position:absolute; top:10px; left:50%; transform:translateX(-50%); z-index:1000; display:flex; gap:5px; background:rgba(255,255,255,0.95); border:1px solid var(--border-md); border-radius:var(--r-lg); padding:5px 8px; box-shadow:var(--sh-md); }
+  .btn-psm-draw { display:inline-flex; align-items:center; gap:5px; padding:5px 12px; font-size:11px; font-weight:600; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); cursor:pointer; background:transparent; color:var(--text-2); transition:all .12s; white-space:nowrap; }
+  .btn-psm-draw:hover { background:var(--surface2); color:var(--text); }
+  .btn-psm-draw.drawing { background:var(--g-fg); color:#fff; border-color:var(--g-fg); animation:psmPulse 1.5s ease-in-out infinite; }
+  @keyframes psmPulse { 0%,100%{box-shadow:0 0 0 0 rgba(26,127,60,.4)} 50%{box-shadow:0 0 0 6px rgba(26,127,60,0)} }
+  .btn-psm-clr { display:inline-flex; align-items:center; gap:4px; padding:5px 10px; font-size:11px; font-family:'DM Sans',sans-serif; border:1px solid var(--b-mid); border-radius:var(--r); cursor:pointer; background:var(--b-bg); color:var(--b-fg); transition:all .12s; }
+  .btn-psm-clr:hover { background:var(--b-fg); color:#fff; }
+  .psm-draw-hint { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); background:rgba(26,127,60,.92); color:#fff; border-radius:var(--r-lg); padding:8px 16px; font-size:12px; font-weight:500; pointer-events:none; z-index:1001; white-space:nowrap; box-shadow:var(--sh-md); display:none; }
+  .psm-draw-hint.show { display:block; }
+  .psm-drawing-cursor #psmMap { cursor:crosshair !important; }
+  .psm-coord-strip { position:absolute; bottom:0; left:0; right:0; background:rgba(255,255,255,.92); backdrop-filter:blur(8px); border-top:1px solid var(--border); padding:4px 10px; display:flex; align-items:center; gap:8px; z-index:1000; flex-wrap:wrap; }
+  .psm-coord-lbl { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); white-space:nowrap; }
+  .psm-coord-list { display:flex; gap:5px; flex-wrap:wrap; flex:1; }
+  .psm-coord-chip { display:inline-flex; align-items:center; background:#EDF9F1; border:1px solid #9EE3B5; color:var(--g-fg); border-radius:5px; padding:2px 7px; font-size:10px; font-weight:600; font-variant-numeric:tabular-nums; font-family:'DM Mono',monospace; white-space:nowrap; }
+  .psm-coord-chip.chip-start { background:var(--l-bg); border-color:var(--l-mid); color:var(--l-fg); }
+  .psm-coord-chip.chip-end   { background:var(--b-bg); border-color:var(--b-mid); color:var(--b-fg); }
+  .psm-len-auto { font-size:10px; color:var(--text-3); margin-left:auto; white-space:nowrap; }
+  .psm-len-auto strong { color:var(--text-2); }
+  /* Form pane */
+  .psm-form-pane { flex:1; overflow-y:auto; padding:.875rem 1.25rem; display:flex; flex-direction:column; gap:.75rem; }
+  .psm-form-pane::-webkit-scrollbar { width:4px; }
+  .psm-form-pane::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
+  .psm-form-ph { flex:1; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:.5rem; color:var(--text-3); font-size:12px; padding:2rem; }
+  .psm-form-ph-icon { font-size:32px; }
+  .psm-sec-title { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.09em; color:var(--text-3); padding-bottom:.25rem; border-bottom:1px solid var(--border); }
+  .psm-fg { display:grid; grid-template-columns:1fr 1fr; gap:.5rem .875rem; }
+  .psm-fg.c3 { grid-template-columns:1fr 1fr 1fr; }
+  .psm-field { display:flex; flex-direction:column; gap:3px; }
+  .psm-field.full { grid-column:1/-1; }
+  .psm-fl { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-2); }
+  .psm-in,.psm-sel,.psm-ta { padding:6px 9px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; transition:all .1s; width:100%; }
+  .psm-in:focus,.psm-sel:focus,.psm-ta:focus { border-color:var(--g-fg); background:#fff; box-shadow:0 0 0 3px rgba(26,127,60,.12); }
+  .psm-sel { padding-right:24px; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%237A84B0' stroke-width='1.4' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
+  .psm-ta { min-height:60px; resize:vertical; line-height:1.5; }
+  .psm-cb-row { display:flex; align-items:center; gap:6px; padding:3px 0; cursor:pointer; }
+  .psm-cb-row input { accent-color:var(--g-fg); width:14px; height:14px; cursor:pointer; }
+  .psm-cb-lbl { font-size:12px; color:var(--text-2); user-select:none; }
+  .psm-stat-row,.psm-res-row { display:flex; gap:5px; flex-wrap:wrap; }
+  .psm-stat-btn,.psm-res-btn { display:inline-flex; align-items:center; gap:4px; padding:4px 10px; font-size:11px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; }
+  .psm-stat-btn.aG,.psm-res-btn.aV { background:var(--g-bg); color:var(--g-fg); border-color:var(--g-mid); }
+  .psm-stat-btn.aL { background:var(--l-bg); color:var(--l-fg); border-color:var(--l-mid); }
+  .psm-stat-btn.aR,.psm-res-btn.aA { background:var(--r-bg); color:var(--r-fg); border-color:var(--r-mid); }
+  .psm-stat-btn.aB,.psm-res-btn.aS { background:var(--b-bg); color:var(--b-fg); border-color:var(--b-mid); }
+  .psm-stat-btn.aN,.psm-res-btn.aN { background:var(--n-bg); color:var(--n-fg); border-color:var(--n-mid); }
+  .psm-mfoot { padding:.625rem 1.25rem; border-top:1px solid var(--border); display:flex; align-items:center; gap:.5rem; flex-shrink:0; background:var(--surface2); }
+  .btn-psm-del { padding:5px 13px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:500; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; transition:all .1s; }
+  .btn-psm-del:hover { background:var(--b-fg); color:#fff; }
+  .btn-psm-cancel { padding:5px 13px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; transition:all .1s; }
+  .btn-psm-cancel:hover { background:var(--surface3); }
+  .btn-psm-save { padding:5px 16px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:700; border:none; border-radius:var(--r); background:var(--g-fg); color:#fff; cursor:pointer; transition:all .1s; margin-left:auto; }
+  .btn-psm-save:hover { background:#145c26; }
+  .btn-psm-save:disabled { background:var(--surface3); color:var(--text-3); cursor:not-allowed; }
+
   /* BORINGEN MODAL */
   .borm-overlay { position:fixed; inset:0; background:rgba(10,15,46,.55); z-index:900; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
   .borm-overlay.open { opacity:1; pointer-events:all; }
@@ -616,6 +758,9 @@
 
 <!-- ══ BORINGEN SECTIE ══ -->
 <div id="boringenSection" style="max-width:900px;margin:.875rem auto 0;padding:0 1.5rem 0"></div>
+
+<!-- ══ PROEFSLEUVEN SECTIE ══ -->
+<div id="proefsleuvenSection" style="max-width:900px;margin:.875rem auto 0;padding:0 1.5rem 0"></div>
 
 <!-- Opmerkingen sectie -->
 <div class="comments-section" id="commentsSection" style="display:none;max-width:900px;margin:1.125rem auto 0">
@@ -936,6 +1081,19 @@ var datePicker_target = null;
 var opmTarget   = null;
 var toastTimer  = null;
 var BOR_DATA    = [];   // boringen voor dit project
+var PS_DATA     = [];   // proefsleuven voor dit project
+
+// ── Proefsleuven modal state ──
+var psmSelId    = null;
+var psmStatus   = 'Nog te starten';
+var psmResultaat = 'N.v.t.';
+var psmMap      = null;
+var psmMapInit  = false;
+var psmPolyline = null;
+var psmMarkers  = [];
+var psmCoords   = [];
+var psmDrawing  = false;
+var psmTempLine = null;
 
 // ══ INIT ══
 window.addEventListener('load', async function() {
@@ -991,8 +1149,15 @@ async function loadProject() {
       if (!Array.isArray(BOR_DATA)) BOR_DATA = [];
     } catch(e) { BOR_DATA = []; }
 
+    // Load proefsleuven
+    try {
+      PS_DATA = await supa.get('/rest/v1/proefsleuven?werkpakket_id=eq.'+ROW_IDX+'&order=sleuf_nr.asc&select=*');
+      if (!Array.isArray(PS_DATA)) PS_DATA = [];
+    } catch(e) { PS_DATA = []; }
+
     renderPage();
     renderBoringen();
+    renderProefsleuven();
   } catch(e) {
     document.getElementById('mainContent').innerHTML = '<div class="loading-box" style="color:#b53030">Fout: '+esc(e.message)+'</div>';
   }
@@ -2623,6 +2788,457 @@ function toggleBorWrap() {
   if (w) w.classList.toggle('collapsed');
 }
 
+// ══════════════════════════════════════════════════════
+// PROEFSLEUVEN — renderProefsleuven + modal
+// ══════════════════════════════════════════════════════
+
+function renderProefsleuven() {
+  var el = document.getElementById('proefsleuvenSection');
+  if (!el) return;
+
+  var n = PS_DATA.length;
+  var totLen = 0, ger = 0, ingetknd = 0;
+  PS_DATA.forEach(function(s) {
+    if (s.lengte_m) totLen += parseFloat(s.lengte_m);
+    if (s.status === 'Gereed') ger++;
+    if (s.coordinaten && Array.isArray(s.coordinaten) && s.coordinaten.length > 1) ingetknd++;
+  });
+  totLen = Math.round(totLen * 10) / 10;
+
+  var h = '<div class="ps-wrap" id="psWrap">';
+
+  // Header
+  h += '<div class="ps-hdr" onclick="togglePsWrap()">'
+    + '<div class="ps-hdr-ico">'
+    + '<svg width="16" height="16" viewBox="0 0 24 24" fill="none">'
+    + '<rect x="2" y="9" width="20" height="6" rx="3" stroke="white" stroke-width="1.8"/>'
+    + '<path d="M6 9V6a6 6 0 0112 0v3M6 15v3a6 6 0 0012 0v-3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>'
+    + '</svg></div>'
+    + '<span class="ps-hdr-lbl">Proefsleuven</span>'
+    + (n ? '<span class="ps-hdr-cnt">' + n + '</span>' : '')
+    + '<button class="btn-ps-open" onclick="event.stopPropagation();openPsmModal(null)">'
+    + '<svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+    + ' Toevoegen</button>'
+    + '<span class="ps-hdr-chev">▾</span>'
+    + '</div>';
+
+  h += '<div class="ps-content">';
+
+  // Progress bar
+  if (n > 0) {
+    var pct = Math.round(ger / n * 100);
+    h += '<div class="ps-prog-row">'
+      + '<span class="ps-prog-lbl">' + ger + ' van ' + n + ' gereed' + (ingetknd ? ' · ' + ingetknd + ' ingetekend' : '') + '</span>'
+      + '<div class="ps-prog-track"><div class="ps-prog-fill" style="width:' + pct + '%"></div></div>'
+      + '<span class="ps-prog-pct">' + pct + '%</span>'
+      + '</div>';
+  }
+
+  if (!n) {
+    h += '<div class="ps-empty-state">'
+      + '<span class="ps-empty-icon">⬛</span>'
+      + 'Nog geen proefsleuven geregistreerd voor dit project.'
+      + '<br><button class="btn-ps-first" onclick="openPsmModal(null)">+ Eerste proefsleuf toevoegen</button>'
+      + '</div>';
+  } else {
+    h += '<div class="ps-cards">';
+    PS_DATA.forEach(function(s) {
+      var bc = {G:'G',L:'L',R:'R',B:'B',N:'N'}[{'Gereed':'G','Loopt':'L','Review':'R','Geblokkeerd':'B','Nog te starten':'N'}[s.status]] || 'N';
+      var hasCoords = s.coordinaten && Array.isArray(s.coordinaten) && s.coordinaten.length > 1;
+      var resCls = s.resultaat === 'Vrij' ? 'vrij' : s.resultaat === 'Aandacht' ? 'aandacht' : s.resultaat === 'Stop' ? 'stop' : '';
+      h += '<div class="ps-card' + (hasCoords ? ' has-map' : '') + '" onclick="openPsmModal(' + s.id + ')" title="Klik om te bewerken">'
+        + '<div class="ps-card-head">'
+        +   '<div class="ps-card-nr">' + esc(s.sleuf_nr || '?') + '</div>'
+        +   '<div class="ps-card-doel">' + esc(s.doeleinde || 'Proefsleuf') + '</div>'
+        +   (bc ? '<span class="badge ' + bc + '">' + esc(s.status) + '</span>' : '')
+        + '</div>'
+        + (s.locatie ? '<div class="ps-card-loc">📍 ' + esc(s.locatie) + '</div>' : '')
+        + '<div class="ps-card-specs">'
+        +   '<div><div class="ps-spec-lbl">Lengte</div><div class="ps-spec-val">' + (s.lengte_m != null ? s.lengte_m + ' m' : '—') + '</div></div>'
+        +   '<div><div class="ps-spec-lbl">Breedte</div><div class="ps-spec-val">' + (s.breedte_m != null ? s.breedte_m + ' m' : '—') + '</div></div>'
+        +   '<div><div class="ps-spec-lbl">Diepte</div><div class="ps-spec-val">' + (s.diepte_m != null ? s.diepte_m + ' m' : '—') + '</div></div>'
+        + '</div>'
+        + '<div class="ps-card-foot">'
+        +   '<span class="ps-aannemer">' + (s.aannemer ? '🏗 ' + esc(s.aannemer) : '') + '</span>'
+        +   (resCls ? '<span class="ps-res-badge ' + resCls + '">' + esc(s.resultaat) + '</span>' : '')
+        +   (s.vergunning_nodig ? '<span class="bor-verg-badge">⚠ Vergunning</span>' : '')
+        + '</div>'
+        + (s.opmerkingen ? '<div class="ps-card-opm">' + esc(s.opmerkingen) + '</div>' : '')
+        + '</div>';
+    });
+    h += '</div>';
+
+    // Samenvatting
+    h += '<div class="ps-summary">'
+      + '<div class="ps-sum-item"><span class="ps-sum-n">' + n + '</span><span class="ps-sum-l">proefsleuven</span></div>'
+      + (totLen ? '<div class="ps-sum-item"><span class="ps-sum-n">' + totLen + '</span><span class="ps-sum-l">m totaal</span></div>' : '')
+      + '<div class="ps-sum-item"><span class="ps-sum-n">' + ger + '</span><span class="ps-sum-l">gereed</span></div>'
+      + (ingetknd ? '<div class="ps-sum-item"><span class="ps-sum-n">' + ingetknd + '</span><span class="ps-sum-l">ingetekend</span></div>' : '')
+      + '</div>';
+  }
+
+  h += '</div></div>'; // ps-content + ps-wrap
+  el.innerHTML = h;
+}
+
+function togglePsWrap() {
+  var w = document.getElementById('psWrap');
+  if (w) w.classList.toggle('collapsed');
+}
+
+// ── PS Supabase helpers ──
+function psInsert(o) {
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();});
+}
+function psPatch(id,o) {
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw new Error('Opslaan mislukt');});
+}
+function psDel(id) {
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
+}
+
+// ── Open/sluiten ──
+function openPsmModal(editId) {
+  psmSelId = editId;
+  var naam = ROW_DATA ? (ROW_DATA[2] || 'Project') : 'Project';
+  document.getElementById('psmTitle').textContent = naam;
+  document.getElementById('psmOverlay').classList.add('open');
+  renderPsmList();
+  updatePsmProg();
+  if (editId !== null) {
+    var s = PS_DATA.find(function(x){ return x.id === editId; });
+    if (s) { fillPsmForm(s); return; }
+  }
+  hidePsmForm();
+  setTimeout(initPsmMap, 150);
+}
+function closePsmModal() {
+  stopPsmDraw(false);
+  document.getElementById('psmOverlay').classList.remove('open');
+  psmSelId = null; psmCoords = [];
+}
+
+// ── Lijst renderen ──
+function renderPsmList() {
+  var list = document.getElementById('psmList');
+  if (!PS_DATA.length) {
+    list.innerHTML = '<div class="psm-empty"><span class="psm-empty-icon">⬛</span>Nog geen proefsleuven.<br>Klik op Toevoegen.</div>';
+    return;
+  }
+  var clsMap = {'Nog te starten':'N','Loopt':'L','Review':'R','Gereed':'G','Geblokkeerd':'B'};
+  var dotClr = {G:'#1A7F3C',L:'#004FCC',R:'#7A4800',B:'#B81518',N:'#96A3BE'};
+  var html = '';
+  PS_DATA.forEach(function(s) {
+    var bc = clsMap[s.status] || 'N';
+    var dc = dotClr[bc] || '#ccc';
+    var hasC = s.coordinaten && Array.isArray(s.coordinaten) && s.coordinaten.length > 1;
+    var meta = [s.doeleinde, s.lengte_m ? s.lengte_m+' m' : '', s.grondsoort].filter(Boolean).join(' · ');
+    html += '<div class="psm-item'+(s.id===psmSelId?' active':'')+(hasC?' has-map':'')+'" onclick="psmSelectSleuf('+s.id+')">'
+      + '<div class="psm-item-nr">'+esc(s.sleuf_nr||'?')+'</div>'
+      + '<div class="psm-item-info">'
+      +   '<div class="psm-item-name">'+esc(s.doeleinde||'Sleuf')+(s.locatie?' — '+esc(s.locatie):'')+'</div>'
+      +   '<div class="psm-item-meta">'+esc(meta)+(hasC?' · 📍':'')+'</div>'
+      + '</div>'
+      + '<span class="psm-status-dot" style="background:'+dc+'"></span>'
+      + '</div>';
+  });
+  list.innerHTML = html;
+}
+
+function updatePsmProg() {
+  var n = PS_DATA.length;
+  var tot = 0;
+  PS_DATA.forEach(function(s){ tot += parseFloat(s.lengte_m)||0; });
+  document.getElementById('psmProgLbl').textContent = n+(n===1?' proefsleuf':' proefsleuven');
+  document.getElementById('psmProgFill').style.width = Math.min(100,Math.round(n/15*100))+'%';
+  document.getElementById('psmProgPct').textContent = tot.toFixed(0)+' m totaal';
+}
+
+// ── Select / nieuw ──
+function psmSelectSleuf(id) {
+  psmSelId = id;
+  var s = PS_DATA.find(function(x){ return x.id === id; });
+  if (!s) return;
+  fillPsmForm(s);
+  renderPsmList();
+  psmCoords = (s.coordinaten && Array.isArray(s.coordinaten)) ? s.coordinaten : [];
+  psmRenderPolyline();
+  psmRenderCoordStrip();
+  document.getElementById('psmClrBtn').style.display = psmCoords.length ? '' : 'none';
+  if (psmMap) psmMap.invalidateSize();
+}
+
+function psmNewSleuf() {
+  if (PS_DATA.length >= 30) { showToast('Maximum van 30 proefsleuven bereikt','error'); return; }
+  psmSelId = null;
+  psmCoords = [];
+  var nr = 'PS-'+String(PS_DATA.length+1).padStart(2,'0');
+  fillPsmForm({ sleuf_nr:nr, doeleinde:'Archeologie', locatie:'', lengte_m:'', breedte_m:'', diepte_m:'',
+    grondsoort:'', aannemer:'', startdatum:'', einddatum:'', status:'Nog te starten',
+    resultaat:'N.v.t.', vergunning_nodig:false, vergunning_datum:'', opmerkingen:'', coordinaten:[] });
+  psmClearDraw();
+  renderPsmList();
+}
+
+function fillPsmForm(s) {
+  document.getElementById('psmNr').value       = s.sleuf_nr    || '';
+  document.getElementById('psmDoel').value     = s.doeleinde   || 'Archeologie';
+  document.getElementById('psmLoc').value      = s.locatie     || '';
+  document.getElementById('psmLen').value      = s.lengte_m    != null ? s.lengte_m : '';
+  document.getElementById('psmBr').value       = s.breedte_m   != null ? s.breedte_m : '';
+  document.getElementById('psmDp').value       = s.diepte_m    != null ? s.diepte_m : '';
+  document.getElementById('psmGrond').value    = s.grondsoort  || '';
+  document.getElementById('psmAan').value      = s.aannemer    || '';
+  document.getElementById('psmSt').value       = s.startdatum  || '';
+  document.getElementById('psmEi').value       = s.einddatum   || '';
+  document.getElementById('psmVergCb').checked = !!s.vergunning_nodig;
+  document.getElementById('psmVergDt').value   = s.vergunning_datum || '';
+  document.getElementById('psmOpm').value      = s.opmerkingen || '';
+  psmStatus    = s.status    || 'Nog te starten';
+  psmResultaat = s.resultaat || 'N.v.t.';
+  psmToggleVerg();
+  psmRenderStatBtns();
+  psmRenderResBtns();
+  showPsmForm();
+  setTimeout(initPsmMap, 100);
+}
+
+function showPsmForm() {
+  document.getElementById('psmFormPh').style.display    = 'none';
+  document.getElementById('psmForm').style.display      = '';
+  document.getElementById('btnPsmSave').style.display   = '';
+  document.getElementById('btnPsmDel').style.display    = psmSelId !== null ? '' : 'none';
+  document.getElementById('psmDrawBar').style.display   = '';
+  document.getElementById('psmMapPh').style.display     = 'none';
+}
+function hidePsmForm() {
+  document.getElementById('psmFormPh').style.display    = '';
+  document.getElementById('psmForm').style.display      = 'none';
+  document.getElementById('btnPsmSave').style.display   = 'none';
+  document.getElementById('btnPsmDel').style.display    = 'none';
+  document.getElementById('psmDrawBar').style.display   = 'none';
+  document.getElementById('psmCoordStrip').style.display = 'none';
+  document.getElementById('psmMapPh').style.display     = '';
+}
+
+// ── Status & Resultaat ──
+var PSM_STAT_CLS = {'Nog te starten':'aN','Loopt':'aL','Review':'aR','Gereed':'aG','Geblokkeerd':'aB'};
+var PSM_RES_CLS  = {'Vrij':'aV','Aandacht':'aA','Stop':'aS','N.v.t.':'aN'};
+function psmSetStat(btn) { psmStatus = btn.getAttribute('data-s'); psmRenderStatBtns(); }
+function psmSetRes(btn)  { psmResultaat = btn.getAttribute('data-r'); psmRenderResBtns(); }
+function psmRenderStatBtns() {
+  document.querySelectorAll('.psm-stat-btn').forEach(function(b){
+    b.className = 'psm-stat-btn'+(b.getAttribute('data-s')===psmStatus?' '+(PSM_STAT_CLS[psmStatus]||''):'');
+  });
+}
+function psmRenderResBtns() {
+  document.querySelectorAll('.psm-res-btn').forEach(function(b){
+    b.className = 'psm-res-btn'+(b.getAttribute('data-r')===psmResultaat?' '+(PSM_RES_CLS[psmResultaat]||''):'');
+  });
+}
+function psmToggleVerg() {
+  document.getElementById('psmVergWrap').style.display = document.getElementById('psmVergCb').checked ? '' : 'none';
+}
+
+// ── Kaart init ──
+function initPsmMap() {
+  var mapEl = document.getElementById('psmMap');
+  if (!mapEl || typeof L === 'undefined') return;
+  document.getElementById('psmMapPh').style.display = 'none';
+  if (!psmMapInit) {
+    psmMap = L.map('psmMap', { center:[52.9,6.6], zoom:12, zoomControl:true, attributionControl:false });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ maxZoom:20 }).addTo(psmMap);
+    L.control.attribution({ prefix:'© OpenStreetMap' }).addTo(psmMap);
+    psmMap.on('click', function(e) {
+      if (!psmDrawing) return;
+      psmCoords.push({ lat:e.latlng.lat, lng:e.latlng.lng });
+      psmRenderPolyline();
+      psmRenderCoordStrip();
+    });
+    psmMap.on('dblclick', function(e) {
+      if (!psmDrawing) return;
+      e.originalEvent.preventDefault();
+      if (psmCoords.length > 1) psmCoords.pop();
+      stopPsmDraw(true);
+    });
+    psmMap.on('mousemove', function(e) {
+      if (!psmDrawing || psmCoords.length === 0) return;
+      if (psmTempLine) psmMap.removeLayer(psmTempLine);
+      var last = psmCoords[psmCoords.length-1];
+      psmTempLine = L.polyline([[last.lat,last.lng],[e.latlng.lat,e.latlng.lng]],
+        {color:'#1A7F3C',weight:2,dashArray:'5,5',opacity:.6}).addTo(psmMap);
+    });
+    psmMapInit = true;
+  }
+  psmMap.invalidateSize();
+  if (psmCoords.length > 1) psmRenderPolyline();
+}
+
+// ── Tekenen ──
+function togglePsmDraw() {
+  psmDrawing ? stopPsmDraw(true) : startPsmDraw();
+}
+function startPsmDraw() {
+  psmDrawing = true;
+  psmCoords  = [];
+  psmRenderPolyline();
+  document.getElementById('psmDrawBtn').classList.add('drawing');
+  document.getElementById('psmDrawBtn').innerHTML = '<svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 2l12 12M14 2L2 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Stoppen';
+  document.getElementById('psmDrawHint').classList.add('show');
+  document.getElementById('psmMapPane').classList.add('psm-drawing-cursor');
+  document.getElementById('psmClrBtn').style.display = '';
+}
+function stopPsmDraw(keep) {
+  psmDrawing = false;
+  if (psmTempLine) { psmMap && psmMap.removeLayer(psmTempLine); psmTempLine = null; }
+  document.getElementById('psmDrawBtn').classList.remove('drawing');
+  document.getElementById('psmDrawBtn').innerHTML = '<svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 14l3-1 8-8-2-2-8 8-1 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Intekenen';
+  document.getElementById('psmDrawHint').classList.remove('show');
+  document.getElementById('psmMapPane').classList.remove('psm-drawing-cursor');
+  if (keep && psmCoords.length > 1) {
+    var calc = psmHaverLen(psmCoords);
+    var lEl  = document.getElementById('psmLen');
+    if (!lEl.value || parseFloat(lEl.value) === 0) lEl.value = calc.toFixed(1);
+    psmRenderCoordStrip();
+  } else if (!keep) {
+    psmCoords = []; psmRenderPolyline(); psmRenderCoordStrip();
+  }
+}
+function psmClearDraw() {
+  stopPsmDraw(false);
+  psmCoords = [];
+  psmRenderPolyline();
+  psmRenderCoordStrip();
+  document.getElementById('psmClrBtn').style.display = 'none';
+}
+
+// ── Kaart render ──
+function psmRenderPolyline() {
+  if (!psmMap) return;
+  if (psmPolyline) { psmMap.removeLayer(psmPolyline); psmPolyline = null; }
+  psmMarkers.forEach(function(m){ psmMap.removeLayer(m); }); psmMarkers = [];
+  if (!psmCoords.length) return;
+  var ll = psmCoords.map(function(c){ return [c.lat,c.lng]; });
+  psmPolyline = L.polyline(ll,{color:'#1A7F3C',weight:4,opacity:.85,lineCap:'round',lineJoin:'round'}).addTo(psmMap);
+  psmMarkers.push(L.circleMarker(ll[0],{radius:7,fillColor:'#1A7F3C',color:'#fff',weight:2,fillOpacity:1}).bindTooltip('Start',{direction:'top'}).addTo(psmMap));
+  if (ll.length > 1) {
+    psmMarkers.push(L.circleMarker(ll[ll.length-1],{radius:7,fillColor:'#C8001A',color:'#fff',weight:2,fillOpacity:1}).bindTooltip('Eind',{direction:'top'}).addTo(psmMap));
+  }
+  for (var i=1;i<ll.length-1;i++) {
+    psmMarkers.push(L.circleMarker(ll[i],{radius:4,fillColor:'#fff',color:'#1A7F3C',weight:2,fillOpacity:1}).addTo(psmMap));
+  }
+  try { psmMap.fitBounds(psmPolyline.getBounds(),{padding:[20,20],maxZoom:17}); } catch(e){}
+}
+
+function psmRenderCoordStrip() {
+  var strip = document.getElementById('psmCoordStrip');
+  var list  = document.getElementById('psmCoordList');
+  var lenEl = document.getElementById('psmLenAuto');
+  if (!psmCoords || !psmCoords.length) { strip.style.display='none'; return; }
+  strip.style.display = '';
+  var html = '';
+  psmCoords.forEach(function(c,i) {
+    var cls = i===0?'psm-coord-chip chip-start':i===psmCoords.length-1?'psm-coord-chip chip-end':'psm-coord-chip';
+    var lbl = i===0?'▶ ':i===psmCoords.length-1?'■ ':(i+1)+'. ';
+    html += '<span class="'+cls+'">'+lbl+c.lat.toFixed(6)+', '+c.lng.toFixed(6)+'</span>';
+  });
+  list.innerHTML = html;
+  if (psmCoords.length > 1) {
+    var len = psmHaverLen(psmCoords);
+    lenEl.innerHTML = '≈ <strong>'+len.toFixed(1)+' m</strong>';
+  } else { lenEl.textContent = ''; }
+}
+
+function psmHaverLen(coords) {
+  var R = 6371000, t = 0;
+  for (var i=0;i<coords.length-1;i++) {
+    var a=coords[i],b=coords[i+1];
+    var dLat=(b.lat-a.lat)*Math.PI/180, dLng=(b.lng-a.lng)*Math.PI/180;
+    var h=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(a.lat*Math.PI/180)*Math.cos(b.lat*Math.PI/180)*Math.sin(dLng/2)*Math.sin(dLng/2);
+    t += 2*R*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));
+  }
+  return t;
+}
+
+// ── Opslaan ──
+function savePsm() {
+  var nr = (document.getElementById('psmNr').value||'').trim();
+  if (!nr) { showToast('✗ Sleuf nr. is verplicht','error'); document.getElementById('psmNr').focus(); return; }
+  var dup = PS_DATA.find(function(s){ return s.sleuf_nr===nr && s.id!==psmSelId; });
+  if (dup) { showToast('✗ Sleuf nr. "'+nr+'" bestaat al','error'); return; }
+
+  var payload = {
+    werkpakket_id:    ROW_IDX,
+    sleuf_nr:         nr,
+    doeleinde:        document.getElementById('psmDoel').value   || 'Archeologie',
+    locatie:          document.getElementById('psmLoc').value    || null,
+    lengte_m:         parseFloat(document.getElementById('psmLen').value)  || null,
+    breedte_m:        parseFloat(document.getElementById('psmBr').value)   || null,
+    diepte_m:         parseFloat(document.getElementById('psmDp').value)   || null,
+    grondsoort:       document.getElementById('psmGrond').value  || null,
+    aannemer:         document.getElementById('psmAan').value    || null,
+    startdatum:       document.getElementById('psmSt').value     || null,
+    einddatum:        document.getElementById('psmEi').value     || null,
+    status:           psmStatus,
+    resultaat:        psmResultaat,
+    vergunning_nodig: document.getElementById('psmVergCb').checked,
+    vergunning_datum: document.getElementById('psmVergDt').value || null,
+    opmerkingen:      document.getElementById('psmOpm').value    || null,
+    coordinaten:      psmCoords.length > 1 ? psmCoords : null,
+    updated_by:       currentUser,
+    updated_at:       new Date().toISOString()
+  };
+
+  document.getElementById('btnPsmSave').disabled = true;
+  showSaving(true);
+
+  var p;
+  if (psmSelId !== null) {
+    p = psPatch(psmSelId, payload).then(function() {
+      var idx = PS_DATA.findIndex(function(s){ return s.id===psmSelId; });
+      if (idx>=0) PS_DATA[idx] = Object.assign(PS_DATA[idx], payload);
+      showToast('✓ Proefsleuf opgeslagen','success');
+    });
+  } else {
+    payload.created_by = currentUser;
+    payload.created_at = new Date().toISOString();
+    p = psInsert(payload).then(function(ins) {
+      var newS = Array.isArray(ins)?ins[0]:ins;
+      PS_DATA.push(newS);
+      psmSelId = newS.id;
+      showToast('✓ Proefsleuf toegevoegd','success');
+    });
+  }
+  p.then(function() {
+    showSaving(false);
+    document.getElementById('btnPsmSave').disabled = false;
+    renderPsmList(); updatePsmProg(); showPsmForm(); renderProefsleuven();
+  }).catch(function(err) {
+    showSaving(false);
+    document.getElementById('btnPsmSave').disabled = false;
+    showToast('✗ Opslaan mislukt: '+err.message,'error');
+  });
+}
+
+// ── Verwijderen ──
+function deletePsm() {
+  if (psmSelId===null) return;
+  var s  = PS_DATA.find(function(x){ return x.id===psmSelId; });
+  var nr = s ? s.sleuf_nr : 'deze proefsleuf';
+  if (!confirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?')) return;
+  showSaving(true);
+  psDel(psmSelId).then(function() {
+    PS_DATA = PS_DATA.filter(function(x){ return x.id!==psmSelId; });
+    psmSelId = null; psmCoords = [];
+    showSaving(false);
+    showToast('✓ Proefsleuf verwijderd','success');
+    renderPsmList(); updatePsmProg(); hidePsmForm(); psmClearDraw(); renderProefsleuven();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Verwijderen mislukt: '+err.message,'error');
+  });
+}
+
 // ── Supabase helpers ──
 function borInsert(o){
   return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();});
@@ -3105,5 +3721,173 @@ async function deleteBorm() {
 
   </div>
 </div>
+
+
+<!-- ══ PROEFSLEUVEN MODAL ══ -->
+<div class="psm-overlay" id="psmOverlay" onclick="if(event.target===this)closePsmModal()">
+  <div class="psm-modal">
+
+    <div class="psm-mhead">
+      <div class="psm-micon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+          <rect x="2" y="9" width="20" height="6" rx="3" stroke="white" stroke-width="1.8"/>
+          <path d="M6 9V6a6 6 0 0112 0v3M6 15v3a6 6 0 0012 0v-3" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div>
+        <div class="psm-mtitle" id="psmTitle">Proefsleuven</div>
+        <div class="psm-msub">Klik punten op de kaart om te tekenen · Dubbelklik om af te ronden</div>
+      </div>
+      <button class="psm-close" onclick="closePsmModal()">✕</button>
+    </div>
+
+    <div class="psm-prog-row">
+      <span class="psm-prog-lbl" id="psmProgLbl">0 proefsleuven</span>
+      <div class="psm-prog-track"><div class="psm-prog-fill" id="psmProgFill" style="width:0%"></div></div>
+      <span class="psm-prog-pct" id="psmProgPct">0 m totaal</span>
+    </div>
+
+    <div class="psm-body">
+
+      <!-- Lijst -->
+      <div class="psm-list-pane">
+        <div class="psm-list-head">
+          <span>Sleuven</span>
+          <button class="btn-psm-add" onclick="psmNewSleuf()">
+            <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            Toevoegen
+          </button>
+        </div>
+        <div class="psm-list" id="psmList">
+          <div class="psm-empty"><span class="psm-empty-icon">⬛</span>Nog geen proefsleuven.</div>
+        </div>
+      </div>
+
+      <!-- Rechter kolom: kaart + formulier -->
+      <div class="psm-right">
+
+        <!-- Kaart -->
+        <div class="psm-map-pane" id="psmMapPane">
+          <div class="psm-map-ph" id="psmMapPh">
+            <span class="psm-map-ph-icon">🗺️</span>
+            <span>Selecteer een proefsleuf om de locatie te zien</span>
+          </div>
+          <div id="psmMap"></div>
+
+          <div class="psm-draw-bar" id="psmDrawBar" style="display:none">
+            <button class="btn-psm-draw" id="psmDrawBtn" onclick="togglePsmDraw()">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 14l3-1 8-8-2-2-8 8-1 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M11 3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Intekenen
+            </button>
+            <button class="btn-psm-clr" id="psmClrBtn" onclick="psmClearDraw()" style="display:none">
+              <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Wissen
+            </button>
+          </div>
+
+          <div class="psm-draw-hint" id="psmDrawHint">Klik punten · Dubbelklik om te voltooien</div>
+
+          <div class="psm-coord-strip" id="psmCoordStrip" style="display:none">
+            <span class="psm-coord-lbl">Coördinaten</span>
+            <div class="psm-coord-list" id="psmCoordList"></div>
+            <span class="psm-len-auto" id="psmLenAuto"></span>
+          </div>
+        </div>
+
+        <!-- Formulier -->
+        <div class="psm-form-pane">
+          <div class="psm-form-ph" id="psmFormPh">
+            <span class="psm-form-ph-icon">👈</span>
+            <span>Selecteer een proefsleuf of voeg er een toe</span>
+          </div>
+
+          <div id="psmForm" style="display:none">
+
+            <div class="psm-sec-title">Identificatie</div>
+            <div class="psm-fg">
+              <div class="psm-field"><label class="psm-fl">Sleuf nr.</label><input class="psm-in" id="psmNr" type="text" placeholder="bijv. PS-01" maxlength="20"></div>
+              <div class="psm-field"><label class="psm-fl">Doeleinde</label>
+                <select class="psm-sel" id="psmDoel">
+                  <option value="Archeologie">Archeologie</option>
+                  <option value="Bodem">Bodem</option>
+                  <option value="Kabels &amp; Leidingen">Kabels &amp; Leidingen</option>
+                  <option value="Funderingsonderzoek">Funderingsonderzoek</option>
+                  <option value="NGE">NGE</option>
+                  <option value="Anders">Anders</option>
+                </select>
+              </div>
+              <div class="psm-field full"><label class="psm-fl">Locatie omschrijving</label><input class="psm-in" id="psmLoc" type="text" placeholder="bijv. Kruising N381 Hoogeveen"></div>
+            </div>
+
+            <div class="psm-sec-title">Afmetingen</div>
+            <div class="psm-fg c3">
+              <div class="psm-field"><label class="psm-fl">Lengte (m)</label><input class="psm-in" id="psmLen" type="number" placeholder="0" min="0" step="0.1"></div>
+              <div class="psm-field"><label class="psm-fl">Breedte (m)</label><input class="psm-in" id="psmBr" type="number" placeholder="0" min="0" step="0.1"></div>
+              <div class="psm-field"><label class="psm-fl">Diepte (m)</label><input class="psm-in" id="psmDp" type="number" placeholder="0" min="0" step="0.01"></div>
+            </div>
+
+            <div class="psm-sec-title">Uitvoering</div>
+            <div class="psm-fg">
+              <div class="psm-field"><label class="psm-fl">Grondsoort</label>
+                <select class="psm-sel" id="psmGrond">
+                  <option value="">— onbekend —</option>
+                  <option value="Zand">Zand</option>
+                  <option value="Klei">Klei</option>
+                  <option value="Veen">Veen</option>
+                  <option value="Leem">Leem</option>
+                  <option value="Zavel">Zavel</option>
+                  <option value="Gemengd">Gemengd</option>
+                </select>
+              </div>
+              <div class="psm-field"><label class="psm-fl">Aannemer</label><input class="psm-in" id="psmAan" type="text" placeholder="naam aannemer"></div>
+              <div class="psm-field"><label class="psm-fl">Startdatum</label><input class="psm-in" id="psmSt" type="date"></div>
+              <div class="psm-field"><label class="psm-fl">Einddatum</label><input class="psm-in" id="psmEi" type="date"></div>
+            </div>
+
+            <div class="psm-sec-title">Status</div>
+            <div class="psm-stat-row">
+              <button class="psm-stat-btn" data-s="Nog te starten" onclick="psmSetStat(this)">— Nog te starten</button>
+              <button class="psm-stat-btn" data-s="Loopt"          onclick="psmSetStat(this)">▶ Loopt</button>
+              <button class="psm-stat-btn" data-s="Review"         onclick="psmSetStat(this)">👁 Review</button>
+              <button class="psm-stat-btn" data-s="Gereed"         onclick="psmSetStat(this)">✓ Gereed</button>
+              <button class="psm-stat-btn" data-s="Geblokkeerd"    onclick="psmSetStat(this)">✗ Geblokkeerd</button>
+            </div>
+
+            <div class="psm-sec-title">Resultaat / Bevinding</div>
+            <div class="psm-res-row">
+              <button class="psm-res-btn" data-r="Vrij"     onclick="psmSetRes(this)">✓ Vrij</button>
+              <button class="psm-res-btn" data-r="Aandacht" onclick="psmSetRes(this)">⚠ Aandacht vereist</button>
+              <button class="psm-res-btn" data-r="Stop"     onclick="psmSetRes(this)">✕ Stopsein</button>
+              <button class="psm-res-btn" data-r="N.v.t."   onclick="psmSetRes(this)">— N.v.t.</button>
+            </div>
+
+            <div class="psm-sec-title">Vergunning</div>
+            <div class="psm-fg">
+              <div class="psm-field full">
+                <label class="psm-cb-row"><input type="checkbox" id="psmVergCb" onchange="psmToggleVerg()"><span class="psm-cb-lbl">Vergunning benodigd</span></label>
+              </div>
+              <div class="psm-field" id="psmVergWrap" style="display:none">
+                <label class="psm-fl">Vergunningsdatum</label><input class="psm-in" id="psmVergDt" type="date">
+              </div>
+            </div>
+
+            <div class="psm-sec-title">Opmerkingen</div>
+            <div class="psm-field"><textarea class="psm-ta" id="psmOpm" placeholder="Notities, bijzonderheden, vondsten..." maxlength="1000"></textarea></div>
+
+          </div><!-- /#psmForm -->
+        </div><!-- /.psm-form-pane -->
+
+      </div><!-- /.psm-right -->
+    </div><!-- /.psm-body -->
+
+    <div class="psm-mfoot">
+      <button class="btn-psm-del"    id="btnPsmDel"  onclick="deletePsm()"   style="display:none">🗑 Verwijderen</button>
+      <button class="btn-psm-cancel"                  onclick="closePsmModal()">Sluiten</button>
+      <button class="btn-psm-save"   id="btnPsmSave" onclick="savePsm()"     style="display:none">Opslaan</button>
+    </div>
+
+  </div>
+</div>
+
 
 </body>
