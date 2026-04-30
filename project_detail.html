@@ -3178,10 +3178,32 @@ function togglePsWrap() {
 
 // ── PS Supabase helpers ──
 function psInsert(o) {
-  return fetch(SUPA_URL+'/rest/v1/proefsleuven',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();});
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven', {
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify(o)
+  }).then(function(r) {
+    return r.json().then(function(data) {
+      if (!r.ok) {
+        var msg = (data && (data.message || data.msg || data.error)) || ('HTTP ' + r.status);
+        throw new Error(msg);
+      }
+      return data;
+    });
+  });
 }
 function psPatch(id,o) {
-  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw new Error('Opslaan mislukt');});
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id, {
+    method:'PATCH',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(o)
+  }).then(function(r) {
+    if (!r.ok) {
+      return r.json().catch(function(){ return {}; }).then(function(data) {
+        throw new Error((data && (data.message || data.error)) || ('HTTP ' + r.status));
+      });
+    }
+  });
 }
 function psDel(id) {
   return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
@@ -3615,23 +3637,36 @@ function savePsm() {
     payload.created_by = currentUser;
     payload.created_at = new Date().toISOString();
     p = psInsert(payload).then(function(ins) {
-      // Merge payload + DB return: garandeert sleuf_nr altijd aanwezig
       var ret  = (Array.isArray(ins) ? ins[0] : ins) || {};
+      if (!ret.id) throw new Error('Geen ID ontvangen van server. Is de proefsleuven tabel aangemaakt in Supabase?');
       var newS = Object.assign({}, payload, ret);
-      if (!newS.sleuf_nr && payload.sleuf_nr) newS.sleuf_nr = payload.sleuf_nr;
+      if (!newS.sleuf_nr) newS.sleuf_nr = payload.sleuf_nr;
       PS_DATA.push(newS);
-      psmSelId = newS.id || ret.id;
+      psmSelId = ret.id;
       showToast('✓ Proefsleuf toegevoegd','success');
+    }).catch(function(err) {
+      psmSelId = null; // reset zodat volgende save opnieuw een insert doet
+      throw err;       // doorgooien naar outer catch
     });
   }
   p.then(function() {
     showSaving(false);
     document.getElementById('btnPsmSave').disabled = false;
-    renderPsmList(); updatePsmProg(); showPsmForm(); renderProefsleuven();
+    renderPsmList();
+    updatePsmProg();
+    renderProefsleuven();
+    // Herlaad opgeslagen data in formulier vanuit PS_DATA
+    if (psmSelId !== null && psmSelId !== undefined) {
+      var saved = PS_DATA.find(function(s){ return s.id === psmSelId; });
+      if (saved) fillPsmForm(saved);
+    } else {
+      showPsmForm();
+    }
   }).catch(function(err) {
     showSaving(false);
     document.getElementById('btnPsmSave').disabled = false;
-    showToast('✗ Opslaan mislukt: '+err.message,'error');
+    console.error('Opslaan proefsleuf mislukt:', err);
+    showToast('✗ Opslaan mislukt: ' + (err.message || 'Onbekende fout'), 'error');
   });
 }
 
