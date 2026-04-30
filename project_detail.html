@@ -3304,7 +3304,7 @@ function renderDuikers() {
   h += '<div class="dk-content">';
   if(n>0){
     var pct=Math.round(ger/n*100);
-    h += '<div class="dk-prog-row"><span class="dk-prog-lbl">'+ger+' van '+n+' gereed'+(metLoc?' &middot; '+metLoc+' ingemeten':'')+'</span><div class="dk-prog-track"><div class="dk-prog-fill" style="width:'+pct+'%"></div></div><span class="dk-prog-pct">'+pct+'%</span></div>';
+    h += '<div class="dk-prog-row"><span class="dk-prog-lbl">'+ger+' van '+n+' gereed'+(metLoc?' &middot; '+metLoc+' ingemeten':'')+'</span><div class="dk-prog-track"><div class="dk-prog-fill" style="width:'+pct+'%"></div></div></div>';
   }
   if(!n){
     h += '<div class="dk-empty-state"><span class="dk-empty-icon">&#x1F6B0;</span>Nog geen duikers geregistreerd.<br><button class="btn-dk-first" onclick="openDkmModal(null)">+ Eerste duiker toevoegen</button></div>';
@@ -3852,7 +3852,7 @@ function renderProefsleuven() {
     h += '<div class="ps-prog-row">'
       + '<span class="ps-prog-lbl">' + ger + ' van ' + n + ' gereed' + (ingetknd ? ' · ' + ingetknd + ' ingetekend' : '') + '</span>'
       + '<div class="ps-prog-track"><div class="ps-prog-fill" style="width:' + pct + '%"></div></div>'
-      + '<span class="ps-prog-pct">' + pct + '%</span>'
+      + ''
       + '</div>';
   }
 
