@@ -63,6 +63,17 @@
   @keyframes savepulse{to{opacity:.12}}
 
   /* PHASE SECTIONS */
+  /* Section headings */
+  .sec-heading {
+    display:flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--text-2);
+    margin:1.375rem 0 .625rem;
+    padding-bottom:.5rem; border-bottom:1px solid var(--border-md);
+  }
+  .sec-heading:first-of-type { margin-top:.25rem; }
+  .sec-heading-icon { font-size:14px; line-height:1; }
+
   .fase-section { margin-bottom:.875rem; }
   .fase-section-header { display:flex; align-items:center; gap:7px; margin-bottom:.5rem; cursor:pointer; user-select:none; }
   .fase-title { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; padding:2px 9px; border-radius:20px; }
@@ -929,6 +940,7 @@
 
 <!-- Opmerkingen sectie -->
 <div class="comments-section" id="commentsSection" style="display:none;max-width:900px;margin:1.125rem auto 0">
+  <div class="sec-heading" style="margin:0 1.5rem .625rem"><span class="sec-heading-icon">&#x1F4AC;</span>Opmerkingen</div>
   <div class="comments-header">
     <div class="comments-title">
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M14 2H2a1 1 0 00-1 1v8a1 1 0 001 1h2v3l3-3h7a1 1 0 001-1V3a1 1 0 00-1-1z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/></svg>
@@ -1541,6 +1553,7 @@ function renderPage() {
   html += '</div>';
 
   // Project info
+  html += '<div class="sec-heading"><span class="sec-heading-icon">&#x1F4CB;</span>Projectinformatie</div>';
   html += '<div class="project-info">';
   var infoFields = [
     [0,'Projectnr. intern'],[1,'Projectnr. extern'],
@@ -1555,6 +1568,7 @@ function renderPage() {
   html += '</div>';
 
   // Rollen & gebruikers
+  html += '<div class="sec-heading"><span class="sec-heading-icon">&#x1F465;</span>Team &amp; Rollen</div>';
   var rolFields = [[8,'Engineer'],[179,'Projectleider'],[180,'Uitvoerder'],[181,'Werkvoorbereider']];
   var hasRol = rolFields.some(function(f){ return ROW_DATA[f[0]] && ROW_DATA[f[0]] !== '—'; });
   var rolColors = {8:'#0071E3', 179:'#1A7F3C', 180:'#8E6000', 181:'#6F35CE'};
@@ -1567,11 +1581,20 @@ function renderPage() {
   html += '</div>';
 
   // ── Gantt chart ──
+  html += '<div class="sec-heading"><span class="sec-heading-icon">&#x1F4C5;</span>Planning &amp; Voortgang</div>';
   html += buildGanttHTML();
 
-  // Phase sections
-  var phases = ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch','Vergunningen','Sleufloze technieken'];
-  phases.forEach(function(fase) {
+  // Phase sections with group headings
+  var phaseGroups = [
+    { heading:'&#x1F4CB; Fasering', icon:'', fases:['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'] },
+    { heading:'&#x1F333; Omgevingsmanagement', icon:'', fases:['Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch'] },
+    { heading:'&#x1F4DC; Vergunningen', icon:'', fases:['Vergunningen'] },
+    { heading:'&#x1F6A7; Sleufloze technieken', icon:'', fases:['Sleufloze technieken'] }
+  ];
+  phaseGroups.forEach(function(group) {
+    // Group heading
+    html += '<div class="sec-heading">'+group.heading+'</div>';
+    group.fases.forEach(function(fase) {
     var faseCols = COLS.filter(function(c){ return c.f === fase; });
     if (!faseCols.length) return;
     var fs = FASE_STYLE[fase] || {};
@@ -1650,7 +1673,8 @@ function renderPage() {
     });
 
     html += '</div></div>'; // fase-section-body + fase-section
-  });
+    }); // end group.fases
+  }); // end phaseGroups
 
   html += '</div>'; // app-wrapper
   document.getElementById('mainContent').innerHTML = html;
@@ -2924,7 +2948,8 @@ function renderBoringen() {
   });
   tot = Math.round(tot * 10) / 10;
 
-  var h = '<div class="bor-wrap" id="borWrap">';
+  var h = '<div class="sec-heading" style="margin-top:1.375rem"><span class="sec-heading-icon">&#x1F9F3;</span>Gestuurde boringen</div>'
+    + '<div class="bor-wrap" id="borWrap">';
 
   // Header
   h += '<div class="bor-hdr" onclick="toggleBorWrap()">'
@@ -3286,7 +3311,8 @@ function renderDuikers() {
     if(d.lengte_m) totLen += parseFloat(d.lengte_m);
   });
   totLen = Math.round(totLen*10)/10;
-  var h = '<div class="dk-wrap" id="dkWrap">';
+  var h = '<div class="sec-heading"><span class="sec-heading-icon">&#x1F6B0;</span>Duikers</div>'
+    + '<div class="dk-wrap" id="dkWrap">';
   h += '<div class="dk-hdr" onclick="toggleDkWrap()">'
     + '<div class="dk-hdr-ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><ellipse cx="12" cy="12" rx="3" ry="10" stroke="white" stroke-width="1.8"/><path d="M2 12h20M4 7c2 1.5 4 2 8 2s6-.5 8-2M4 17c2-1.5 4-2 8-2s6 .5 8 2" stroke="white" stroke-width="1.6" stroke-linecap="round"/></svg></div>'
     + '<span class="dk-hdr-lbl">Duikers</span>'
@@ -3819,7 +3845,8 @@ function renderProefsleuven() {
   });
   totLen = Math.round(totLen * 10) / 10;
 
-  var h = '<div class="ps-wrap" id="psWrap">';
+  var h = '<div class="sec-heading"><span class="sec-heading-icon">&#x2B1B;</span>Proefsleuven</div>'
+    + '<div class="ps-wrap" id="psWrap">';
 
   // Header
   h += '<div class="ps-hdr" onclick="togglePsWrap()">'
