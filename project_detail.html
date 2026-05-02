@@ -226,11 +226,25 @@
     overflow:hidden; margin-bottom:.875rem; box-shadow:var(--sh-sm);
   }
   .gantt-header {
-    padding:.75rem 1.25rem .625rem;
+    padding:.625rem 1.25rem;
     border-bottom:1px solid var(--border);
-    display:flex; align-items:center; gap:.75rem;
+    display:flex; align-items:center; gap:.75rem; flex-wrap:wrap;
     background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%);
   }
+  .gantt-group-filters { display:flex; gap:4px; flex-wrap:wrap; margin-left:auto; }
+  .gantt-gf-btn {
+    display:inline-flex; align-items:center; gap:4px;
+    font-size:10px; font-weight:600; padding:3px 10px;
+    border:1px solid var(--border-md); border-radius:20px;
+    background:var(--surface); color:var(--text-2);
+    cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .12s;
+    white-space:nowrap; user-select:none;
+  }
+  .gantt-gf-btn:hover { background:var(--surface2); border-color:var(--border-strong); }
+  .gantt-gf-btn.active { color:#fff; border-color:transparent; }
+  .gantt-gf-btn .gfb-dot { width:7px; height:7px; border-radius:2px; flex-shrink:0; }
+  .gantt-gf-btn.active .gfb-cross { display:inline; }
+  .gantt-gf-btn:not(.active) .gfb-cross { display:none; }
   .gantt-title {
     font-size:12px; font-weight:700; text-transform:uppercase;
     letter-spacing:.07em; color:var(--text); display:flex; align-items:center; gap:7px;
@@ -1991,6 +2005,7 @@ async function saveOpmerking() {
 
 var ganttFaseFilter = 'alle';
 var ganttHidden = {};  // label -> true = hidden
+var ganttGroupHidden = {};  // group key -> true = hidden
 var ganttRolFilter  = '';
 
 var GANTT_PHASES = [
@@ -2051,6 +2066,7 @@ function buildGanttHTML() {
     + '<div class="gantt-header">'
     + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 7h14M5 3V1M11 3V1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>'
     + '<span class="gantt-title">Planning</span>'
+    + '<div class="gantt-group-filters" id="ganttGroupFilters"></div>'
     + '</div>'
     + '<div class="gantt-body"><div id="ganttChart"></div></div>'
     + '<div class="gantt-legend-wrap" id="ganttLegend"></div>'
@@ -2099,9 +2115,47 @@ function applyFilters(fase, rol, btn) {
   });
 }
 
+var GANTT_GROUPS = [
+  { key:'fasering',     label:'Fasering',             color:'#0057FF' },
+  { key:'omgeving',     label:'Omgevingsmanagement',  color:'#1A7F3C' },
+  { key:'vergunningen', label:'Vergunningen',          color:'#881C58' },
+  { key:'sleufloze',    label:'Sleufloze technieken',  color:'#C93400' }
+];
+
+function renderGanttGroupFilters() {
+  var el = document.getElementById('ganttGroupFilters');
+  if (!el) return;
+  var html = '';
+  GANTT_GROUPS.forEach(function(g) {
+    var isHidden = !!ganttGroupHidden[g.key];
+    var btnStyle = isHidden ? '' : 'background:'+g.color+';border-color:'+g.color;
+    html += '<button class="gantt-gf-btn'+(isHidden?'':' active')+'" '
+      + 'style="'+btnStyle+'" '
+      + 'onclick="toggleGanttGroup(\\"'+g.key+'\\")" '
+      + 'title="'+(isHidden?'Toon':'Verberg')+' '+g.label+'">'
+      + '<span class="gfb-dot" style="background:'+(isHidden?'var(--text-3)':g.color === '#0057FF' ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.7)')+'"></span>'
+      + g.label
+      + ' <span class="gfb-cross" style="opacity:.7;font-size:9px">&times;</span>'
+      + '</button>';
+  });
+  el.innerHTML = html;
+}
+
+function toggleGanttGroup(groupKey) {
+  ganttGroupHidden[groupKey] = !ganttGroupHidden[groupKey];
+  // Sync all individual phase checkboxes in this group
+  var isHidden = !!ganttGroupHidden[groupKey];
+  GANTT_PHASES.forEach(function(p) {
+    if (p.group === groupKey) ganttHidden[p.label] = isHidden;
+  });
+  renderGanttGroupFilters();
+  renderGanttChart(); // renders legend too
+}
+
 function setAllGanttPhases(show) {
   GANTT_PHASES.forEach(function(p){ ganttHidden[p.label] = !show; });
   renderGanttChart();
+  renderGanttGroupFilters();
   renderGanttLegend();
 }
 
@@ -2119,11 +2173,8 @@ function renderGanttLegend() {
   GANTT_PHASES.forEach(function(p){ if (grouped[p.group]) grouped[p.group].push(p); });
 
   var html = '<div class="gantt-leg-controls">'
-    + '<span class="gantt-leg-title">Fasen in-/uitschakelen</span>'
-    + '<div class="gantt-leg-btns">'
-    + '<button class="gantt-leg-btn" onclick="setAllGanttPhases(true)">Alles tonen</button>'
-    + '<button class="gantt-leg-btn" onclick="setAllGanttPhases(false)">Alles verbergen</button>'
-    + '</div></div>';
+    + '<span class="gantt-leg-title">Individuele fasen</span>'
+    + '</div>';
 
   html += '<div class="gantt-leg-groups">';
   var cbId = 0;
@@ -2172,6 +2223,7 @@ function renderGanttChart() {
   // ── Filter phases ──
   var phases = GANTT_PHASES.filter(function(p) {
     if (ganttHidden[p.label]) return false;
+    if (ganttGroupHidden[p.group]) return false;
     var gff = ganttFaseFilter;
     if (gff === 'fasering'     && p.group !== 'fasering')    return false;
     if (gff === 'omgeving'     && p.group !== 'omgeving')    return false;
@@ -2354,6 +2406,7 @@ function renderGanttChart() {
   html += '</div>'; // .gantt-grid
 
   chart.innerHTML = html;
+  renderGanttGroupFilters();
   renderGanttLegend();
 }
 
