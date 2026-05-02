@@ -2125,20 +2125,19 @@ var GANTT_GROUPS = [
 function renderGanttGroupFilters() {
   var el = document.getElementById('ganttGroupFilters');
   if (!el) return;
-  var html = '';
+  el.innerHTML = '';
   GANTT_GROUPS.forEach(function(g) {
     var isHidden = !!ganttGroupHidden[g.key];
-    var btnStyle = isHidden ? '' : 'background:'+g.color+';border-color:'+g.color;
-    html += '<button class="gantt-gf-btn'+(isHidden?'':' active')+'" '
-      + 'style="'+btnStyle+'" '
-      + 'onclick="toggleGanttGroup(\\"'+g.key+'\\")" '
-      + 'title="'+(isHidden?'Toon':'Verberg')+' '+g.label+'">'
-      + '<span class="gfb-dot" style="background:'+(isHidden?'var(--text-3)':g.color === '#0057FF' ? 'rgba(255,255,255,.7)' : 'rgba(255,255,255,.7)')+'"></span>'
+    var btn = document.createElement('button');
+    btn.className = 'gantt-gf-btn' + (isHidden ? '' : ' active');
+    btn.title = (isHidden ? 'Toon ' : 'Verberg ') + g.label;
+    if (!isHidden) { btn.style.background = g.color; btn.style.borderColor = g.color; }
+    btn.innerHTML = '<span class="gfb-dot" style="background:'+(isHidden?'var(--text-3)':'rgba(255,255,255,.7)')+'"></span>'
       + g.label
-      + ' <span class="gfb-cross" style="opacity:.7;font-size:9px">&times;</span>'
-      + '</button>';
+      + '<span class="gfb-cross" style="opacity:.7;font-size:9px">&times;</span>';
+    btn.addEventListener('click', function() { toggleGanttGroup(g.key); });
+    el.appendChild(btn);
   });
-  el.innerHTML = html;
 }
 
 function toggleGanttGroup(groupKey) {
