@@ -2159,7 +2159,13 @@ function buildDatumOverzicht() {
     return best;
   }
 
-  var engineer = ROW_DATA[8] || '—';
+  // Map role key -> person name from ROW_DATA
+  var ROLE_PERSON = {
+    engineer:         ROW_DATA[8]   || '—',
+    projectleider:    ROW_DATA[179] || '—',
+    uitvoerder:       ROW_DATA[180] || '—',
+    werkvoorbereider: ROW_DATA[181] || '—'
+  };
 
   var grouped = {};
   GROUPS.forEach(function(g){ grouped[g.key] = []; });
@@ -2226,8 +2232,9 @@ function buildDatumOverzicht() {
         roleCell = '<span style="font-size:10px;color:var(--text-3)">—</span>';
       }
 
-      // Responsible person
-      var personCell = '<span style="font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(engineer)+'</span>';
+      // Responsible person — name matching the phase role
+      var personName = role ? (ROLE_PERSON[role] || ROLE_PERSON.engineer) : ROLE_PERSON.engineer;
+      var personCell = '<span style="font-size:11px;color:var(--text-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(personName)+'</span>';
 
       // Gereed
       var doneCell = isDone
