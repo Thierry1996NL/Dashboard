@@ -488,7 +488,40 @@
   .gantt-filters,.gantt-filter-row,.gantt-filter-lbl,.gantt-ftab,.gantt-rtab,.gr-dot { display:none; }
 
 
-  /* ══ DATUM OVERZICHT ══ */
+  /* ══ ONTWERP / TRACÉ ══ */
+  .ontwerp-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); }
+  .ontwerp-header { padding:.625rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.625rem; background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%); flex-wrap:wrap; }
+  .ontwerp-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text); display:flex; align-items:center; gap:7px; }
+  .ontwerp-body { display:flex; height:calc(100vh - 160px); min-height:500px; }
+  /* Sidebar */
+  .ontwerp-sidebar { width:280px; flex-shrink:0; border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+  .ontwerp-sb-head { padding:.5rem .875rem; border-bottom:1px solid var(--border); font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); display:flex; align-items:center; justify-content:space-between; }
+  .ontwerp-layers { flex:1; overflow-y:auto; padding:.25rem 0; }
+  .ontwerp-layer-item { display:flex; align-items:center; gap:8px; padding:.375rem .875rem; transition:background .07s; }
+  .ontwerp-layer-item:hover { background:var(--surface2); }
+  .ont-layer-color { width:12px; height:12px; border-radius:3px; flex-shrink:0; border:1px solid rgba(0,0,0,.12); }
+  .ont-layer-name { font-size:11px; color:var(--text-2); flex:1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .ont-layer-pts { font-size:9px; color:var(--text-3); white-space:nowrap; }
+  .ont-layer-vis { cursor:pointer; font-size:13px; color:var(--text-3); transition:color .07s; padding:0 2px; background:none; border:none; }
+  .ont-layer-vis:hover { color:var(--text); }
+  .ont-layer-del { cursor:pointer; font-size:11px; color:var(--b-fg); background:none; border:none; opacity:0; transition:opacity .07s; padding:0 2px; }
+  .ontwerp-layer-item:hover .ont-layer-del { opacity:1; }
+  .ont-empty { text-align:center; padding:2rem 1rem; color:var(--text-3); font-size:12px; }
+  /* Map area */
+  .ontwerp-map-area { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+  .ontwerp-layer-bar { padding:.375rem .875rem .25rem; border-bottom:1px solid var(--border); background:var(--surface2); flex-shrink:0; position:relative; z-index:20; }
+  #ontwerpMap { flex:1; }
+  /* DXF drop zone */
+  .ont-dxf-drop { border:2px dashed var(--border-strong); border-radius:var(--r-lg); padding:.75rem 1rem; margin:.625rem .875rem; text-align:center; cursor:pointer; transition:all .12s; background:var(--surface2); }
+  .ont-dxf-drop:hover { border-color:var(--accent); background:var(--accent-2); }
+  .ont-dxf-drop.drag-over { border-color:var(--accent); background:var(--accent-2); }
+  .ont-dxf-lbl { font-size:12px; font-weight:500; color:var(--text-2); }
+  .ont-dxf-sub { font-size:10px; color:var(--text-3); margin-top:2px; }
+  .ont-status { font-size:11px; padding:4px 10px; border-radius:var(--r); margin:.25rem .875rem 0; display:none; }
+  .ont-status.ok  { background:var(--g-bg); color:var(--g-fg); display:block; }
+  .ont-status.err { background:var(--b-bg); color:var(--b-fg); display:block; }
+
+    /* ══ DATUM OVERZICHT ══ */
   .datum-overzicht {
     background:var(--surface); border:1px solid var(--border);
     border-radius:var(--r-xl); overflow:hidden;
@@ -1192,7 +1225,16 @@
   <button class="snav-btn"        data-section="boringen"   onclick="showSection('boringen',this)">&#x1F9F3; Boringen</button>
   <button class="snav-btn"        data-section="proefsleuven" onclick="showSection('proefsleuven',this)">&#x2B1B; Proefsleuven</button>
   <button class="snav-btn"        data-section="duikers"    onclick="showSection('duikers',this)">&#x1F6B0; Duikers</button>
+  <button class="snav-btn"        data-section="ontwerp"     onclick="showSection('ontwerp',this)">&#x1F5FA; Ontwerp / Tracé</button>
   <button class="snav-btn"        data-section="opmerkingen" onclick="showSection('opmerkingen',this)">&#x1F4AC; Opmerkingen</button>
+  <div style="margin-left:auto;display:flex;align-items:center;gap:5px;padding-left:.75rem;border-left:1px solid var(--border)">
+    <button class="btn-det-export csv" onclick="exportDetailCSV()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border:1px solid var(--border-md);border-radius:var(--r);background:var(--surface2);color:var(--text-2);cursor:pointer;font-family:inherit;white-space:nowrap">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
+    </button>
+    <button class="btn-det-export xlsx" onclick="exportDetailXLSX()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border:none;border-radius:var(--r);background:var(--g-fg);color:#fff;cursor:pointer;font-family:inherit;white-space:nowrap">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
+    </button>
+  </div>
 </nav>
 
 <!-- Detail controls: only search + status filters -->
@@ -1228,6 +1270,66 @@
 </div>
 
 <!-- Opmerkingen sectie -->
+<div class="section-panel" id="panel-ontwerp">
+<div class="main" style="padding-top:0;padding-bottom:2rem">
+  <div class="sec-heading"><span class="sec-heading-icon">&#x1F5FA;</span>Ontwerp / Trac&eacute;</div>
+  <div class="ontwerp-wrap">
+    <div class="ontwerp-header">
+      <span class="ontwerp-title">
+        <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/><path d="M4 8l3 3 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        DXF Lagen
+      </span>
+      <span style="font-size:11px;color:var(--text-3);margin-left:auto">Importeer meerdere DXF bestanden als lagen op de kaart</span>
+    </div>
+    <div class="ontwerp-body">
+      <!-- Sidebar: lagenlijst + import -->
+      <div class="ontwerp-sidebar">
+        <div class="ontwerp-sb-head">
+          <span>Lagen (<span id="ontwerpLayerCount">0</span>)</span>
+          <button onclick="clearAllOntwerpLayers()" style="font-size:9px;padding:2px 7px;border:1px solid var(--border-md);border-radius:20px;background:var(--b-bg);color:var(--b-fg);cursor:pointer;font-family:inherit" title="Verwijder alle lagen">Alles wissen</button>
+        </div>
+        <div class="ontwerp-layers" id="ontwerpLayerList">
+          <div class="ont-empty">&#x1F4C2;<br>Nog geen lagen.<br>Importeer een DXF bestand.</div>
+        </div>
+        <!-- DXF import -->
+        <div style="border-top:1px solid var(--border);padding:.5rem 0">
+          <div class="ont-dxf-drop" id="ontwerpDxfDrop"
+            onclick="document.getElementById('ontwerpDxfInput').click()"
+            ondragover="event.preventDefault();this.classList.add('drag-over')"
+            ondragleave="this.classList.remove('drag-over')"
+            ondrop="handleOntwerpDrop(event)">
+            <div style="font-size:20px;margin-bottom:3px">&#x1F4D0;</div>
+            <div class="ont-dxf-lbl">+ DXF importeren</div>
+            <div class="ont-dxf-sub">LWPOLYLINE &middot; POLYLINE &middot; LINE</div>
+          </div>
+          <input type="file" id="ontwerpDxfInput" accept=".dxf" multiple style="display:none" onchange="handleOntwerpFiles(this.files)">
+          <div id="ontwerpStatus"></div>
+        </div>
+      </div>
+      <!-- Map -->
+      <div class="ontwerp-map-area">
+        <!-- Layer bar -->
+        <div class="ontwerp-layer-bar">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-3);margin-bottom:.25rem">Achtergrondkaart</div>
+          <div class="map-layer-btns">
+            <button class="map-lbtn active" id="btnOntwerpPdok" onclick="setOntwerpLayer('pdok')">PDOK Luchtfoto</button>
+            <button class="map-lbtn"        id="btnOntwerpOsm"  onclick="setOntwerpLayer('osm')">OpenStreetMap</button>
+            <button class="map-lbtn"        id="btnOntwerpBrt"  onclick="setOntwerpLayer('brt')">BRT (topografisch)</button>
+          </div>
+          <div class="kadaster-toggle-row">
+            <button class="btn-kadaster-toggle" id="btnKadOntwerp" onclick="toggleKadaster('ont')">
+              <span class="kt-dot"></span>Kadastrale kaart overlay
+            </button>
+            <span style="font-size:10px;color:var(--text-3)">Percelen &amp; grenzen</span>
+          </div>
+        </div>
+        <div id="ontwerpMap" style="flex:1;min-height:0"></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 <div class="section-panel" id="panel-opmerkingen"><div class="main" id="commentsSection" style="padding-top:0;padding-bottom:2rem">
   <div class="sec-heading"><span class="sec-heading-icon">&#x1F4AC;</span>Opmerkingen</div>
   <div class="comments-header">
@@ -1317,6 +1419,176 @@ function showSection(id, btn) {
   if (btn) btn.classList.add('active');
   // Scroll to top
   window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+
+// ══════════════════════════════════════════════════════════
+// ONTWERP / TRACÉ MODULE
+// ══════════════════════════════════════════════════════════
+var ontwerpMap        = null;
+var ontwerpMapInit    = false;
+var ontwerpCurLayer   = 'pdok';
+var ontwerpLayers     = [];   // [{id, name, color, visible, leafletLayers:[]}]
+var ontwerpColorIdx   = 0;
+var OT_COLORS = ['#0057FF','#FF3B30','#1A7F3C','#FF9500','#881C58','#6F35CE','#0077B5','#C93400','#006B47','#636366'];
+
+// Init map when section opens
+function initOntwerpMap() {
+  var el = document.getElementById('ontwerpMap');
+  if (!el || typeof L === 'undefined') return;
+  if (ontwerpMapInit) { ontwerpMap.invalidateSize(); return; }
+  ontwerpMap = L.map('ontwerpMap', { center:[52.9,6.6], zoom:10, zoomControl:true, attributionControl:true });
+  MAP_LAYERS[ontwerpCurLayer].addTo(ontwerpMap);
+  entwickerpMapInit = true;  // typo guard
+  ontwerpMapInit = true;
+  ontwerpMap.invalidateSize();
+}
+
+function setOntwerpLayer(name) {
+  if (!ontwerpMap) return;
+  Object.values(MAP_LAYERS).forEach(function(l){ if(ontwerpMap.hasLayer(l)) ontwerpMap.removeLayer(l); });
+  MAP_LAYERS[name].addTo(ontwerpMap);
+  ontwerpCurLayer = name;
+  ['pdok','osm','brt'].forEach(function(k){
+    var el = document.getElementById('btnOntwerp'+k.charAt(0).toUpperCase()+k.slice(1));
+    if (el) el.classList.toggle('active', k===name);
+  });
+  if (kadasterActive.ont && ontwerpMap) {
+    if (ontwerpMap.hasLayer(kadasterOverlay)) ontwerpMap.removeLayer(kadasterOverlay);
+    kadasterOverlay.addTo(ontwerpMap);
+  }
+}
+
+// Override showSection to init map
+var _origShowSection = showSection;
+showSection = function(id, btn) {
+  _origShowSection(id, btn);
+  if (id === 'ontwerp') setTimeout(initOntwerpMap, 80);
+};
+
+// DXF drop/file handlers
+function handleOntwerpDrop(e) {
+  e.preventDefault();
+  document.getElementById('ontwerpDxfDrop').classList.remove('drag-over');
+  handleOntwerpFiles(e.dataTransfer.files);
+}
+
+function handleOntwerpFiles(files) {
+  if (!files || !files.length) return;
+  Array.prototype.forEach.call(files, function(file) {
+    if (!file.name.toLowerCase().endsWith('.dxf')) {
+      showOntwerpStatus('Alleen .dxf bestanden worden ondersteund: ' + file.name, 'err');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) { parseOntwerpDxf(e.target.result, file.name); };
+    reader.readAsText(file);
+  });
+}
+
+function parseOntwerpDxf(text, filename) {
+  try {
+    var lines = text.split(/\r?\n/).map(function(l){ return l.trim(); });
+    var polylines = [];
+    var entStart = lines.indexOf('ENTITIES'); if (entStart < 0) entStart = 0;
+    var i = entStart;
+    while (i < lines.length) {
+      if (lines[i]==='LWPOLYLINE'||(lines[i]==='0'&&lines[i+1]==='LWPOLYLINE')){ var pts=parseLwPolyline(lines,i); if(pts.length>=2) polylines.push(pts); }
+      if (lines[i]==='POLYLINE'  ||(lines[i]==='0'&&lines[i+1]==='POLYLINE'))  { var pts2=parsePolyline(lines,i);  if(pts2.length>=2) polylines.push(pts2); }
+      if (lines[i-1]==='0'&&lines[i]==='LINE'){ var ln=parseLine(lines,i); if(ln) polylines.push(ln); }
+      i++;
+    }
+    if (!polylines.length) { showOntwerpStatus('Geen polylines gevonden in: ' + filename, 'err'); return; }
+
+    var inRd = polylines[0].every(function(p){ return p[0]>0&&p[0]<300000&&p[1]>250000&&p[1]<650000; });
+    if (!inRd) { showOntwerpStatus('Coördinaten lijken niet in RD New: ' + filename, 'err'); return; }
+
+    var color = OT_COLORS[ontwerpColorIdx % OT_COLORS.length];
+    ontwerpColorIdx++;
+    var layerId = 'otl_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    var layer = { id:layerId, name:filename.replace(/\.dxf$/i,''), color:color, visible:true, polylines:polylines, leafletLayers:[] };
+    ontwerpLayers.push(layer);
+    renderOntwerpLayerOnMap(layer);
+    renderOntwerpLayerList();
+    showOntwerpStatus('\u2713 ' + polylines.length + ' polyline(s) geladen uit ' + filename, 'ok');
+    setTimeout(function(){ document.getElementById('ontwerpStatus').style.display='none'; }, 3000);
+  } catch(err) {
+    showOntwerpStatus('Parseerfout: ' + err.message, 'err');
+  }
+}
+
+function renderOntwerpLayerOnMap(layer) {
+  if (!ontwerpMap) initOntwerpMap();
+  layer.leafletLayers = [];
+  layer.polylines.forEach(function(pts) {
+    var latlngs = pts.map(function(p){ var wgs=rd2wgs(p[0],p[1]); return [wgs[0],wgs[1]]; });
+    var poly = L.polyline(latlngs, {
+      color: layer.color, weight:2.5, opacity: layer.visible ? 0.9 : 0,
+      lineJoin:'round', lineCap:'round'
+    }).addTo(ontwerpMap);
+    layer.leafletLayers.push(poly);
+  });
+  // Fit bounds to all layers
+  var allBounds = [];
+  ontwerpLayers.forEach(function(l){ l.leafletLayers.forEach(function(pl){ try{ var b=pl.getBounds(); allBounds.push(b); }catch(e){} }); });
+  if (allBounds.length) {
+    var combined = allBounds[0];
+    allBounds.forEach(function(b){ combined = combined.extend(b); });
+    ontwerpMap.fitBounds(combined, {padding:[24,24]});
+  }
+}
+
+function toggleOntwerpLayer(id) {
+  var layer = ontwerpLayers.find(function(l){ return l.id===id; });
+  if (!layer) return;
+  layer.visible = !layer.visible;
+  layer.leafletLayers.forEach(function(pl){ pl.setStyle({opacity: layer.visible?0.9:0, fillOpacity: layer.visible?0.2:0}); });
+  renderOntwerpLayerList();
+}
+
+function deleteOntwerpLayer(id) {
+  var idx = ontwerpLayers.findIndex(function(l){ return l.id===id; });
+  if (idx < 0) return;
+  ontwerpLayers[idx].leafletLayers.forEach(function(pl){ if(ontwerpMap&&ontwerpMap.hasLayer(pl)) ontwerpMap.removeLayer(pl); });
+  ontwerpLayers.splice(idx, 1);
+  renderOntwerpLayerList();
+}
+
+function clearAllOntwerpLayers() {
+  ontwerpLayers.forEach(function(layer){
+    layer.leafletLayers.forEach(function(pl){ if(ontwerpMap&&ontwerpMap.hasLayer(pl)) ontwerpMap.removeLayer(pl); });
+  });
+  ontwerpLayers = [];
+  renderOntwerpLayerList();
+}
+
+function renderOntwerpLayerList() {
+  var el = document.getElementById('ontwerpLayerList');
+  var cnt = document.getElementById('ontwerpLayerCount');
+  if (!el) return;
+  if (cnt) cnt.textContent = ontwerpLayers.length;
+  if (!ontwerpLayers.length) {
+    el.innerHTML = '<div class="ont-empty">&#x1F4C2;<br>Nog geen lagen.<br>Importeer een DXF bestand.</div>';
+    return;
+  }
+  var html = '';
+  ontwerpLayers.forEach(function(layer) {
+    var pts = layer.polylines.reduce(function(s,p){ return s+p.length; }, 0);
+    html += '<div class="ontwerp-layer-item">'
+      + '<span class="ont-layer-color" style="background:'+layer.color+'"></span>'
+      + '<span class="ont-layer-name" title="'+esc(layer.name)+'">'+esc(layer.name)+'</span>'
+      + '<span class="ont-layer-pts">'+pts+'pt</span>'
+      + '<button class="ont-layer-vis" data-id="'+layer.id+'" onclick="toggleOntwerpLayer(this.dataset.id)" title="'+(layer.visible?'Verbergen':'Tonen')+'">'+(layer.visible?'&#x1F441;':'&#x1F648;')+'</button>'
+      + '<button class="ont-layer-del" data-id="'+layer.id+'" onclick="deleteOntwerpLayer(this.dataset.id)" title="Verwijderen">&times;</button>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function showOntwerpStatus(msg, type) {
+  var el = document.getElementById('ontwerpStatus');
+  if (!el) return;
+  el.textContent = msg; el.className = 'ont-status ' + type; el.style.display = 'block';
 }
 
 function goBack() {
@@ -2927,6 +3199,7 @@ var kadasterOverlay = L.tileLayer(
   { attribution:'© Kadaster', maxZoom:19, opacity:0.75, className:'kadaster-overlay' }
 );
 var kadasterActive = { bor:false, psm:false, dkm:false };
+kadasterActive.ont    = false;
 
 // ── Marker HTML helpers ──
 function markerHtmlPin(label, color, textColor) {
@@ -4884,7 +5157,7 @@ function psmRenderCoordStrip() {
 }
 
 function toggleKadaster(mapKey) {
-  var mapObj = mapKey==='bor'?borMap : mapKey==='psm'?psmMap : dkmMap;
+  var mapObj = mapKey==='bor'?borMap : mapKey==='psm'?psmMap : mapKey==='dkm'?dkmMap : ontwerpMap;
   if (!mapObj) return;
   kadasterActive[mapKey] = !kadasterActive[mapKey];
   if (kadasterActive[mapKey]) {
