@@ -488,7 +488,49 @@
   .gantt-filters,.gantt-filter-row,.gantt-filter-lbl,.gantt-ftab,.gantt-rtab,.gr-dot { display:none; }
 
 
-  /* ══ ONTWERP / TRACÉ ══ */
+  /* ══ CONTACTPERSONEN ══ */
+  .cp-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); margin-bottom:1.125rem; }
+  .cp-header { padding:.625rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.625rem; background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%); }
+  .cp-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text); display:flex; align-items:center; gap:7px; flex:1; }
+  .btn-cp-add { display:inline-flex; align-items:center; gap:4px; padding:4px 12px; font-size:11px; font-weight:600; border:none; border-radius:20px; background:var(--accent); color:#fff; cursor:pointer; font-family:'DM Sans',sans-serif; transition:all .1s; box-shadow:0 1px 4px rgba(0,87,255,.25); }
+  .btn-cp-add:hover { background:#0044CC; }
+  .cp-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:0; }
+  .cp-card { padding:.875rem 1.25rem; border-right:1px solid var(--border); border-bottom:1px solid var(--border); transition:background .07s; }
+  .cp-card:hover { background:var(--surface2); }
+  .cp-card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:.5rem; margin-bottom:.5rem; }
+  .cp-name { font-size:13px; font-weight:600; color:var(--text); }
+  .cp-org  { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-3); margin-top:1px; }
+  .cp-func { display:inline-flex; align-items:center; font-size:10px; padding:2px 7px; border-radius:20px; background:var(--surface2); color:var(--text-2); border:1px solid var(--border-md); margin-bottom:.375rem; }
+  .cp-contact { display:flex; flex-direction:column; gap:3px; }
+  .cp-contact-row { display:flex; align-items:center; gap:5px; font-size:11px; color:var(--text-2); }
+  .cp-contact-row a { color:var(--accent); text-decoration:none; }
+  .cp-contact-row a:hover { text-decoration:underline; }
+  .cp-edit-btn { background:none; border:none; cursor:pointer; color:var(--text-3); font-size:12px; padding:2px 5px; border-radius:4px; transition:all .1s; flex-shrink:0; }
+  .cp-edit-btn:hover { background:var(--surface3); color:var(--text); }
+  .cp-empty { text-align:center; padding:2rem; color:var(--text-3); font-size:12px; grid-column:1/-1; }
+  /* Contact modal */
+  .cp-overlay { position:fixed; inset:0; background:rgba(8,13,31,.5); z-index:700; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
+  .cp-overlay.open { opacity:1; pointer-events:all; }
+  .cp-modal { background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:440px; box-shadow:var(--sh-lg); border:1px solid var(--border-md); transform:translateY(8px); transition:transform .15s; }
+  .cp-overlay.open .cp-modal { transform:translateY(0); }
+  .cp-modal-hdr { padding:.875rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .cp-modal-title { font-size:14px; font-weight:600; color:var(--text); }
+  .cp-modal-body { padding:1rem 1.25rem; display:flex; flex-direction:column; gap:.625rem; }
+  .cp-modal-footer { padding:.75rem 1.25rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:6px; }
+  .cp-field { display:flex; flex-direction:column; gap:3px; }
+  .cp-field label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); }
+  .cp-field input, .cp-field textarea { padding:7px 10px; font-family:'DM Sans',sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r-md); background:var(--surface2); color:var(--text); outline:none; transition:all .1s; width:100%; }
+  .cp-field input:focus, .cp-field textarea:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .cp-field textarea { min-height:60px; resize:vertical; line-height:1.5; }
+  .cp-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:.625rem; }
+  .btn-cp-cancel { padding:6px 14px; font-size:12px; font-family:'DM Sans',sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
+  .btn-cp-cancel:hover { background:var(--surface2); }
+  .btn-cp-save   { padding:6px 16px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:700; border:none; border-radius:var(--r); background:var(--accent); color:#fff; cursor:pointer; }
+  .btn-cp-save:hover { background:#0044CC; }
+  .btn-cp-delete { padding:6px 14px; font-size:12px; font-family:'DM Sans',sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--b-bg); color:var(--b-fg); cursor:pointer; margin-right:auto; }
+  .btn-cp-delete:hover { background:var(--b-fg); color:#fff; }
+
+    /* ══ ONTWERP / TRACÉ ══ */
   .ontwerp-wrap { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-xl); overflow:hidden; box-shadow:var(--sh-sm); }
   .ontwerp-header { padding:.625rem 1.25rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.625rem; background:linear-gradient(135deg,var(--surface) 0%,var(--surface2) 100%); flex-wrap:wrap; }
   .ontwerp-title { font-size:12px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text); display:flex; align-items:center; gap:7px; }
@@ -1396,6 +1438,33 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- ══ CONTACTPERSONEN MODAL ══ -->
+<div class="cp-overlay" id="cpOverlay" onclick="if(event.target===this)closeCpModal()">
+  <div class="cp-modal">
+    <div class="cp-modal-hdr">
+      <span class="cp-modal-title" id="cpModalTitle">Contactpersoon toevoegen</span>
+      <button class="opm-close" onclick="closeCpModal()">&#10005;</button>
+    </div>
+    <div class="cp-modal-body">
+      <div class="cp-grid2">
+        <div class="cp-field"><label>Naam <span style="color:var(--b-fg)">*</span></label><input id="cpNaam" type="text" placeholder="Jan de Vries"></div>
+        <div class="cp-field"><label>Organisatie</label><input id="cpOrg" type="text" placeholder="Gemeente Drenthe"></div>
+      </div>
+      <div class="cp-field"><label>Functie</label><input id="cpFunc" type="text" placeholder="Omgevingsmanager"></div>
+      <div class="cp-grid2">
+        <div class="cp-field"><label>Telefoon</label><input id="cpTel" type="tel" placeholder="+31 6 12345678"></div>
+        <div class="cp-field"><label>E-mail</label><input id="cpEmail" type="email" placeholder="jan@gemeente.nl"></div>
+      </div>
+      <div class="cp-field"><label>Notitie</label><textarea id="cpNote" placeholder="Optionele notitie..."></textarea></div>
+    </div>
+    <div class="cp-modal-footer">
+      <button class="btn-cp-delete" id="btnCpDelete" onclick="deleteCp()" style="display:none">Verwijderen</button>
+      <button class="btn-cp-cancel" onclick="closeCpModal()">Annuleren</button>
+      <button class="btn-cp-save" onclick="saveCp()">Opslaan</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script>
 function showSection(id, btn) {
@@ -1655,6 +1724,124 @@ function showOntwerpStatus(msg, type) {
   var el = document.getElementById('ontwerpStatus');
   if (!el) return;
   el.textContent = msg; el.className = 'ont-status ' + type; el.style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════
+// CONTACTPERSONEN MODULE
+// ══════════════════════════════════════════════════════════
+var CP_DATA = [];
+var cpEditId = null;
+
+function cpLoad() {
+  return fetch(SUPA_URL+'/rest/v1/contactpersonen?werkpakket_id=eq.'+ROW_IDX+'&order=created_at.asc&select=*', {
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){ return r.json(); });
+}
+function cpInsert(o) {
+  return fetch(SUPA_URL+'/rest/v1/contactpersonen', {
+    method:'POST', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify(o)
+  }).then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error((d&&d.message)||'HTTP '+r.status); return d; }); });
+}
+function cpPatch(id, o) {
+  return fetch(SUPA_URL+'/rest/v1/contactpersonen?id=eq.'+id, {
+    method:'PATCH', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    body:JSON.stringify(o)
+  }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
+}
+function cpDelete(id) {
+  return fetch(SUPA_URL+'/rest/v1/contactpersonen?id=eq.'+id, {
+    method:'DELETE', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
+}
+
+function renderContacts() {
+  cpLoad().then(function(rows) {
+    CP_DATA = Array.isArray(rows) ? rows : [];
+    var el = document.getElementById('cpGrid');
+    if (!el) return;
+    if (!CP_DATA.length) {
+      el.innerHTML = '<div class="cp-empty">&#x1F4DE; Nog geen contactpersonen.<br>'
+        + (currentMode==='editor' ? 'Klik "+ Toevoegen" om een contact toe te voegen.' : 'Contacten worden hier getoond.')
+        + '</div>';
+      return;
+    }
+    var html = '';
+    CP_DATA.forEach(function(cp) {
+      var editBtn = currentMode==='editor'
+        ? '<button class="cp-edit-btn" data-cpid="'+cp.id+'" onclick="openCpModal(this.dataset.cpid)" title="Bewerken">&#9998;</button>'
+        : '';
+      html += '<div class="cp-card">'
+        + '<div class="cp-card-top">'
+        + '<div><div class="cp-name">'+esc(cp.naam||'')+'</div>'+(cp.organisatie?'<div class="cp-org">'+esc(cp.organisatie)+'</div>':'')+'</div>'
+        + editBtn + '</div>';
+      if (cp.functie) html += '<div class="cp-func">'+esc(cp.functie)+'</div>';
+      html += '<div class="cp-contact">';
+      if (cp.telefoon) html += '<div class="cp-contact-row"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M5 1h2l1 4-1.5 1.5a8 8 0 004 4L12 9l4 1v2a2 2 0 01-2 2A14 14 0 012 3a2 2 0 012-2z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg><a href="tel:'+esc(cp.telefoon)+'">'+esc(cp.telefoon)+'</a></div>';
+      if (cp.email)    html += '<div class="cp-contact-row"><svg width="11" height="11" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5l7 5 7-5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg><a href="mailto:'+esc(cp.email)+'">'+esc(cp.email)+'</a></div>';
+      if (cp.notitie)  html += '<div class="cp-contact-row" style="color:var(--text-3);font-size:10px;font-style:italic">'+esc(cp.notitie)+'</div>';
+      html += '</div></div>';
+    });
+    el.innerHTML = html;
+  }).catch(function(err){
+    var el = document.getElementById('cpGrid');
+    if (el) el.innerHTML = '<div class="cp-empty" style="color:var(--b-fg)">Kon contacten niet laden: '+esc(err.message)+'</div>';
+  });
+}
+
+function openCpModal(id) {
+  cpEditId = id && id !== -1 ? parseInt(id) : null;
+  var cp = cpEditId ? CP_DATA.find(function(x){ return x.id===cpEditId; }) : null;
+  document.getElementById('cpModalTitle').textContent = cp ? 'Contactpersoon bewerken' : 'Contactpersoon toevoegen';
+  document.getElementById('cpNaam').value    = cp ? (cp.naam||'') : '';
+  document.getElementById('cpOrg').value     = cp ? (cp.organisatie||'') : '';
+  document.getElementById('cpFunc').value    = cp ? (cp.functie||'') : '';
+  document.getElementById('cpTel').value     = cp ? (cp.telefoon||'') : '';
+  document.getElementById('cpEmail').value   = cp ? (cp.email||'') : '';
+  document.getElementById('cpNote').value    = cp ? (cp.notitie||'') : '';
+  document.getElementById('btnCpDelete').style.display = cp ? 'inline-flex' : 'none';
+  document.getElementById('cpOverlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('cpNaam').focus(); }, 80);
+}
+
+function closeCpModal() {
+  document.getElementById('cpOverlay').classList.remove('open');
+  cpEditId = null;
+}
+
+function saveCp() {
+  var naam = document.getElementById('cpNaam').value.trim();
+  if (!naam) { showToast('Naam is verplicht', 'error'); return; }
+  var payload = {
+    werkpakket_id: ROW_IDX,
+    naam:          naam,
+    organisatie:   document.getElementById('cpOrg').value.trim(),
+    functie:       document.getElementById('cpFunc').value.trim(),
+    telefoon:      document.getElementById('cpTel').value.trim(),
+    email:         document.getElementById('cpEmail').value.trim(),
+    notitie:       document.getElementById('cpNote').value.trim(),
+    updated_by:    currentUser,
+    updated_at:    new Date().toISOString()
+  };
+  closeCpModal();
+  showSaving(true);
+  var p = cpEditId ? cpPatch(cpEditId, payload) : cpInsert(Object.assign({created_by:currentUser,created_at:new Date().toISOString()},payload));
+  p.then(function(){
+    showSaving(false);
+    showToast(cpEditId ? '✓ Contact bijgewerkt' : '✓ Contact toegevoegd', 'success');
+    renderContacts();
+  }).catch(function(err){ showSaving(false); showToast('✗ '+err.message,'error'); });
+}
+
+function deleteCp() {
+  if (!cpEditId || !confirm('Contactpersoon verwijderen?')) return;
+  closeCpModal();
+  showSaving(true);
+  cpDelete(cpEditId).then(function(){
+    showSaving(false);
+    showToast('✓ Contact verwijderd','success');
+    renderContacts();
+  }).catch(function(err){ showSaving(false); showToast('✗ '+err.message,'error'); });
 }
 
 function goBack() {
@@ -2236,6 +2423,18 @@ function renderPage() {
     var dot = '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+(rolColors[f[0]]||'#999')+';margin-right:5px;vertical-align:middle"></span>';
     html += '<div class="info-item"><div class="info-label">'+esc(f[1])+'</div><div class="info-val">'+dot+esc(val)+'</div></div>';
   });
+  html += '</div>';
+
+  // ── Contactpersonen ──
+  html += '<div class="sec-heading"><span class="sec-heading-icon">&#x1F4DE;</span>Contactpersonen</div>';
+  html += '<div class="cp-wrap">';
+  html += '<div class="cp-header">';
+  html += '<span class="cp-title">Externe contacten</span>';
+  if (currentMode === 'editor') {
+    html += '<button class="btn-cp-add" onclick="openCpModal(-1)">+ Toevoegen</button>';
+  }
+  html += '</div>';
+  html += '<div class="cp-grid" id="cpGrid"></div>';
   html += '</div>';
 
   // ── Gantt chart ──
