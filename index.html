@@ -2125,16 +2125,26 @@ function _colEnd(e) {
   document.body.style.userSelect = '';
   document.body.style.cursor = '';
   if (_colDragGhost) { document.body.removeChild(_colDragGhost); _colDragGhost = null; }
-  if (_colDragTarget) { _colDragTarget.classList.remove('col-drag-over'); }
+
+  // Use elementFromPoint at drop moment — more reliable than stored _colDragTarget
+  var el = document.elementFromPoint(e.clientX, e.clientY);
+  var th = null;
+  while (el && el !== document.body) {
+    if (el.tagName === 'TH' && el.dataset && el.dataset.ci !== undefined) { th = el; break; }
+    el = el.parentElement;
+  }
+
+  // Clear all highlights
+  document.querySelectorAll('.col-drag-over').forEach(function(x) { x.classList.remove('col-drag-over'); });
+  _colDragTarget = null;
 
   var srcIdx = _colDragSrc;
   _colDragSrc = -1;
-  var tgtIdx  = _colDragTarget ? parseInt(_colDragTarget.dataset.ci) : -1;
-  _colDragTarget = null;
+  var tgtIdx = th ? parseInt(th.dataset.ci) : -1;
   if (srcIdx < 0 || tgtIdx < 0 || srcIdx === tgtIdx) return;
 
   var vcols   = visibleCols();
-  var order   = vcols.map(function(c){ return c.i; });
+  var order   = vcols.map(function(c) { return c.i; });
   var fromPos = order.indexOf(srcIdx);
   var toPos   = order.indexOf(tgtIdx);
   if (fromPos < 0 || toPos < 0) return;
@@ -2142,8 +2152,8 @@ function _colEnd(e) {
   order.splice(toPos, 0, srcIdx);
   COL_ORDER = order;
   render();
-  kvSave(order).catch(function(){});
-  showToast('\u2713 Kolomvolgorde opgeslagen', 'success');
+  kvSave(order).catch(function() {});
+  showToast('✓ Kolomvolgorde opgeslagen', 'success');
 }
 
 // ══ KOLOMNAAM OVERRIDES ══
