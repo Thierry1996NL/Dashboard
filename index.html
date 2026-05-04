@@ -140,7 +140,13 @@
   .tbl-scroll::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
   table { border-collapse:collapse; min-width:100%; font-size:11px; }
   thead { position:sticky; top:0; z-index:10; }
-  .fase-hdr-row th { padding:3px 8px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; text-align:center; border-bottom:1px solid rgba(0,0,0,.05); white-space:nowrap; }
+  .fase-hdr-row th {
+    padding:2px 8px; font-size:8px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.07em; text-align:left;
+    border-bottom:2px solid currentColor;
+    white-space:nowrap; opacity:.85;
+  }
+  .fase-hdr-row th.fh-empty { background:var(--surface2); color:var(--text-3); border-bottom-color:var(--border-md); opacity:1; }
   /* ══ AANGEPASTE KOLOMMEN ══ */
   .col-mgr-btn {
     display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
@@ -210,8 +216,16 @@
   .btn-col-close { padding:6px 16px; font-size:12px; font-family:'Inter',system-ui,sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
   .btn-col-close:hover { background:var(--surface2); }
 
-    .col-hdr-row th { padding:5px 8px; font-size:11px; font-weight:500; text-align:left; color:var(--text-2); border-bottom:1px solid var(--border-md); background:var(--surface2); font-family:'Inter',system-ui,-apple-system,sans-serif; letter-spacing:-.01em; white-space:nowrap; min-width:90px; cursor:default; user-select:none; transition:background .08s; }
+    .col-hdr-row th {
+    padding:5px 8px; font-size:11px; font-weight:500; text-align:left;
+    color:var(--text-2); border-bottom:1px solid var(--border-md);
+    background:var(--surface2); font-family:'Inter',system-ui,-apple-system,sans-serif;
+    letter-spacing:-.01em; white-space:nowrap; min-width:90px;
+    cursor:default; user-select:none; transition:background .08s;
+    border-top:3px solid transparent; /* fase color goes here */
+  }
   .col-hdr-row th:hover { background:var(--surface3); color:var(--text); }
+  .col-hdr-row th.has-fase-color { background:linear-gradient(180deg, var(--col-fase-bg,var(--surface2)) 0%, var(--surface2) 40%); }
   .sort-arrow { opacity:.45; font-size:8px; margin-left:2px; }
   tbody tr { border-bottom:1px solid var(--border); transition:background .07s; cursor:pointer; }
   tbody tr:last-child { border-bottom:none; }
@@ -3476,17 +3490,19 @@ function render() {
     rows.sort(function(a,b) { var av=a[_sci]||'', bv=b[_sci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
   }
   updateKPIs(rows, vcols);
-  var groups = [], lastF = null;
-  vcols.forEach(function(col) {
-    if (col.f !== lastF) { groups.push({f:col.f, count:1}); lastF=col.f; }
-    else groups[groups.length-1].count++;
-  });
   var html = '<thead><tr class="fase-hdr-row">';
-  groups.forEach(function(g) {
-    var label = g.f || 'Projectinfo';
-    var s = FASE_STYLE[g.f];
-    var style = s ? 'color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color : 'color:var(--text-3);background:var(--surface2)';
-    html += '<th colspan="'+g.count+'" style="'+style+'">'+esc(label)+'</th>';
+  if (currentMode==='editor') html += '<th class="fh-empty" style="width:32px"></th>';
+  vcols.forEach(function(col, ci) {
+    var s = FASE_STYLE[col.f];
+    var isFirst = ci===0 || vcols[ci-1].f !== col.f;
+    if (s) {
+      // Show fase label only on the first column of each group, blank for the rest
+      var label = isFirst ? esc(col.f || 'Projectinfo') : '';
+      html += '<th style="color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color+'">'+label+'</th>';
+    } else {
+      var label = isFirst ? 'Projectinfo' : '';
+      html += '<th class="fh-empty">'+label+'</th>';
+    }
   });
   html += '</tr><tr class="col-hdr-row">';
   if (currentMode==='editor') html += '<th class="edit-col-hdr" style="background:var(--surface2);border-bottom:1px solid var(--border-md);width:32px;font-size:10px;font-weight:600;color:var(--text-3);padding:4px 6px;white-space:nowrap;text-align:center">Bewerken</th>';
@@ -3505,10 +3521,15 @@ function render() {
       var rColor = ROLE_COLOR_MAP[rKey] || '#999';
       rolDotHdr = '<span class="col-rol-dot" style="background:'+rColor+'" title="'+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"></span>';
     }
-    html += '<th class="'+filterCls+'" style="'+bl+';min-width:'+minW+'" title="'+esc(col.n)+'">'
-      + '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'
-      + ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>'
-      + '</th>';
+    var faseColor = fs ? fs.color : '';
+    var faseBg    = fs ? fs.bg    : '';
+    var topBorder = faseColor ? 'border-top:3px solid '+faseColor+';' : '';
+    var bgStyle   = faseBg    ? 'background:linear-gradient(180deg,'+faseBg+' 0%,var(--surface2) 50%);' : '';
+    var faseCls   = faseColor ? ' has-fase-color' : '';
+    html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'">';
+    html += '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
+    html += ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>';
+    html += '</th>';
   });
   html += '</tr></thead><tbody>';
   if (!rows.length) {
