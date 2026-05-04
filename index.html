@@ -232,6 +232,16 @@
   .mode-editor .col-hdr-row th:hover .col-drag-handle { opacity:.5; }
   .mode-editor .col-hdr-row th:active .col-drag-handle { opacity:1; }
 
+  /* ── Kolomnaam edit knop ── */
+  .col-name-edit-btn {
+    display:none; background:none; border:none; cursor:pointer;
+    color:var(--text-3); font-size:11px; padding:2px 4px;
+    border-radius:4px; line-height:1; margin-left:2px;
+    transition:all .1s; vertical-align:middle;
+  }
+  .col-hdr-row th:hover .col-name-edit-btn { display:inline-flex; }
+  .col-name-edit-btn:hover { background:var(--surface3); color:var(--accent); }
+
   /* ── Rol dot picker ── */
   .rol-dot-picker {
     position:fixed; background:var(--surface); border:1px solid var(--border-md);
@@ -2156,54 +2166,71 @@ function loadColNames() {
   // Loaded together with config in loadConfig()
 }
 
+function _cnClose() { var p=document.getElementById("colNamePopup"); if(p)p.remove(); _colNamePickerIdx=-1; }
+
 function openColNamePicker(e, colIdx) {
   if (currentMode !== 'editor') return;
   e.stopPropagation();
   _colNamePickerIdx = colIdx;
   var col = COLS.find(function(c){ return c.i === colIdx; });
   var curName = COL_NAME_OVERRIDES[colIdx] || (col ? col.n : '');
-  // Reuse the textPicker popup
-  document.getElementById('textPickerLabel').textContent = 'Kolomnaam aanpassen';
-  var inp = document.getElementById('textInput');
-  inp.style.display = '';
-  inp.value = curName;
-  var sel = document.getElementById('textSelect');
-  if (sel) sel.style.display = 'none';
-  var popup = document.getElementById('textPicker');
+
+  // Build a dedicated inline popup
+  var existing = document.getElementById('colNamePopup');
+  if (existing) existing.remove();
+
+  var popup = document.createElement('div');
+  popup.id = 'colNamePopup';
+  popup.style.cssText = 'position:fixed;z-index:800;background:var(--surface);'
+    + 'border:1px solid var(--border-md);border-radius:12px;'
+    + 'box-shadow:0 8px 32px rgba(0,0,0,.15);padding:.875rem 1rem;'
+    + 'display:flex;flex-direction:column;gap:.625rem;min-width:280px;';
+
+  popup.innerHTML = '<div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-3)">Kolomnaam aanpassen</div>'
+    + '<input id="colNameInput" type="text" value="'+esc(curName)+'" style="padding:8px 10px;font-family:inherit;font-size:13px;border:1px solid var(--border-md);border-radius:8px;background:var(--surface2);color:var(--text);outline:none;width:100%;box-sizing:border-box;" placeholder="Naam...">'
+    + '<div style="display:flex;gap:6px;justify-content:flex-end">'
+    + '<button onclick="_cnClose()" style="padding:5px 12px;font-size:12px;font-family:inherit;border:1px solid var(--border-md);border-radius:7px;background:transparent;cursor:pointer;color:var(--text-2)">Annuleren</button>'
+    + '<button id="colNameSaveBtn" style="padding:5px 14px;font-size:12px;font-family:inherit;font-weight:700;border:none;border-radius:7px;background:var(--accent);color:#fff;cursor:pointer;">Opslaan</button>'
+    + '</div>';
+
+  // Position below the clicked button
   var rect = e.currentTarget.getBoundingClientRect();
-  var left = rect.left, top = rect.bottom + 5;
-  if (left + 280 > window.innerWidth) left = window.innerWidth - 285;
+  var left = rect.left;
+  var top  = rect.bottom + 6;
+  if (left + 295 > window.innerWidth) left = window.innerWidth - 300;
+  if (left < 8) left = 8;
   popup.style.left = left + 'px';
   popup.style.top  = top  + 'px';
-  popup.classList.add('open');
-  setTimeout(function() { inp.focus(); inp.select();
-    document.addEventListener('click', function closeOut(ev) {
-      if (!popup.contains(ev.target)) { popup.classList.remove('open'); _colNamePickerIdx = -1; }
-      document.removeEventListener('click', closeOut);
-    });
-  }, 50);
-}
+  document.body.appendChild(popup);
 
-// Override saveText to handle col name
-var _origSaveText = saveText;
-saveText = function() {
-  if (_colNamePickerIdx >= 0) {
+  var inp = document.getElementById('colNameInput');
+  inp.focus(); inp.select();
+  inp.addEventListener('keydown', function(ev) {
+    if (ev.key === 'Enter') document.getElementById('colNameSaveBtn').click();
+    if (ev.key === 'Escape') { popup.remove(); _colNamePickerIdx = -1; }
+  });
+
+  document.getElementById('colNameSaveBtn').onclick = function() {
     var ci = _colNamePickerIdx;
-    _colNamePickerIdx = -1;
-    var newName = document.getElementById('textInput').value.trim();
-    document.getElementById('textPicker').classList.remove('open');
-    if (!newName) return;
+    var newName = inp.value.trim();
+    popup.remove(); _colNamePickerIdx = -1;
+    if (!newName || ci < 0) return;
     COL_NAME_OVERRIDES[ci] = newName;
-    // Update COLS array
-    var col = COLS.find(function(c){ return c.i === ci; });
-    if (col) col.n = newName;
+    var col2 = COLS.find(function(c){ return c.i === ci; });
+    if (col2) col2.n = newName;
     render();
     cnSave();
     showToast('\u2713 Kolomnaam opgeslagen', 'success');
-    return;
-  }
-  _origSaveText();
-};
+  };
+
+  // Close on outside click
+  setTimeout(function() {
+    document.addEventListener('click', function closeOut(ev) {
+      if (!popup.contains(ev.target)) { popup.remove(); _colNamePickerIdx = -1; }
+      document.removeEventListener('click', closeOut);
+    });
+  }, 100);
+}
 
 // ══ FASE OVERRIDES ══
 var FASE_OVERRIDES = {};   // colIdx -> fase string
@@ -4047,10 +4074,10 @@ function render() {
       : '';
     html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'"'+dragAttrs+'>';
     var colName = COL_NAME_OVERRIDES[col.i] || col.n;
-    var nameClick = currentMode==='editor'
-      ? 'ondblclick="openColNamePicker(event,'+col.i+')" title="Dubbelklik om naam te wijzigen"'
+    var editNameBtn = currentMode==='editor'
+      ? '<button class="col-name-edit-btn" onclick="event.stopPropagation();openColNamePicker(event,'+col.i+')" title="Naam aanpassen">&#9998;</button>'
       : '';
-    html += dragHandle+'<span onclick="sortBy('+ci+')" '+nameClick+' style="cursor:pointer">'+esc(colName)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
+    html += dragHandle+'<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(colName)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'+editNameBtn;
     html += ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>';
     html += '</th>';
   });
