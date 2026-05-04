@@ -97,25 +97,7 @@
   .sec-heading:first-of-type { margin-top:.25rem; }
   .sec-heading-icon { font-size:14px; line-height:1; }
 
-  /* ══ SECTIE NAVIGATIE ══ */
-  .section-nav {
-    position:sticky; top:48px; z-index:80;
-    background:rgba(255,255,255,0.92); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px);
-    border-bottom:1px solid var(--border);
-    display:flex; align-items:center; gap:0; padding:0 1.5rem;
-    overflow-x:auto; scrollbar-width:none;
-  }
-  .section-nav::-webkit-scrollbar { display:none; }
-  .snav-btn {
-    display:inline-flex; align-items:center; gap:5px;
-    padding:.625rem .875rem; font-size:11px; font-weight:500;
-    color:var(--text-3); cursor:pointer; border:none; background:none;
-    border-bottom:2px solid transparent; margin-bottom:-1px;
-    font-family:'DM Sans',sans-serif; white-space:nowrap;
-    transition:color .12s, border-color .12s;
-  }
-  .snav-btn:hover { color:var(--text-2); }
-  .snav-btn.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+  /* section-nav removed — navigation via sidebar */
 
   /* Hidden sections */
   .section-panel { display:none; }
@@ -1238,17 +1220,27 @@
   .sidebar-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
 
   /* Toggle button */
+  /* Toggle: hover-only, click to collapse */
   .sb-toggle {
     position:fixed; top:calc(var(--hdr-h) + .75rem); left:calc(var(--sb-w) - 14px);
     width:28px; height:28px; border-radius:50%;
     background:var(--surface); border:1px solid var(--border-md);
     box-shadow:0 2px 8px rgba(0,0,0,.12);
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; z-index:91; transition:left .22s cubic-bezier(.4,0,.2,1);
+    cursor:pointer; z-index:91;
+    transition:left .22s cubic-bezier(.4,0,.2,1), opacity .15s, transform .15s;
     color:var(--text-2); font-size:12px;
+    opacity:0; transform:scale(.85); pointer-events:none;
+  }
+  /* Show on sidebar hover */
+  .sidebar:hover ~ .sb-toggle,
+  .sb-toggle:hover {
+    opacity:1; transform:scale(1); pointer-events:all;
   }
   .sb-toggle:hover { background:var(--surface2); color:var(--text); }
   .sidebar.collapsed ~ .sb-toggle { left:calc(var(--sb-w-col) - 14px); }
+  /* Also show toggle when sidebar is collapsed (always visible so user can open it) */
+  .sidebar.collapsed ~ .sb-toggle { opacity:1; transform:scale(1); pointer-events:all; }
 
   /* Sidebar section label */
   .sb-section-label {
@@ -1403,26 +1395,7 @@
 
 
 <!-- ══ SECTIE NAVIGATIE ══ -->
-<div class="app-layout"><nav class="section-nav" id="sectionNav" style="display:none">
-  <button class="snav-btn active" data-section="info"       onclick="showSection('info',this)">&#x1F4CB; Projectinfo</button>
-  <button class="snav-btn"        data-section="team"       onclick="showSection('team',this)">&#x1F465; Team</button>
-  <button class="snav-btn"        data-section="ontwerp"    onclick="showSection('ontwerp',this)">&#x1F5FA; Ontwerp / Tracé</button>
-  <button class="snav-btn"        data-section="planning"   onclick="showSection('planning',this)">&#x1F4C5; Planning</button>
-  <button class="snav-btn"        data-section="datumoverzicht" onclick="showSection('datumoverzicht',this)">&#x1F4CB; Datum overzicht</button>
-  <button class="snav-btn"        data-section="voortgang"  onclick="showSection('voortgang',this)">&#x1F4CA; Voortgang</button>
-  <button class="snav-btn"        data-section="boringen"   onclick="showSection('boringen',this)">&#x1F9F3; Boringen</button>
-  <button class="snav-btn"        data-section="proefsleuven" onclick="showSection('proefsleuven',this)">&#x2B1B; Proefsleuven</button>
-  <button class="snav-btn"        data-section="duikers"    onclick="showSection('duikers',this)">&#x1F6B0; Duikers</button>
-  <button class="snav-btn"        data-section="opmerkingen" onclick="showSection('opmerkingen',this)">&#x1F4AC; Opmerkingen</button>
-  <div style="margin-left:auto;display:flex;align-items:center;gap:5px;padding-left:.75rem;border-left:1px solid var(--border)">
-    <button class="btn-det-export csv" onclick="exportDetailCSV()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border:1px solid var(--border-md);border-radius:var(--r);background:var(--surface2);color:var(--text-2);cursor:pointer;font-family:inherit;white-space:nowrap">
-      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
-    </button>
-    <button class="btn-det-export xlsx" onclick="exportDetailXLSX()" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;font-size:11px;font-weight:600;border:none;border-radius:var(--r);background:var(--g-fg);color:#fff;cursor:pointer;font-family:inherit;white-space:nowrap">
-      <svg width="11" height="11" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Excel
-    </button>
-  </div>
-</nav>
+<div class="app-layout">
 
 <!-- Detail controls: only search + status filters -->
 
@@ -2716,7 +2689,6 @@ function renderPage() {
   html += '</div>'; // app-wrapper
   document.getElementById('mainContent').innerHTML = html;
 
-  var snav = document.getElementById('sectionNav'); if(snav) snav.style.display = 'flex';
 
   // Herstel huidig filter (of standaard 'alle' bij eerste load)
   setTimeout(function() {

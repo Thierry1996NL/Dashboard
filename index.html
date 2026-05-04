@@ -1019,11 +1019,16 @@
     background:var(--surface); border:1px solid var(--border-md);
     box-shadow:0 2px 8px rgba(0,0,0,.12);
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer; z-index:91; transition:left .22s cubic-bezier(.4,0,.2,1);
+    cursor:pointer; z-index:91;
+    transition:left .22s cubic-bezier(.4,0,.2,1), opacity .15s, transform .15s;
     color:var(--text-2); font-size:12px;
+    opacity:0; transform:scale(.85); pointer-events:none;
+  }
+  .sidebar:hover ~ .sb-toggle, .sb-toggle:hover {
+    opacity:1; transform:scale(1); pointer-events:all;
   }
   .sb-toggle:hover { background:var(--surface2); color:var(--text); }
-  .sidebar.collapsed ~ .sb-toggle { left:calc(var(--sb-w-col) - 14px); }
+  .sidebar.collapsed ~ .sb-toggle { left:calc(var(--sb-w-col) - 14px); opacity:1; transform:scale(1); pointer-events:all; }
 
   /* Sidebar section label */
   .sb-section-label {
