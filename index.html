@@ -271,6 +271,11 @@
   tbody tr:last-child { border-bottom:none; }
   tbody tr:hover td { background:var(--surface2); }
   tbody tr:hover td.col-base { color:var(--accent); }
+  tbody tr.row-drag-over td { background:var(--accent-2) !important; box-shadow:inset 0 2px 0 var(--accent); }
+  tbody tr.row-drag-over td:first-child { box-shadow:inset 3px 0 0 var(--accent), inset 0 2px 0 var(--accent); }
+  tbody tr.row-dragging { opacity:.3; }
+  .row-drag-handle { cursor:grab; color:var(--text-3); font-size:13px; padding:0 3px; display:inline-flex; align-items:center; opacity:0; transition:opacity .1s; }
+  tbody tr:hover .row-drag-handle { opacity:.55; }
   td { padding:5px 8px; vertical-align:middle; color:var(--text); white-space:nowrap; max-width:200px; overflow:hidden; text-overflow:ellipsis; font-size:12px; font-family:'Inter',system-ui,-apple-system,sans-serif; }
   td.col-base { font-weight:500; font-size:12px; min-width:90px; font-family:'Inter',system-ui,-apple-system,sans-serif; }
   td.col-wp { font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px; color:var(--text-3); }
@@ -1850,6 +1855,102 @@
   </div>
 </div>
 <script>
+// ══ RIJVOLGORDE ══
+var ROW_ORDER = [];   // array of row_idx values in display order
+var _rowDragSrcIdx = -1;  // actualIdx in ROWS
+
+function rvLoad() {
+  return fetch(SUPA_URL+'/rest/v1/rij_volgorde?select=*&order=pos.asc',{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();}).catch(function(){return [];});
+}
+function rvSave(rowIdxList) {
+  var rows = rowIdxList.map(function(ri,pos){ return {row_idx:ri, pos:pos, updated_by:currentUser}; });
+  return fetch(SUPA_URL+'/rest/v1/rij_volgorde',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify(rows)
+  });
+}
+
+function loadRijVolgorde() {
+  return rvLoad().then(function(rows) {
+    if (!Array.isArray(rows) || !rows.length) return;
+    ROW_ORDER = rows.map(function(r){ return r.row_idx; });
+  });
+}
+
+function getOrderedRows(rows) {
+  if (!ROW_ORDER.length) return rows;
+  var map = {};
+  rows.forEach(function(r, i){
+    var dbIdx = DB_ROWS.indexOf(DB_ROWS[ROWS.indexOf(r)]);
+    var ri = DB_ROWS[ROWS.indexOf(r)] ? DB_ROWS[ROWS.indexOf(r)].row_idx : -1;
+    map[ri] = r;
+  });
+  // More reliable: build map by row_idx
+  var byRi = {};
+  rows.forEach(function(r){
+    var ai = ROWS.indexOf(r);
+    var db = DB_ROWS[ai];
+    if (db) byRi[db.row_idx] = r;
+  });
+  var ordered = [];
+  ROW_ORDER.forEach(function(ri){ if(byRi[ri]){ ordered.push(byRi[ri]); delete byRi[ri]; } });
+  // Append any rows not yet in order
+  rows.forEach(function(r){ var ai=ROWS.indexOf(r); var db=DB_ROWS[ai]; if(db&&byRi[db.row_idx]) ordered.push(r); });
+  return ordered;
+}
+
+// Row drag handlers
+function rowDragStart(e, actualIdx) {
+  _rowDragSrcIdx = actualIdx;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(actualIdx));
+  var tr = e.currentTarget;
+  setTimeout(function(){ tr.classList.add('row-dragging'); }, 0);
+}
+function rowDragOver(e, tr) {
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('tbody tr.row-drag-over').forEach(function(el){ el.classList.remove('row-drag-over'); });
+  tr.classList.add('row-drag-over');
+}
+function rowDragLeave(tr) { tr.classList.remove('row-drag-over'); }
+function rowDragEnd(tr) {
+  tr.classList.remove('row-dragging');
+  document.querySelectorAll('tbody tr.row-drag-over').forEach(function(el){ el.classList.remove('row-drag-over'); });
+}
+function rowDrop(e, targetActualIdx) {
+  e.preventDefault(); e.stopPropagation();
+  document.querySelectorAll('tbody tr.row-drag-over,.row-dragging').forEach(function(el){ el.classList.remove('row-drag-over','row-dragging'); });
+  var srcIdx = _rowDragSrcIdx;
+  _rowDragSrcIdx = -1;
+  if (srcIdx === targetActualIdx || srcIdx < 0) return;
+  // Get current visible ordered rows
+  var vcols = visibleCols();
+  var frows = filterRows();
+  frows = getOrderedRows(frows);
+  // Find src and target in frows
+  var srcRow = ROWS[srcIdx];
+  var tgtRow = ROWS[targetActualIdx];
+  var fromPos = frows.indexOf(srcRow);
+  var toPos   = frows.indexOf(tgtRow);
+  if (fromPos < 0 || toPos < 0) return;
+  frows.splice(fromPos, 1);
+  frows.splice(toPos, 0, srcRow);
+  // Build new ROW_ORDER from the full ROWS array reordered
+  var newOrder = frows.map(function(r){
+    var ai = ROWS.indexOf(r);
+    var db = DB_ROWS[ai];
+    return db ? db.row_idx : -1;
+  }).filter(function(ri){ return ri >= 0; });
+  ROW_ORDER = newOrder;
+  render();
+  rvSave(newOrder).catch(function(){});
+  showToast('\u2713 Volgorde opgeslagen', 'success');
+}
+
 // ══ KOLOMVOLGORDE ══
 var COL_ORDER = [];   // array of col.i values in display order; empty = default
 var _dragSrcColIdx = -1;
@@ -3698,7 +3799,7 @@ function updateKPIs(rows, vcols) {
 function render() {
   if (!ROWS.length) return;
   var vcols = visibleCols();
-  var rows  = filterRows();
+  var rows  = getOrderedRows(filterRows());
   if (sortCol >= 0 && sortCol < vcols.length) {
     var _sci = vcols[sortCol].i;
     rows.sort(function(a,b) { var av=a[_sci]||'', bv=b[_sci]||''; return av<bv?-sortDir:av>bv?sortDir:0; });
@@ -3763,12 +3864,22 @@ function render() {
   } else {
     rows.forEach(function(r) {
       var actualIdx = ROWS.indexOf(r);
-      html += '<tr onclick="handleRowClick(event,'+actualIdx+')" title="Klik om project te openen">';
+      var dragRowAttrs = currentMode==='editor'
+        ? ' draggable="true"'
+          +' ondragstart="rowDragStart(event,'+actualIdx+')"'
+          +' ondragover="rowDragOver(event,this);event.preventDefault()"'
+          +' ondragleave="rowDragLeave(this)"'
+          +' ondragend="rowDragEnd(this)"'
+          +' ondrop="rowDrop(event,'+actualIdx+')"'
+        : '';
+      html += '<tr onclick="handleRowClick(event,'+actualIdx+')" title="Klik om project te openen"'+dragRowAttrs+'>';
       if (currentMode==='editor') {
         if (archiefModus) {
           html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
         } else {
-          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openProjectModal('+actualIdx+')" title="Project bewerken">&#9998;</td>';
+          html += '<td class="edit-col-cell" style="cursor:grab" title="Slepen om te verplaatsen">'
+            + '<span class="row-drag-handle" onclick="event.stopPropagation()">&#8942;</span>'
+            + '</td>';
         }
       }
       vcols.forEach(function(col, ci) {
