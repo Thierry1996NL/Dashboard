@@ -216,6 +216,46 @@
   .btn-col-close { padding:6px 16px; font-size:12px; font-family:'Inter',system-ui,sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
   .btn-col-close:hover { background:var(--surface2); }
 
+    /* ── Kolomvolgorde drag-and-drop ── */
+  .col-hdr-row th[draggable="true"] { cursor:grab; }
+  .col-hdr-row th[draggable="true"]:active { cursor:grabbing; }
+  .col-hdr-row th.col-drag-over {
+    background:var(--accent-2) !important;
+    outline:2px solid var(--accent); outline-offset:-2px;
+  }
+  .col-hdr-row th.col-dragging { opacity:.35; }
+  .col-drag-handle {
+    display:inline-flex; align-items:center; opacity:0;
+    font-size:10px; color:var(--text-3); margin-right:3px;
+    cursor:grab; transition:opacity .1s; vertical-align:middle;
+  }
+  .mode-editor .col-hdr-row th:hover .col-drag-handle { opacity:.5; }
+  .mode-editor .col-hdr-row th:active .col-drag-handle { opacity:1; }
+
+  /* ── Fase cel picker ── */
+  .fase-cell-picker {
+    position:fixed; background:var(--surface); border:1px solid var(--border-md);
+    border-radius:var(--r-lg); box-shadow:0 8px 32px rgba(0,0,0,.15);
+    z-index:600; min-width:180px; padding:4px;
+    display:none;
+  }
+  .fase-cell-picker.open { display:block; animation:popIn .1s ease; }
+  .fcp-hdr { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); padding:5px 8px 3px; }
+  .fcp-opt {
+    display:flex; align-items:center; gap:8px; padding:5px 8px;
+    border-radius:var(--r); cursor:pointer; font-size:11px; color:var(--text);
+    transition:background .07s;
+  }
+  .fcp-opt:hover { background:var(--surface2); }
+  .fcp-opt.active { background:var(--surface2); font-weight:600; }
+  .fcp-dot { width:8px; height:8px; border-radius:2px; flex-shrink:0; }
+  /* In editor mode: show edit cursor on fase header cells */
+  .mode-editor .fase-hdr-row th.editable-fase { cursor:pointer; }
+  .mode-editor .fase-hdr-row th.editable-fase:hover { filter:brightness(.95); }
+  .mode-editor .fase-hdr-row th.editable-fase::after {
+    content:'▾'; font-size:8px; margin-left:3px; opacity:.6;
+  }
+
     .col-hdr-row th {
     padding:5px 8px; font-size:11px; font-weight:500; text-align:left;
     color:var(--text-2); border-bottom:1px solid var(--border-md);
@@ -1721,6 +1761,9 @@
   </div>
 </div>
 
+<!-- ══ FASE PICKER ══ -->
+<div class="fase-cell-picker" id="faseCellPicker"></div>
+
 <!-- ══ KOLOMBEHEER MODAL ══ -->
 <div class="col-mgr-overlay" id="colMgrOverlay" onclick="if(event.target===this)closeColMgr()">
   <div class="col-mgr-modal">
@@ -1807,6 +1850,177 @@
   </div>
 </div>
 <script>
+// ══ KOLOMVOLGORDE ══
+var COL_ORDER = [];   // array of col.i values in display order; empty = default
+var _dragSrcColIdx = -1;
+
+function kvLoad() {
+  return fetch(SUPA_URL+'/rest/v1/kolom_volgorde?select=*&order=pos.asc',{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();}).catch(function(){return [];});
+}
+function kvSave(order) {
+  // Upsert all positions
+  var rows = order.map(function(ci,pos){ return {col_idx:ci, pos:pos, updated_by:currentUser}; });
+  return fetch(SUPA_URL+'/rest/v1/kolom_volgorde',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify(rows)
+  });
+}
+
+function loadKolomVolgorde() {
+  return kvLoad().then(function(rows) {
+    if (!Array.isArray(rows) || !rows.length) return;
+    COL_ORDER = rows.map(function(r){ return r.col_idx; });
+  });
+}
+
+function getOrderedCols(cols) {
+  if (!COL_ORDER.length) return cols;
+  var map = {};
+  cols.forEach(function(c){ map[c.i] = c; });
+  var ordered = [];
+  // First: cols in COL_ORDER that exist in cols
+  COL_ORDER.forEach(function(ci){ if(map[ci]) { ordered.push(map[ci]); delete map[ci]; } });
+  // Then: any remaining (new cols not yet in order)
+  cols.forEach(function(col){ if(map[col.i]) ordered.push(col); });
+  return ordered;
+}
+
+// Drag handlers
+function colDragStart(e, colIdx) {
+  _dragSrcColIdx = colIdx;
+  var th = e.currentTarget.closest('th');
+  if (th) { setTimeout(function(){ th.classList.add('col-dragging'); }, 0); }
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(colIdx));
+}
+function colDragOver(e, th) {
+  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.col-drag-over').forEach(function(el){ el.classList.remove('col-drag-over'); });
+  th.classList.add('col-drag-over');
+}
+function colDragLeave(th) { th.classList.remove('col-drag-over'); }
+function colDragEnd(th) {
+  th.classList.remove('col-dragging');
+  document.querySelectorAll('.col-drag-over').forEach(function(el){ el.classList.remove('col-drag-over'); });
+}
+function colDrop(e, targetColIdx) {
+  e.preventDefault();
+  document.querySelectorAll('.col-drag-over,.col-dragging').forEach(function(el){ el.classList.remove('col-drag-over','col-dragging'); });
+  var srcIdx = _dragSrcColIdx;
+  _dragSrcColIdx = -1;
+  if (srcIdx === targetColIdx) return;
+  // Build current ordered list from visibleCols
+  var vcols = visibleCols();
+  var order = vcols.map(function(c){ return c.i; });
+  var fromPos = order.indexOf(srcIdx);
+  var toPos   = order.indexOf(targetColIdx);
+  if (fromPos < 0 || toPos < 0) return;
+  order.splice(fromPos, 1);
+  order.splice(toPos, 0, srcIdx);
+  COL_ORDER = order;
+  render();
+  // Save asynchronously
+  kvSave(order).catch(function(){});
+  showToast('\u2713 Kolomvolgorde opgeslagen', 'success');
+}
+
+// ══ FASE OVERRIDES ══
+var FASE_OVERRIDES = {};   // colIdx -> fase string
+var _fasePicker_colIdx = -1;
+var ALLE_FASEN = ['Projectinfo','Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase','Natuurtoets','Archeologie','Bodem','NGE/OO','Geotechnisch','Vergunningen','Sleufloze technieken'];
+
+// Supabase helpers for fase overrides
+function foLoad() {
+  return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides?select=*',{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();}).catch(function(){return [];});
+}
+function foUpsert(colIdx, fase) {
+  return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'},
+    body:JSON.stringify({col_idx:colIdx, fase:fase, updated_by:currentUser, updated_at:new Date().toISOString()})
+  });
+}
+
+function loadFaseOverrides() {
+  return foLoad().then(function(rows) {
+    if (!Array.isArray(rows)) return;
+    rows.forEach(function(r){ FASE_OVERRIDES[r.col_idx] = r.fase; });
+    applyFaseOverrides();
+  });
+}
+
+function applyFaseOverrides() {
+  Object.keys(FASE_OVERRIDES).forEach(function(ci) {
+    var idx = parseInt(ci);
+    var col = COLS.find(function(c){ return c.i===idx; });
+    if (col) col.f = FASE_OVERRIDES[idx];
+  });
+}
+
+function openFasePicker(e, colIdx) {
+  if (currentMode !== 'editor') return;
+  e.stopPropagation();
+  _fasePicker_colIdx = colIdx;
+  var col = COLS.find(function(c){ return c.i===colIdx; });
+  var curFase = col ? col.f : '';
+  var picker = document.getElementById('faseCellPicker');
+  var html = '<div class="fcp-hdr">Fase wijzigen</div>';
+  ALLE_FASEN.forEach(function(f) {
+    var s = FASE_STYLE[f];
+    var color = s ? s.color : '#888';
+    html += '<div class="fcp-opt'+(f===curFase?' active':'')+'" data-fase="'+f+'" onclick="applyFaseOverride(this.dataset.fase)">'
+      + '<span class="fcp-dot" style="background:'+color+'"></span>'
+      + f + '</div>';
+  });
+  picker.innerHTML = html;
+  // Position
+  var rect = e.currentTarget.getBoundingClientRect();
+  var left = rect.left; var top = rect.bottom + 4;
+  if (left + 190 > window.innerWidth) left = window.innerWidth - 194;
+  picker.style.left = left+'px'; picker.style.top = top+'px';
+  picker.classList.add('open');
+  setTimeout(function(){
+    document.addEventListener('click', _closeFasePicker, {once:true});
+  }, 0);
+}
+
+function _closeFasePicker() {
+  document.getElementById('faseCellPicker').classList.remove('open');
+  _fasePicker_colIdx = -1;
+}
+
+function applyFaseOverride(newFase) {
+  var ci = _fasePicker_colIdx;
+  _closeFasePicker();
+  if (ci < 0) return;
+  var col = COLS.find(function(c){ return c.i===ci; });
+  if (!col) return;
+  col.f = newFase;
+  FASE_OVERRIDES[ci] = newFase;
+  // For custom cols: update custom_kolommen table
+  if (ci >= CX_BASE && col.cx_id) {
+    fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+col.cx_id,{
+      method:'PATCH',
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify({fase:newFase})
+    }).catch(function(){});
+    var cc = CUSTOM_COLS.find(function(c){ return c.id===col.cx_id; });
+    if (cc) cc.fase = newFase;
+  } else {
+    // Standard col: save override to DB
+    foUpsert(ci, newFase).catch(function(){});
+  }
+  render();
+  showToast('\u2713 Fase gewijzigd naar '+newFase, 'success');
+}
+
 // ══ AANGEPASTE KOLOMMEN ══
 var CUSTOM_COLS = [];        // [{id, naam, type, volgorde}]
 var CX_BASE = 2000;          // offset for custom col indices (cx_2000, cx_2001, …)
@@ -3495,13 +3709,14 @@ function render() {
   vcols.forEach(function(col, ci) {
     var s = FASE_STYLE[col.f];
     var isFirst = ci===0 || vcols[ci-1].f !== col.f;
+    var editFase = currentMode==='editor' ? ' editable-fase' : '';
+    var clickFase = currentMode==='editor' ? ' onclick="openFasePicker(event,'+col.i+')"' : '';
     if (s) {
-      // Show fase label only on the first column of each group, blank for the rest
       var label = isFirst ? esc(col.f || 'Projectinfo') : '';
-      html += '<th style="color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color+'">'+label+'</th>';
+      html += '<th class="'+editFase+'" style="color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color+'"'+clickFase+'>'+label+'</th>';
     } else {
       var label = isFirst ? 'Projectinfo' : '';
-      html += '<th class="fh-empty">'+label+'</th>';
+      html += '<th class="fh-empty'+editFase+'"'+clickFase+'>'+label+'</th>';
     }
   });
   html += '</tr><tr class="col-hdr-row">';
@@ -3526,8 +3741,19 @@ function render() {
     var topBorder = faseColor ? 'border-top:3px solid '+faseColor+';' : '';
     var bgStyle   = faseBg    ? 'background:linear-gradient(180deg,'+faseBg+' 0%,var(--surface2) 50%);' : '';
     var faseCls   = faseColor ? ' has-fase-color' : '';
-    html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'">';
-    html += '<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
+    var dragAttrs = currentMode==='editor'
+      ? ' draggable="true"'
+        + ' ondragstart="colDragStart(event,'+col.i+')"'
+        + ' ondragover="colDragOver(event,this)"'
+        + ' ondragleave="colDragLeave(this)"'
+        + ' ondragend="colDragEnd(this)"'
+        + ' ondrop="colDrop(event,'+col.i+')"'
+      : '';
+    var dragHandle = currentMode==='editor'
+      ? '<span class="col-drag-handle" title="Verschuiven">&#8942;</span>'
+      : '';
+    html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'"'+dragAttrs+'>';
+    html += dragHandle+'<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
     html += ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>';
     html += '</th>';
   });
