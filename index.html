@@ -2136,6 +2136,75 @@ function _colEnd(e) {
   showToast('\u2713 Kolomvolgorde opgeslagen', 'success');
 }
 
+// ══ KOLOMNAAM OVERRIDES ══
+var COL_NAME_OVERRIDES = {};  // col.i -> custom name string
+var _colNamePickerIdx = -1;
+
+function cnSave() {
+  // Store in config row
+  var celData = {
+    '__roles__':      JSON.stringify({ engineer:ROLE_LISTS.engineer, projectleider:ROLE_LISTS.projectleider, uitvoerder:ROLE_LISTS.uitvoerder, werkvoorbereider:ROLE_LISTS.werkvoorbereider }),
+    '__task_roles__': JSON.stringify(TASK_ROLE_MAP),
+    '__col_names__':  JSON.stringify(COL_NAME_OVERRIDES)
+  };
+  return supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + CONFIG_ROW_IDX, {
+    cel_data: celData, updated_by: currentUser, updated_at: new Date().toISOString()
+  }).catch(function() {});
+}
+
+function loadColNames() {
+  // Loaded together with config in loadConfig()
+}
+
+function openColNamePicker(e, colIdx) {
+  if (currentMode !== 'editor') return;
+  e.stopPropagation();
+  _colNamePickerIdx = colIdx;
+  var col = COLS.find(function(c){ return c.i === colIdx; });
+  var curName = COL_NAME_OVERRIDES[colIdx] || (col ? col.n : '');
+  // Reuse the textPicker popup
+  document.getElementById('textPickerLabel').textContent = 'Kolomnaam aanpassen';
+  var inp = document.getElementById('textInput');
+  inp.style.display = '';
+  inp.value = curName;
+  var sel = document.getElementById('textSelect');
+  if (sel) sel.style.display = 'none';
+  var popup = document.getElementById('textPicker');
+  var rect = e.currentTarget.getBoundingClientRect();
+  var left = rect.left, top = rect.bottom + 5;
+  if (left + 280 > window.innerWidth) left = window.innerWidth - 285;
+  popup.style.left = left + 'px';
+  popup.style.top  = top  + 'px';
+  popup.classList.add('open');
+  setTimeout(function() { inp.focus(); inp.select();
+    document.addEventListener('click', function closeOut(ev) {
+      if (!popup.contains(ev.target)) { popup.classList.remove('open'); _colNamePickerIdx = -1; }
+      document.removeEventListener('click', closeOut);
+    });
+  }, 50);
+}
+
+// Override saveText to handle col name
+var _origSaveText = saveText;
+saveText = function() {
+  if (_colNamePickerIdx >= 0) {
+    var ci = _colNamePickerIdx;
+    _colNamePickerIdx = -1;
+    var newName = document.getElementById('textInput').value.trim();
+    document.getElementById('textPicker').classList.remove('open');
+    if (!newName) return;
+    COL_NAME_OVERRIDES[ci] = newName;
+    // Update COLS array
+    var col = COLS.find(function(c){ return c.i === ci; });
+    if (col) col.n = newName;
+    render();
+    cnSave();
+    showToast('\u2713 Kolomnaam opgeslagen', 'success');
+    return;
+  }
+  _origSaveText();
+};
+
 // ══ FASE OVERRIDES ══
 var FASE_OVERRIDES = {};   // colIdx -> fase string
 var _fasePicker_colIdx = -1;
@@ -3022,6 +3091,18 @@ function loadRoleLists() {
         }
         // Load task-role map
         var storedTR = cd['__task_roles__'];
+        // Load col name overrides
+        if (cd['__col_names__']) {
+          try {
+            var parsedCN = JSON.parse(cd['__col_names__']);
+            Object.keys(parsedCN).forEach(function(k) {
+              var ci = parseInt(k);
+              COL_NAME_OVERRIDES[ci] = parsedCN[k];
+              var col = COLS.find(function(c){ return c.i === ci; });
+              if (col) col.n = parsedCN[k];
+            });
+          } catch(e) {}
+        }
         if (storedTR) {
           try {
             var parsedTR = typeof storedTR === 'string' ? JSON.parse(storedTR) : storedTR;
@@ -3042,7 +3123,8 @@ function saveConfig() {
   };
   var celData = {
     '__roles__':      JSON.stringify(rolesPayload),
-    '__task_roles__': JSON.stringify(TASK_ROLE_MAP)
+    '__task_roles__': JSON.stringify(TASK_ROLE_MAP),
+    '__col_names__':  JSON.stringify(COL_NAME_OVERRIDES)
   };
   return supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + CONFIG_ROW_IDX, {
     cel_data: celData, updated_by: currentUser, updated_at: new Date().toISOString()
@@ -3964,7 +4046,11 @@ function render() {
       ? '<span class="col-drag-handle" onmousedown="_colStart(event,'+col.i+')" title="Verschuiven">&#8942;</span>'
       : '';
     html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'"'+dragAttrs+'>';
-    html += dragHandle+'<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
+    var colName = COL_NAME_OVERRIDES[col.i] || col.n;
+    var nameClick = currentMode==='editor'
+      ? 'ondblclick="openColNamePicker(event,'+col.i+')" title="Dubbelklik om naam te wijzigen"'
+      : '';
+    html += dragHandle+'<span onclick="sortBy('+ci+')" '+nameClick+' style="cursor:pointer">'+esc(colName)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
     html += ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>';
     html += '</th>';
   });
