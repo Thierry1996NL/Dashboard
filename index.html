@@ -225,12 +225,14 @@
   }
   .col-hdr-row th.col-dragging { opacity:.35; }
   .col-drag-handle {
-    display:inline-flex; align-items:center; opacity:0;
-    font-size:10px; color:var(--text-3); margin-right:3px;
-    cursor:grab; transition:opacity .1s; vertical-align:middle;
+    display:inline-flex; align-items:center; justify-content:center;
+    width:20px; height:20px; border-radius:5px;
+    font-size:14px; color:var(--text-2); margin-right:4px;
+    cursor:grab; opacity:0; transition:opacity .1s, background .1s;
+    vertical-align:middle; flex-shrink:0;
   }
-  .mode-editor .col-hdr-row th:hover .col-drag-handle { opacity:.5; }
-  .mode-editor .col-hdr-row th:active .col-drag-handle { opacity:1; }
+  .mode-editor .col-hdr-row th:hover .col-drag-handle { opacity:1; background:var(--surface3); }
+  .mode-editor .col-hdr-row th:active .col-drag-handle { background:var(--border-md); }
 
   /* ── Kolomnaam edit knop ── */
   .col-name-edit-btn {
