@@ -2048,40 +2048,90 @@ function getOrderedCols(cols) {
 }
 
 // Drag handlers
+// ── Kolom-drag: pointer events (werkt in alle richtingen) ──
+var _colDragSrc  = -1;   // col.i being dragged
+var _colDragGhost = null;
+var _colDragTarget = null;
+
 function colDragStart(e, colIdx) {
-  _dragSrcColIdx = colIdx;
-  var th = e.currentTarget.closest('th');
-  if (th) { setTimeout(function(){ th.classList.add('col-dragging'); }, 0); }
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', String(colIdx));
+  // HTML5 compat stub (not used)
 }
-function colDragOver(e, th) {
-  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('.col-drag-over').forEach(function(el){ el.classList.remove('col-drag-over'); });
-  th.classList.add('col-drag-over');
-}
-function colDragLeave(th) { th.classList.remove('col-drag-over'); }
-function colDragEnd(th) {
-  th.classList.remove('col-dragging');
-  document.querySelectorAll('.col-drag-over').forEach(function(el){ el.classList.remove('col-drag-over'); });
-}
-function colDrop(e, targetColIdx) {
+function colDragOver(e, th) { e.preventDefault(); }
+function colDragLeave(th) {}
+function colDragEnd(th) {}
+function colDrop(e, targetColIdx) {}
+
+function _colStart(e, colIdx) {
+  if (currentMode !== 'editor') return;
   e.preventDefault();
-  document.querySelectorAll('.col-drag-over,.col-dragging').forEach(function(el){ el.classList.remove('col-drag-over','col-dragging'); });
-  var srcIdx = _dragSrcColIdx;
-  _dragSrcColIdx = -1;
-  if (srcIdx === targetColIdx) return;
-  // Build current ordered list from visibleCols
-  var vcols = visibleCols();
-  var order = vcols.map(function(c){ return c.i; });
+  _colDragSrc = colIdx;
+
+  // Ghost label
+  var col = COLS.find(function(c){ return c.i === colIdx; });
+  _colDragGhost = document.createElement('div');
+  _colDragGhost.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;'
+    + 'background:var(--navy);color:#fff;border-radius:8px;padding:5px 12px;'
+    + 'font-size:11px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:.92;white-space:nowrap;';
+  _colDragGhost.textContent = (col ? col.n : 'Kolom');
+  document.body.appendChild(_colDragGhost);
+  _colMoveGhost(e);
+
+  document.addEventListener('mousemove', _colMove);
+  document.addEventListener('mouseup',   _colEnd);
+  document.body.style.userSelect = 'none';
+  document.body.style.cursor = 'grabbing';
+}
+
+function _colMoveGhost(e) {
+  if (!_colDragGhost) return;
+  _colDragGhost.style.left = (e.clientX + 10) + 'px';
+  _colDragGhost.style.top  = (e.clientY + 6)  + 'px';
+}
+
+function _colMove(e) {
+  _colMoveGhost(e);
+  // Find th under cursor — check both direct and parent
+  var el = document.elementFromPoint(e.clientX, e.clientY);
+  var th = null;
+  while (el && el !== document.body) {
+    if (el.tagName === 'TH' && el.dataset && el.dataset.ci !== undefined) { th = el; break; }
+    el = el.parentElement;
+  }
+  // Clear previous highlight
+  if (_colDragTarget && _colDragTarget !== th) {
+    _colDragTarget.classList.remove('col-drag-over');
+  }
+  if (th && parseInt(th.dataset.ci) !== _colDragSrc) {
+    _colDragTarget = th;
+    th.classList.add('col-drag-over');
+  } else if (!th) {
+    _colDragTarget = null;
+  }
+}
+
+function _colEnd(e) {
+  document.removeEventListener('mousemove', _colMove);
+  document.removeEventListener('mouseup',   _colEnd);
+  document.body.style.userSelect = '';
+  document.body.style.cursor = '';
+  if (_colDragGhost) { document.body.removeChild(_colDragGhost); _colDragGhost = null; }
+  if (_colDragTarget) { _colDragTarget.classList.remove('col-drag-over'); }
+
+  var srcIdx = _colDragSrc;
+  _colDragSrc = -1;
+  var tgtIdx  = _colDragTarget ? parseInt(_colDragTarget.dataset.ci) : -1;
+  _colDragTarget = null;
+  if (srcIdx < 0 || tgtIdx < 0 || srcIdx === tgtIdx) return;
+
+  var vcols   = visibleCols();
+  var order   = vcols.map(function(c){ return c.i; });
   var fromPos = order.indexOf(srcIdx);
-  var toPos   = order.indexOf(targetColIdx);
+  var toPos   = order.indexOf(tgtIdx);
   if (fromPos < 0 || toPos < 0) return;
   order.splice(fromPos, 1);
   order.splice(toPos, 0, srcIdx);
   COL_ORDER = order;
   render();
-  // Save asynchronously
   kvSave(order).catch(function(){});
   showToast('\u2713 Kolomvolgorde opgeslagen', 'success');
 }
@@ -3868,14 +3918,18 @@ function render() {
   vcols.forEach(function(col, ci) {
     var s = FASE_STYLE[col.f];
     var isFirst = ci===0 || vcols[ci-1].f !== col.f;
-    var editFase = currentMode==='editor' ? ' editable-fase' : '';
+    var editFase  = currentMode==='editor' ? ' editable-fase' : '';
     var clickFase = currentMode==='editor' ? ' onclick="openFasePicker(event,'+col.i+')"' : '';
+    // Also accept column drops on the fase row so left-dragging works
+    var dropFase  = currentMode==='editor'
+      ? ' ondragover="colDragOver(event,this)" ondragleave="colDragLeave(this)" ondrop="colDrop(event,'+col.i+')"'
+      : '';
     if (s) {
       var label = isFirst ? esc(col.f || 'Projectinfo') : '';
-      html += '<th class="'+editFase+'" style="color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color+'"'+clickFase+'>'+label+'</th>';
+      html += '<th class="'+editFase+'" style="color:'+s.color+';background:'+s.bg+';border-bottom:2px solid '+s.color+'"'+clickFase+dropFase+'>'+label+'</th>';
     } else {
       var label = isFirst ? 'Projectinfo' : '';
-      html += '<th class="fh-empty'+editFase+'"'+clickFase+'>'+label+'</th>';
+      html += '<th class="fh-empty'+editFase+'"'+clickFase+dropFase+'>'+label+'</th>';
     }
   });
   html += '</tr><tr class="col-hdr-row">';
@@ -3884,7 +3938,7 @@ function render() {
     var arrow = sortCol===ci ? (sortDir===1?' \u25b2':' \u25bc') : '';
     var fs = FASE_STYLE[col.f];
     var isFirst = ci===0 || vcols[ci-1].f !== col.f;
-    var bl = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
+    var bl = '';
     var hasFilter = activeFilters[col.i] && !activeFilters[col.i].allSelected;
     var filterCls = hasFilter ? ' has-filter' : '';
     var minW = Math.max(80, col.n.length * 7) + 'px';
@@ -3900,19 +3954,14 @@ function render() {
     }
     var faseColor = fs ? fs.color : '';
     var faseBg    = fs ? fs.bg    : '';
-    var topBorder = faseColor ? 'border-top:3px solid '+faseColor+';' : '';
-    var bgStyle   = faseBg    ? 'background:linear-gradient(180deg,'+faseBg+' 0%,var(--surface2) 50%);' : '';
+    var topBorder = '';  // removed per user request
+    var bgStyle   = '';  // removed per user request
     var faseCls   = faseColor ? ' has-fase-color' : '';
     var dragAttrs = currentMode==='editor'
-      ? ' draggable="true"'
-        + ' ondragstart="colDragStart(event,'+col.i+')"'
-        + ' ondragover="colDragOver(event,this)"'
-        + ' ondragleave="colDragLeave(this)"'
-        + ' ondragend="colDragEnd(this)"'
-        + ' ondrop="colDrop(event,'+col.i+')"'
+      ? ' data-ci="'+col.i+'"'
       : '';
     var dragHandle = currentMode==='editor'
-      ? '<span class="col-drag-handle" title="Verschuiven">&#8942;</span>'
+      ? '<span class="col-drag-handle" onmousedown="_colStart(event,'+col.i+')" title="Verschuiven">&#8942;</span>'
       : '';
     html += '<th class="'+filterCls+faseCls+'" style="'+bl+';'+topBorder+bgStyle+'min-width:'+minW+'" title="'+esc(col.n)+'"'+dragAttrs+'>';
     html += dragHandle+'<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(col.n)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>';
@@ -3943,7 +3992,7 @@ function render() {
         var isCx     = col.i >= CX_BASE; // custom col
         var fs       = FASE_STYLE[col.f];
         var isFirst  = ci===0 || vcols[ci-1].f !== col.f;
-        var bl       = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
+        var bl       = '';
         var cls      = isBase ? 'col-base' : (col.i===5 ? 'col-wp' : '');
         var isVirt   = VIRT_COLS.indexOf(col.i) >= 0;
 
