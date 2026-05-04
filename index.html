@@ -1856,98 +1856,136 @@
 </div>
 <script>
 // ══ RIJVOLGORDE ══
-var ROW_ORDER = [];   // array of row_idx values in display order
-var _rowDragSrcIdx = -1;  // actualIdx in ROWS
+var ROW_ORDER = [];        // [row_idx, ...] in display order
+var _rowDragSrc = -1;      // row_idx of dragging row
 
-function rvLoad() {
-  return fetch(SUPA_URL+'/rest/v1/rij_volgorde?select=*&order=pos.asc',{
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
-  }).then(function(r){return r.json();}).catch(function(){return [];});
-}
-function rvSave(rowIdxList) {
-  var rows = rowIdxList.map(function(ri,pos){ return {row_idx:ri, pos:pos, updated_by:currentUser}; });
-  return fetch(SUPA_URL+'/rest/v1/rij_volgorde',{
-    method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
-      'Prefer':'resolution=merge-duplicates,return=minimal'},
-    body:JSON.stringify(rows)
-  });
+// Supabase
+function rvSave(order) {
+  var rows = order.map(function(ri, pos) { return { row_idx: ri, pos: pos, updated_by: currentUser }; });
+  fetch(SUPA_URL + '/rest/v1/rij_volgorde', {
+    method: 'POST',
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify(rows)
+  }).catch(function() {});
 }
 
 function loadRijVolgorde() {
-  return rvLoad().then(function(rows) {
-    if (!Array.isArray(rows) || !rows.length) return;
-    ROW_ORDER = rows.map(function(r){ return r.row_idx; });
-  });
+  return fetch(SUPA_URL + '/rest/v1/rij_volgorde?select=row_idx,pos&order=pos.asc', {
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+  }).then(function(r) { return r.json(); })
+    .then(function(rows) {
+      if (Array.isArray(rows) && rows.length) {
+        ROW_ORDER = rows.map(function(r) { return r.row_idx; });
+      }
+    }).catch(function() {});
 }
 
+// Reorder rows array according to ROW_ORDER
 function getOrderedRows(rows) {
   if (!ROW_ORDER.length) return rows;
-  var map = {};
-  rows.forEach(function(r, i){
-    var dbIdx = DB_ROWS.indexOf(DB_ROWS[ROWS.indexOf(r)]);
-    var ri = DB_ROWS[ROWS.indexOf(r)] ? DB_ROWS[ROWS.indexOf(r)].row_idx : -1;
-    map[ri] = r;
-  });
-  // More reliable: build map by row_idx
+  // Build lookup: row_idx -> row
   var byRi = {};
-  rows.forEach(function(r){
+  rows.forEach(function(r) {
     var ai = ROWS.indexOf(r);
     var db = DB_ROWS[ai];
     if (db) byRi[db.row_idx] = r;
   });
-  var ordered = [];
-  ROW_ORDER.forEach(function(ri){ if(byRi[ri]){ ordered.push(byRi[ri]); delete byRi[ri]; } });
-  // Append any rows not yet in order
-  rows.forEach(function(r){ var ai=ROWS.indexOf(r); var db=DB_ROWS[ai]; if(db&&byRi[db.row_idx]) ordered.push(r); });
-  return ordered;
-}
-
-// Row drag handlers
-function rowDragStart(e, actualIdx) {
-  _rowDragSrcIdx = actualIdx;
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', String(actualIdx));
-  var tr = e.currentTarget.closest ? e.currentTarget.closest('tr') : e.currentTarget.parentNode;
-  if (tr) setTimeout(function(){ tr.classList.add('row-dragging'); }, 0);
-}
-function rowDragOver(e, tr) {
-  e.preventDefault(); e.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('tbody tr.row-drag-over').forEach(function(el){ el.classList.remove('row-drag-over'); });
-  tr.classList.add('row-drag-over');
-}
-function rowDragLeave(tr) { tr.classList.remove('row-drag-over'); }
-function rowDragEnd(tr) {
-  tr.classList.remove('row-dragging');
-  document.querySelectorAll('tbody tr.row-drag-over').forEach(function(el){ el.classList.remove('row-drag-over'); });
-}
-function rowDrop(e, targetActualIdx) {
-  e.preventDefault(); e.stopPropagation();
-  document.querySelectorAll('tbody tr.row-drag-over,.row-dragging').forEach(function(el){ el.classList.remove('row-drag-over','row-dragging'); });
-  var srcIdx = _rowDragSrcIdx;
-  _rowDragSrcIdx = -1;
-  if (srcIdx === targetActualIdx || srcIdx < 0) return;
-  // Get current visible ordered rows
-  var vcols = visibleCols();
-  var frows = filterRows();
-  frows = getOrderedRows(frows);
-  // Find src and target in frows
-  var srcRow = ROWS[srcIdx];
-  var tgtRow = ROWS[targetActualIdx];
-  var fromPos = frows.indexOf(srcRow);
-  var toPos   = frows.indexOf(tgtRow);
-  if (fromPos < 0 || toPos < 0) return;
-  frows.splice(fromPos, 1);
-  frows.splice(toPos, 0, srcRow);
-  // Build new ROW_ORDER from the full ROWS array reordered
-  var newOrder = frows.map(function(r){
+  var result = [];
+  // First pass: in ROW_ORDER sequence
+  ROW_ORDER.forEach(function(ri) {
+    if (byRi.hasOwnProperty(ri)) {
+      result.push(byRi[ri]);
+      delete byRi[ri];
+    }
+  });
+  // Second pass: any remaining rows not yet in ROW_ORDER
+  rows.forEach(function(r) {
     var ai = ROWS.indexOf(r);
     var db = DB_ROWS[ai];
-    return db ? db.row_idx : -1;
-  }).filter(function(ri){ return ri >= 0; });
+    if (db && byRi.hasOwnProperty(db.row_idx)) {
+      result.push(r);
+    }
+  });
+  return result;
+}
+
+// Get row_idx for a ROWS array index
+function getRowIdx(actualIdx) {
+  var db = DB_ROWS[actualIdx];
+  return db ? db.row_idx : -1;
+}
+
+// Drag handlers — called from inline HTML
+function rowDragStart(e, actualIdx) {
+  _rowDragSrc = getRowIdx(actualIdx);
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.setData('text/plain', String(actualIdx));
+  // Highlight source row
+  var tr = e.currentTarget.closest ? e.currentTarget.closest('tr') : e.currentTarget.parentNode;
+  if (tr) { setTimeout(function() { tr.classList.add('row-dragging'); }, 0); }
+}
+
+function rowDragOver(e, tr) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
+  if (tr) tr.classList.add('row-drag-over');
+}
+
+function rowDragLeave(tr) {
+  if (tr) tr.classList.remove('row-drag-over');
+}
+
+function rowDragEnd(tr) {
+  _rowDragSrc = -1;
+  if (tr) tr.classList.remove('row-dragging');
+  document.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
+}
+
+function rowDrop(e, targetActualIdx) {
+  e.preventDefault();
+  e.stopPropagation();
+  document.querySelectorAll('.row-drag-over, .row-dragging').forEach(function(el) {
+    el.classList.remove('row-drag-over', 'row-dragging');
+  });
+
+  var srcRi = _rowDragSrc;
+  var tgtRi = getRowIdx(targetActualIdx);
+  _rowDragSrc = -1;
+
+  if (srcRi < 0 || tgtRi < 0 || srcRi === tgtRi) return;
+
+  // Build current ordered list (all rows, not just filtered)
+  var allRows = ROWS.filter(function(r) { return !r._gearchiveerd; });
+  var ordered = getOrderedRows(allRows);
+
+  // Find positions by row_idx
+  var srcPos = -1, tgtPos = -1;
+  ordered.forEach(function(r, i) {
+    var ai = ROWS.indexOf(r);
+    var db = DB_ROWS[ai];
+    if (db && db.row_idx === srcRi) srcPos = i;
+    if (db && db.row_idx === tgtRi) tgtPos = i;
+  });
+
+  if (srcPos < 0 || tgtPos < 0) return;
+
+  // Reorder
+  var moved = ordered.splice(srcPos, 1)[0];
+  ordered.splice(tgtPos, 0, moved);
+
+  // Extract new row_idx order
+  var newOrder = [];
+  ordered.forEach(function(r) {
+    var ai = ROWS.indexOf(r);
+    var db = DB_ROWS[ai];
+    if (db) newOrder.push(db.row_idx);
+  });
+
   ROW_ORDER = newOrder;
   render();
-  rvSave(newOrder).catch(function(){});
+  rvSave(newOrder);
   showToast('\u2713 Volgorde opgeslagen', 'success');
 }
 
@@ -3872,14 +3910,11 @@ function render() {
         if (archiefModus) {
           html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
         } else {
-          // Drag handle cell: draggable, initiates row drag
           html += '<td class="edit-col-cell" style="cursor:grab;user-select:none"'
             + ' draggable="true"'
-            + ' ondragstart="event.stopPropagation();rowDragStart(event,'+actualIdx+')"'
-            + ' ondragend="rowDragEnd(this.parentNode)"'
-            + ' onclick="event.stopPropagation()"'
-            + ' title="Slepen om rij te verplaatsen">&#8942;</td>';
-          // Separate edit button cell is no longer shown (use row click instead)
+            + ' ondragstart="rowDragStart(event,'+actualIdx+');event.stopPropagation()"'
+            + ' ondragend="rowDragEnd(this.closest ? this.closest(\'tr\') : this.parentNode)"'
+            + ' onclick="event.stopPropagation()" title="Slepen om rij te verplaatsen">&#8942;</td>';
         }
       }
       vcols.forEach(function(col, ci) {
