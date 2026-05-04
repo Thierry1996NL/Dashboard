@@ -1220,9 +1220,154 @@
   .btn-export-xl { background:var(--g-fg); color:#fff; border-color:var(--g-fg); }
   .btn-export-xl:hover { background:#004d2a; }
 
+  /* ══ SIDEBAR ══ */
+  :root { --sb-w:220px; --sb-w-col:52px; --hdr-h:48px; }
+  .app-layout { display:flex; min-height:100vh; }
+  .sidebar {
+    width:var(--sb-w); flex-shrink:0;
+    background:var(--navy,#0A0F2E); color:#fff;
+    position:fixed; top:var(--hdr-h); left:0;
+    height:calc(100vh - var(--hdr-h)); z-index:90;
+    display:flex; flex-direction:column;
+    transition:width .22s cubic-bezier(.4,0,.2,1);
+    overflow:hidden; border-right:1px solid rgba(255,255,255,0.07);
+  }
+  .sidebar.collapsed { width:var(--sb-w-col); }
+  .sidebar-content { flex:1; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,.12) transparent; }
+  .sidebar-content::-webkit-scrollbar { width:3px; }
+  .sidebar-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
+
+  /* Toggle button */
+  .sb-toggle {
+    position:fixed; top:calc(var(--hdr-h) + .75rem); left:calc(var(--sb-w) - 14px);
+    width:28px; height:28px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--border-md);
+    box-shadow:0 2px 8px rgba(0,0,0,.12);
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; z-index:91; transition:left .22s cubic-bezier(.4,0,.2,1);
+    color:var(--text-2); font-size:12px;
+  }
+  .sb-toggle:hover { background:var(--surface2); color:var(--text); }
+  .sidebar.collapsed ~ .sb-toggle { left:calc(var(--sb-w-col) - 14px); }
+
+  /* Sidebar section label */
+  .sb-section-label {
+    font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:.1em;
+    color:rgba(255,255,255,.3); padding:.875rem 1rem .25rem;
+    white-space:nowrap; overflow:hidden; transition:opacity .15s;
+  }
+  .sidebar.collapsed .sb-section-label { opacity:0; }
+
+  /* Nav items */
+  .sb-item {
+    display:flex; align-items:center; gap:.625rem;
+    padding:.5rem 1rem; font-size:12px; font-weight:500;
+    color:rgba(255,255,255,.6); cursor:pointer;
+    border-left:3px solid transparent;
+    transition:all .1s; white-space:nowrap; overflow:hidden;
+    border:none; background:none; width:100%; text-align:left;
+    font-family:inherit;
+  }
+  .sb-item:hover { background:rgba(255,255,255,.07); color:#fff; }
+  .sb-item.active { background:rgba(255,255,255,.1); color:#fff; border-left-color:var(--accent,#0057FF); }
+  .sb-item .sb-icon {
+    width:32px; height:32px; border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; font-size:14px; transition:background .1s;
+  }
+  .sb-item:hover .sb-icon { background:rgba(255,255,255,.08); }
+  .sb-item.active .sb-icon { background:rgba(0,87,255,.35); }
+  .sb-item .sb-label { flex:1; overflow:hidden; text-overflow:ellipsis; transition:opacity .15s, width .22s; }
+  .sidebar.collapsed .sb-label { opacity:0; width:0; }
+
+  /* Project list in sidebar */
+  .sb-proj-list { flex:1; padding:.25rem 0; }
+  .sb-proj-item {
+    display:flex; align-items:center; gap:6px;
+    padding:.375rem 1rem; font-size:11px; color:rgba(255,255,255,.5);
+    cursor:pointer; white-space:nowrap; overflow:hidden; transition:all .1s;
+    border:none; background:none; width:100%; text-align:left; font-family:inherit;
+  }
+  .sb-proj-item:hover { background:rgba(255,255,255,.07); color:rgba(255,255,255,.85); }
+  .sb-proj-item.active { color:#fff; background:rgba(0,87,255,.2); }
+  .sb-proj-bullet { width:5px; height:5px; border-radius:50%; background:rgba(255,255,255,.25); flex-shrink:0; }
+  .sb-proj-item .sb-proj-name { overflow:hidden; text-overflow:ellipsis; transition:opacity .15s; }
+  .sidebar.collapsed .sb-proj-name, .sidebar.collapsed .sb-proj-bullet { opacity:0; }
+  .sb-proj-search {
+    padding:.375rem .75rem; margin:.375rem .625rem 0;
+    font-size:11px; border:1px solid rgba(255,255,255,.1);
+    border-radius:var(--r,8px); background:rgba(255,255,255,.05);
+    color:#fff; outline:none; width:calc(100% - 1.25rem); font-family:inherit;
+    transition:opacity .15s;
+  }
+  .sb-proj-search::placeholder { color:rgba(255,255,255,.3); }
+  .sb-proj-search:focus { border-color:rgba(0,87,255,.6); background:rgba(255,255,255,.08); }
+  .sidebar.collapsed .sb-proj-search { opacity:0; pointer-events:none; }
+
+  /* Divider */
+  .sb-divider { height:1px; background:rgba(255,255,255,.07); margin:.5rem 1rem; }
+
+  /* Main content shifts right */
+  .app-layout > .main, .app-layout > main.main { margin-left:var(--sb-w); transition:margin-left .22s cubic-bezier(.4,0,.2,1); }
+  .sidebar-collapsed-state .app-layout > .main,
+  .sidebar-collapsed-state .app-layout > main.main { margin-left:var(--sb-w-col); }
+
+  /* Header adjustment */
+  .site-header, .page-header {
+    padding-left:calc(var(--sb-w) + 1rem) !important;
+    transition:padding-left .22s cubic-bezier(.4,0,.2,1);
+  }
+  .sidebar-collapsed-state .site-header,
+  .sidebar-collapsed-state .page-header {
+    padding-left:calc(var(--sb-w-col) + 1rem) !important;
+  }
+
+  /* Remove logo from header when sidebar is present */
+  .has-sidebar .hdr-logo,
+  .has-sidebar .logo { display:none !important; }
+
+  @media(max-width:768px) {
+    .sidebar { transform:translateX(-100%); }
+    .sidebar.mobile-open { transform:translateX(0); }
+    .app-layout > .main, .app-layout > main.main { margin-left:0 !important; }
+    .site-header, .page-header { padding-left:1.5rem !important; }
+    .sb-toggle { display:none; }
+  }
+
 </style>
 </head>
 <body>
+
+<!-- ══ SIDEBAR ══ -->
+<aside class="sidebar" id="appSidebar">
+  <div class="sidebar-content">
+    <div style="padding:.875rem 1rem .5rem;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden">
+      <span style="width:26px;height:26px;background:var(--accent,#0057FF);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+        <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="white" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </span>
+      <span class="sb-label" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">Dashboard Engineering</span>
+    </div>
+    <div class="sb-divider"></div>
+    <div class="sb-section-label">Navigatie</div>
+    <button class="sb-item" onclick="goBack()">
+      <span class="sb-icon"><svg width="14" height="14" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".4"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".6"/></svg></span>
+      <span class="sb-label">Dashboard</span>
+    </button>
+    <div class="sb-divider"></div>
+    <div class="sb-section-label">Secties</div>
+    <button class="sb-item active" id="sb-sec-info"         onclick="showSection('info',this);sbSetActive(this)"><span class="sb-icon">&#x1F4CB;</span><span class="sb-label">Projectinfo</span></button>
+    <button class="sb-item"        id="sb-sec-team"         onclick="showSection('team',this);sbSetActive(this)"><span class="sb-icon">&#x1F465;</span><span class="sb-label">Team</span></button>
+    <button class="sb-item"        id="sb-sec-ontwerp"      onclick="showSection('ontwerp',this);sbSetActive(this)"><span class="sb-icon">&#x1F5FA;</span><span class="sb-label">Ontwerp / Trac&#233;</span></button>
+    <button class="sb-item"        id="sb-sec-planning"     onclick="showSection('planning',this);sbSetActive(this)"><span class="sb-icon">&#x1F4C5;</span><span class="sb-label">Planning</span></button>
+    <button class="sb-item"        id="sb-sec-datumoverzicht" onclick="showSection('datumoverzicht',this);sbSetActive(this)"><span class="sb-icon">&#x1F4CB;</span><span class="sb-label">Datum overzicht</span></button>
+    <button class="sb-item"        id="sb-sec-voortgang"    onclick="showSection('voortgang',this);sbSetActive(this)"><span class="sb-icon">&#x1F4CA;</span><span class="sb-label">Voortgang</span></button>
+    <button class="sb-item"        id="sb-sec-boringen"     onclick="showSection('boringen',this);sbSetActive(this)"><span class="sb-icon">&#x1F9F3;</span><span class="sb-label">Boringen</span></button>
+    <button class="sb-item"        id="sb-sec-proefsleuven" onclick="showSection('proefsleuven',this);sbSetActive(this)"><span class="sb-icon">&#x2B1B;</span><span class="sb-label">Proefsleuven</span></button>
+    <button class="sb-item"        id="sb-sec-duikers"      onclick="showSection('duikers',this);sbSetActive(this)"><span class="sb-icon">&#x1F6B0;</span><span class="sb-label">Duikers</span></button>
+    <button class="sb-item"        id="sb-sec-opmerkingen"  onclick="showSection('opmerkingen',this);sbSetActive(this)"><span class="sb-icon">&#x1F4AC;</span><span class="sb-label">Opmerkingen</span></button>
+  </div>
+</aside>
+<button class="sb-toggle" id="sbToggle" onclick="toggleSidebar()" title="Sidebar inklappen">&#x276E;</button>
 
 <header class="page-header" id="pageHeader">
   <!-- Logo -->
@@ -1258,7 +1403,7 @@
 
 
 <!-- ══ SECTIE NAVIGATIE ══ -->
-<nav class="section-nav" id="sectionNav" style="display:none">
+<div class="app-layout"><nav class="section-nav" id="sectionNav" style="display:none">
   <button class="snav-btn active" data-section="info"       onclick="showSection('info',this)">&#x1F4CB; Projectinfo</button>
   <button class="snav-btn"        data-section="team"       onclick="showSection('team',this)">&#x1F465; Team</button>
   <button class="snav-btn"        data-section="ontwerp"    onclick="showSection('ontwerp',this)">&#x1F5FA; Ontwerp / Tracé</button>
@@ -1390,7 +1535,7 @@
       onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();postComment()}"></textarea>
     <button class="btn-comment-post" id="btnPostComment" onclick="postComment()">Plaatsen</button>
   </div>
-</div></div><!-- /panel-opmerkingen -->
+</div></div><!-- /panel-opmerkingen --></div><!-- /app-layout -->
 
 <!-- Status picker -->
 <div class="status-picker" id="statusPicker">
