@@ -1300,9 +1300,9 @@
   .sb-divider { height:1px; background:rgba(255,255,255,.07); margin:.5rem 1rem; }
 
   /* Main content shifts right */
-  .app-layout > .main, .app-layout > main.main { margin-left:var(--sb-w); transition:margin-left .22s cubic-bezier(.4,0,.2,1); }
-  .sidebar-collapsed-state .app-layout > .main,
-  .sidebar-collapsed-state .app-layout > main.main { margin-left:var(--sb-w-col); }
+  .app-layout { padding-left:var(--sb-w); transition:padding-left .22s cubic-bezier(.4,0,.2,1); }
+  .sidebar-collapsed-state .app-layout { padding-left:var(--sb-w-col); }
+  .app-layout > .main, .app-layout > main.main { margin-left:auto; margin-right:auto; }
 
   /* Header adjustment */
   .site-header, .page-header {
@@ -1321,7 +1321,7 @@
   @media(max-width:768px) {
     .sidebar { transform:translateX(-100%); }
     .sidebar.mobile-open { transform:translateX(0); }
-    .app-layout > .main, .app-layout > main.main { margin-left:0 !important; }
+    .app-layout { padding-left:0 !important; }
     .site-header, .page-header { padding-left:1.5rem !important; }
     .sb-toggle { display:none; }
   }
@@ -5904,6 +5904,46 @@ async function deleteBorm() {
     showToast('✗ ' + err.message, 'error');
   }
 }
+
+// ══════════════════════════════════
+// SIDEBAR
+// ══════════════════════════════════
+var _sbCollapsed = (localStorage.getItem('sb_collapsed') === '1');
+
+function _sbApply() {
+  var sb  = document.getElementById('appSidebar');
+  var tog = document.getElementById('sbToggle');
+  if (!sb) return;
+  if (_sbCollapsed) {
+    sb.classList.add('collapsed');
+    document.body.classList.add('sidebar-collapsed-state');
+    if (tog) tog.innerHTML = '&#x276F;';
+    if (tog) tog.title = 'Sidebar uitklappen';
+  } else {
+    sb.classList.remove('collapsed');
+    document.body.classList.remove('sidebar-collapsed-state');
+    if (tog) tog.innerHTML = '&#x276E;';
+    if (tog) tog.title = 'Sidebar inklappen';
+  }
+}
+
+function toggleSidebar() {
+  _sbCollapsed = !_sbCollapsed;
+  localStorage.setItem('sb_collapsed', _sbCollapsed ? '1' : '0');
+  _sbApply();
+}
+
+function sbSetActive(btn) {
+  document.querySelectorAll('#appSidebar .sb-item[id^="sb-sec-"]').forEach(function(b) {
+    b.classList.remove('active');
+  });
+  if (btn) btn.classList.add('active');
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  _sbApply();
+  document.body.classList.add('has-sidebar');
+});
 </script>
 
 <!-- ══ BORINGEN MODAL ══ -->
