@@ -141,7 +141,76 @@
   table { border-collapse:collapse; min-width:100%; font-size:11px; }
   thead { position:sticky; top:0; z-index:10; }
   .fase-hdr-row th { padding:3px 8px; font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; text-align:center; border-bottom:1px solid rgba(0,0,0,.05); white-space:nowrap; }
-  .col-hdr-row th { padding:5px 8px; font-size:11px; font-weight:500; text-align:left; color:var(--text-2); border-bottom:1px solid var(--border-md); background:var(--surface2); font-family:'Inter',system-ui,-apple-system,sans-serif; letter-spacing:-.01em; white-space:nowrap; min-width:90px; cursor:default; user-select:none; transition:background .08s; }
+  /* ══ AANGEPASTE KOLOMMEN ══ */
+  .col-mgr-btn {
+    display:inline-flex; align-items:center; gap:4px; padding:4px 10px;
+    font-size:11px; font-weight:600; border:1px solid var(--border-md);
+    border-radius:var(--r); background:var(--surface2); color:var(--text-2);
+    cursor:pointer; font-family:'Inter',system-ui,sans-serif; transition:all .1s;
+    white-space:nowrap;
+  }
+  .col-mgr-btn:hover { background:var(--surface3); color:var(--text); }
+  .col-mgr-badge { background:var(--accent); color:#fff; border-radius:20px; padding:0 5px; font-size:9px; font-weight:700; }
+  .col-mgr-overlay {
+    position:fixed; inset:0; background:rgba(8,13,31,.5); z-index:700;
+    display:flex; align-items:center; justify-content:center; padding:1rem;
+    opacity:0; pointer-events:none; transition:opacity .15s;
+  }
+  .col-mgr-overlay.open { opacity:1; pointer-events:all; }
+  .col-mgr-modal {
+    background:var(--surface); border-radius:var(--r-xl); width:100%; max-width:500px;
+    max-height:85vh; display:flex; flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,.2); border:1px solid var(--border-md);
+    transform:translateY(8px); transition:transform .15s;
+  }
+  .col-mgr-overlay.open .col-mgr-modal { transform:translateY(0); }
+  .col-mgr-hdr {
+    padding:.875rem 1.25rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:center; justify-content:space-between; flex-shrink:0;
+  }
+  .col-mgr-title { font-size:14px; font-weight:600; color:var(--text); }
+  .col-mgr-sub { font-size:10px; color:var(--text-3); margin-top:2px; }
+  .col-mgr-body { padding:1rem 1.25rem; overflow-y:auto; flex:1; }
+  .col-mgr-list { display:flex; flex-direction:column; gap:.5rem; margin-bottom:1rem; }
+  .col-mgr-item {
+    display:flex; align-items:center; gap:.75rem;
+    padding:.625rem .875rem; background:var(--surface2);
+    border:1px solid var(--border); border-radius:var(--r-lg);
+    transition:background .07s;
+  }
+  .col-mgr-item:hover { background:var(--surface3); }
+  .col-mgr-item-name { flex:1; font-size:12px; font-weight:500; color:var(--text); }
+  .col-mgr-item-type { font-size:10px; padding:2px 7px; border-radius:20px; background:var(--surface); border:1px solid var(--border-md); color:var(--text-3); white-space:nowrap; }
+  .col-mgr-item-del { background:none; border:none; cursor:pointer; color:var(--b-fg); font-size:14px; padding:2px 5px; border-radius:4px; opacity:0; transition:all .1s; }
+  .col-mgr-item:hover .col-mgr-item-del { opacity:1; }
+  .col-mgr-item-del:hover { background:var(--b-bg); }
+  .col-mgr-add {
+    border-top:1px solid var(--border); padding-top:.875rem; margin-top:.25rem;
+  }
+  .col-mgr-add-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-2); margin-bottom:.625rem; }
+  .col-mgr-add-grid { display:grid; grid-template-columns:1fr auto; gap:.5rem; align-items:start; }
+  .col-mgr-input {
+    padding:7px 10px; font-family:'Inter',system-ui,sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r-md);
+    background:var(--surface2); color:var(--text); outline:none; transition:all .1s;
+  }
+  .col-mgr-input:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .col-mgr-select {
+    padding:7px 28px 7px 10px; font-family:'Inter',system-ui,sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r-md);
+    background:var(--surface2); color:var(--text); outline:none; cursor:pointer;
+    appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A8FAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center;
+  }
+  .col-mgr-select:focus { border-color:var(--accent); background-color:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .btn-col-add { padding:7px 14px; font-size:12px; font-family:'Inter',system-ui,sans-serif; font-weight:700; border:none; border-radius:var(--r-md); background:var(--accent); color:#fff; cursor:pointer; transition:all .1s; white-space:nowrap; }
+  .btn-col-add:hover { background:#0044CC; }
+  .col-mgr-empty { text-align:center; padding:1.5rem; color:var(--text-3); font-size:12px; font-style:italic; }
+  .col-mgr-ftr { padding:.75rem 1.25rem; border-top:1px solid var(--border); display:flex; justify-content:flex-end; flex-shrink:0; }
+  .btn-col-close { padding:6px 16px; font-size:12px; font-family:'Inter',system-ui,sans-serif; border:1px solid var(--border-md); border-radius:var(--r); background:transparent; color:var(--text-2); cursor:pointer; }
+  .btn-col-close:hover { background:var(--surface2); }
+
+    .col-hdr-row th { padding:5px 8px; font-size:11px; font-weight:500; text-align:left; color:var(--text-2); border-bottom:1px solid var(--border-md); background:var(--surface2); font-family:'Inter',system-ui,-apple-system,sans-serif; letter-spacing:-.01em; white-space:nowrap; min-width:90px; cursor:default; user-select:none; transition:background .08s; }
   .col-hdr-row th:hover { background:var(--surface3); color:var(--text); }
   .sort-arrow { opacity:.45; font-size:8px; margin-left:2px; }
   tbody tr { border-bottom:1px solid var(--border); transition:background .07s; cursor:pointer; }
@@ -1323,6 +1392,11 @@
         </div>
         <input class="search-box" type="text" id="search" placeholder="&#128269; Zoeken..." oninput="debouncedRender()">
         <span class="row-count" id="row-count"></span>
+        <button class="col-mgr-btn editor-only" onclick="openColMgr()" id="colMgrBtn">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M1 4h14M1 8h14M1 12h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M6 2v4M10 6v4M6 10v4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+          Kolommen
+          <span class="col-mgr-badge" id="colMgrBadge" style="display:none">0</span>
+        </button>
         <div class="export-group" id="exportGroup" style="display:none">
           <button class="btn-export csv" onclick="exportCSV()">
             <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M2 12v2h12v-2M8 2v8M5 7l3 3 3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>CSV
@@ -1633,6 +1707,43 @@
   </div>
 </div>
 
+<!-- ══ KOLOMBEHEER MODAL ══ -->
+<div class="col-mgr-overlay" id="colMgrOverlay" onclick="if(event.target===this)closeColMgr()">
+  <div class="col-mgr-modal">
+    <div class="col-mgr-hdr">
+      <div>
+        <div class="col-mgr-title">&#x1F4CB; Kolommen beheren</div>
+        <div class="col-mgr-sub">Voeg aangepaste kolommen toe aan het projectenoverzicht</div>
+      </div>
+      <button class="opm-close" onclick="closeColMgr()">&#10005;</button>
+    </div>
+    <div class="col-mgr-body">
+      <div class="col-mgr-list" id="colMgrList">
+        <div class="col-mgr-empty">Laden...</div>
+      </div>
+      <div class="col-mgr-add">
+        <div class="col-mgr-add-title">Nieuwe kolom toevoegen</div>
+        <div style="display:flex;flex-direction:column;gap:.5rem">
+          <input class="col-mgr-input" id="colMgrNaam" type="text" placeholder="Kolomnaam (bijv. Contractnummer)">
+          <div style="display:flex;gap:.5rem;align-items:center">
+            <select class="col-mgr-select" id="colMgrType" style="flex:1">
+              <option value="tekst">Tekst</option>
+              <option value="datum">Datum</option>
+              <option value="janee">Ja / Nee</option>
+              <option value="status">Status (G/L/R/B)</option>
+              <option value="nummer">Nummer</option>
+            </select>
+            <button class="btn-col-add" onclick="addCustomKolom()">+ Toevoegen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-mgr-ftr">
+      <button class="btn-col-close" onclick="closeColMgr()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <!-- ══ ROLLEN MODAL ══ -->
@@ -1667,6 +1778,135 @@
   </div>
 </div>
 <script>
+// ══ AANGEPASTE KOLOMMEN ══
+var CUSTOM_COLS = [];        // [{id, naam, type, volgorde}]
+var CX_BASE = 2000;          // offset for custom col indices (cx_2000, cx_2001, …)
+
+// Supabase helpers
+function cxLoad() {
+  return fetch(SUPA_URL+'/rest/v1/custom_kolommen?order=volgorde.asc,id.asc&select=*',{
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){return r.json();});
+}
+function cxInsert(o) {
+  return fetch(SUPA_URL+'/rest/v1/custom_kolommen',{
+    method:'POST',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    body:JSON.stringify(o)
+  }).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error((d&&d.message)||'HTTP '+r.status);return d;});});
+}
+function cxDelete(id) {
+  return fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+id,{
+    method:'DELETE',
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+  }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);});
+}
+
+// Load custom cols and merge into COLS + ROWS
+function loadCustomKolommen() {
+  return cxLoad().then(function(rows) {
+    if (!Array.isArray(rows)) return;
+    CUSTOM_COLS = rows;
+    mergeCustomColsIntoCOLS();
+    rebuildCustomRows();
+    var badge = document.getElementById('colMgrBadge');
+    if (badge) {
+      badge.textContent = CUSTOM_COLS.length;
+      badge.style.display = CUSTOM_COLS.length ? 'inline' : 'none';
+    }
+  });
+}
+
+function mergeCustomColsIntoCOLS() {
+  // Remove previously merged custom cols
+  COLS = COLS.filter(function(c){ return c.i < CX_BASE; });
+  // Add custom cols as 'Aangepast' fase
+  CUSTOM_COLS.forEach(function(cc, idx) {
+    COLS.push({ i: CX_BASE + cc.id, f:'Aangepast', n: cc.naam, type: cc.type, cx_id: cc.id });
+  });
+}
+
+function rebuildCustomRows() {
+  // Re-map cel_data cx_ keys to ROWS array slots
+  if (!DB_ROWS.length) return;
+  DB_ROWS.forEach(function(dbRow, ri) {
+    var cd = dbRow.cel_data || {};
+    CUSTOM_COLS.forEach(function(cc) {
+      var key = 'cx_' + cc.id;
+      ROWS[ri][CX_BASE + cc.id] = cd[key] || '';
+    });
+  });
+}
+
+// Open/close modal
+function openColMgr() {
+  document.getElementById('colMgrOverlay').classList.add('open');
+  renderColMgrList();
+  setTimeout(function(){ document.getElementById('colMgrNaam').focus(); }, 80);
+}
+function closeColMgr() {
+  document.getElementById('colMgrOverlay').classList.remove('open');
+}
+
+function renderColMgrList() {
+  var el = document.getElementById('colMgrList');
+  if (!el) return;
+  if (!CUSTOM_COLS.length) {
+    el.innerHTML = '<div class="col-mgr-empty">Nog geen aangepaste kolommen. Voeg hieronder een kolom toe.</div>';
+    return;
+  }
+  var TYPE_LABELS = {tekst:'Tekst',datum:'Datum',janee:'Ja/Nee',status:'Status',nummer:'Nummer'};
+  var html = '';
+  CUSTOM_COLS.forEach(function(cc) {
+    html += '<div class="col-mgr-item">'
+      + '<span class="col-mgr-item-name">'+esc(cc.naam)+'</span>'
+      + '<span class="col-mgr-item-type">'+esc(TYPE_LABELS[cc.type]||cc.type)+'</span>'
+      + '<button class="col-mgr-item-del" data-cxid="'+cc.id+'" onclick="deleteCustomKolom(this.dataset.cxid)" title="Verwijderen">&times;</button>'
+      + '</div>';
+  });
+  el.innerHTML = html;
+}
+
+function addCustomKolom() {
+  var naam = (document.getElementById('colMgrNaam').value || '').trim();
+  var type = document.getElementById('colMgrType').value;
+  if (!naam) { showToast('Vul een kolomnaam in', 'error'); return; }
+  if (CUSTOM_COLS.find(function(c){ return c.naam.toLowerCase()===naam.toLowerCase(); })) {
+    showToast('Kolom "'+naam+'" bestaat al', 'error'); return;
+  }
+  document.getElementById('colMgrNaam').value = '';
+  cxInsert({ naam:naam, type:type, volgorde: CUSTOM_COLS.length, created_by: currentUser })
+    .then(function(inserted) {
+      var ret = Array.isArray(inserted) ? inserted[0] : inserted;
+      if (ret && ret.id) {
+        CUSTOM_COLS.push(ret);
+        mergeCustomColsIntoCOLS();
+        rebuildCustomRows();
+        renderColMgrList();
+        render();
+        var badge = document.getElementById('colMgrBadge');
+        if (badge) { badge.textContent = CUSTOM_COLS.length; badge.style.display = 'inline'; }
+        showToast('✓ Kolom "'+naam+'" toegevoegd', 'success');
+      }
+    }).catch(function(err){ showToast('✗ '+err.message,'error'); });
+}
+
+function deleteCustomKolom(id) {
+  id = parseInt(id);
+  var cc = CUSTOM_COLS.find(function(c){ return c.id===id; });
+  if (!cc || !confirm('Kolom "'+cc.naam+'" en alle bijbehorende data verwijderen?')) return;
+  cxDelete(id).then(function() {
+    CUSTOM_COLS = CUSTOM_COLS.filter(function(c){ return c.id!==id; });
+    mergeCustomColsIntoCOLS();
+    rebuildCustomRows();
+    renderColMgrList();
+    render();
+    var badge = document.getElementById('colMgrBadge');
+    if (badge) { badge.textContent = CUSTOM_COLS.length; badge.style.display = CUSTOM_COLS.length?'inline':'none'; }
+    showToast('✓ Kolom verwijderd', 'success');
+  }).catch(function(err){ showToast('✗ '+err.message,'error'); });
+}
+
 // ══ CONFIG ══
 if (window.location.protocol === 'file:') {
   var w = document.getElementById('localWarning');
@@ -1859,6 +2099,7 @@ var FASE_STYLE = {
   'Bodem':        {color:'var(--fase-bodem)',     bg:'var(--fase-bodem-bg)',     cls:'fl-bodem'},
   'NGE/OO':       {color:'var(--fase-nge)',       bg:'var(--fase-nge-bg)',       cls:'fl-nge'},
   'Geotechnisch': {color:'var(--fase-geo)',       bg:'var(--fase-geo-bg)',       cls:'fl-geo'},
+  'Aangepast':    {color:'#636366',                bg:'#F5F5F7',                  cls:'fl-cx'},
   'Rollen & Gebruikers': {color:'#3A3A3C', bg:'#F2F2F7', cls:'fl-rollen'},
 };
 
@@ -2396,9 +2637,15 @@ function buildROWS(dbData) {
   ROWS = dbData.map(function(row) {
     var arr = new Array(182).fill('');
     var cd = row.cel_data || {};
+    // Standard numeric cols
     Object.keys(cd).forEach(function(k) {
       var idx = parseInt(k);
       if (!isNaN(idx) && idx < 182) arr[idx] = cd[k] || '';
+      // Custom cols: cx_<id>
+      else if (String(k).indexOf('cx_') === 0) {
+        var cxId = parseInt(k.slice(3));
+        if (!isNaN(cxId)) arr[CX_BASE + cxId] = cd[k] || '';
+      }
     });
     arr._gearchiveerd = row.gearchiveerd || false;
     return arr;
@@ -2514,8 +2761,11 @@ function saveCellData(ri, updates) {
   var dbRow = DB_ROWS[ri];
   var newCelData = Object.assign({}, dbRow.cel_data || {});
   Object.keys(updates).forEach(function(k) {
-    if (updates[k] !== '') newCelData[k] = updates[k];
-    else delete newCelData[k];
+    var numK = parseInt(k);
+    // Custom col: store as cx_<id>
+    var storeKey = (!isNaN(numK) && numK >= CX_BASE) ? ('cx_' + (numK - CX_BASE)) : k;
+    if (updates[k] !== '') newCelData[storeKey] = updates[k];
+    else delete newCelData[storeKey];
   });
   return supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
     cel_data: newCelData,
@@ -3262,6 +3512,7 @@ function render() {
         var raw      = r[col.i] !== undefined ? r[col.i] : '';
         var val      = esc(raw);
         var isBase   = col.f === '';
+        var isCx     = col.i >= CX_BASE; // custom col
         var fs       = FASE_STYLE[col.f];
         var isFirst  = ci===0 || vcols[ci-1].f !== col.f;
         var bl       = isFirst && fs ? 'border-left:2px solid '+fs.color : '';
