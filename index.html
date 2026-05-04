@@ -1148,11 +1148,11 @@
   <div class="sidebar-content">
 
     <!-- Logo -->
-    <div class="sb-brand">
-      <span class="sb-brand-icon">
+    <div style="padding:.875rem 1rem .5rem;display:flex;align-items:center;gap:8px;white-space:nowrap;overflow:hidden">
+      <span style="width:26px;height:26px;background:var(--accent,#0057FF);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 8px rgba(0,87,255,.3)">
         <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="white" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
       </span>
-      <span class="sb-label sb-brand-name">Dashboard Engineering</span>
+      <span class="sb-label" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">Dashboard Engineering</span>
     </div>
 
     <div class="sb-divider"></div>
@@ -1211,7 +1211,9 @@
 <button class="sb-toggle" id="sbToggle" onclick="toggleSidebar()" title="Sidebar inklappen">&#x276E;</button>
 
 <header class="site-header">
-  <!-- Logo verplaatst naar sidebar -->
+  <!-- Spacer: pushes content to right -->
+  <div style="flex:1"></div>
+  <!-- Right side controls -->
   <div style="display:flex;align-items:center;gap:.625rem">
     <span class="saving-indicator" id="savingIndicator"><span class="saving-dot"></span>opslaan...</span>
     <div class="online-users" id="onlineUsers"></div>
