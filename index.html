@@ -232,6 +232,21 @@
   .mode-editor .col-hdr-row th:hover .col-drag-handle { opacity:.5; }
   .mode-editor .col-hdr-row th:active .col-drag-handle { opacity:1; }
 
+  /* ── Rol dot picker ── */
+  .rol-dot-picker {
+    position:fixed; background:var(--surface); border:1px solid var(--border-md);
+    border-radius:var(--r-lg); box-shadow:0 8px 32px rgba(0,0,0,.15);
+    z-index:650; min-width:170px; padding:4px; display:none;
+  }
+  .rol-dot-picker.open { display:block; animation:popIn .1s ease; }
+  .rdp-hdr { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--text-3); padding:5px 8px 3px; }
+  .rdp-opt { display:flex; align-items:center; gap:8px; padding:5px 8px; border-radius:var(--r); cursor:pointer; font-size:11px; color:var(--text); transition:background .07s; }
+  .rdp-opt:hover { background:var(--surface2); }
+  .rdp-opt.active { background:var(--surface2); font-weight:600; }
+  .rdp-dot { width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .mode-editor .col-rol-dot { cursor:pointer; transition:transform .1s; }
+  .mode-editor .col-rol-dot:hover { transform:scale(1.4); }
+
   /* ── Fase cel picker ── */
   .fase-cell-picker {
     position:fixed; background:var(--surface); border:1px solid var(--border-md);
@@ -1763,6 +1778,9 @@
     </div>
   </div>
 </div>
+
+<!-- ══ ROL DOT PICKER ══ -->
+<div class="rol-dot-picker" id="rolDotPicker"></div>
 
 <!-- ══ FASE PICKER ══ -->
 <div class="fase-cell-picker" id="faseCellPicker"></div>
@@ -3875,7 +3893,10 @@ function render() {
     if (col.f !== '' && col.f !== 'Rollen & Gebruikers' && TASK_ROLE_MAP && ROLE_COLOR_MAP) {
       var rKey = TASK_ROLE_MAP[col.i] || 'engineer';
       var rColor = ROLE_COLOR_MAP[rKey] || '#999';
-      rolDotHdr = '<span class="col-rol-dot" style="background:'+rColor+'" title="'+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"></span>';
+      var rdpClick = currentMode==='editor'
+        ? ' onclick="openRolDotPicker(event,'+col.i+')" title="Klik om rol te wijzigen: '+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"'
+        : ' title="'+(ROLE_LABEL_MAP&&ROLE_LABEL_MAP[rKey]||rKey)+'"';
+      rolDotHdr = '<span class="col-rol-dot" style="background:'+rColor+'"'+rdpClick+'></span>';
     }
     var faseColor = fs ? fs.color : '';
     var faseBg    = fs ? fs.bg    : '';
@@ -4285,6 +4306,37 @@ var TV_FASEN = [
 
 var ROLE_COLOR_MAP = { engineer:'#0071E3', projectleider:'#1A7F3C', uitvoerder:'#8E6000', werkvoorbereider:'#6F35CE' };
 var ROLE_LABEL_MAP = { engineer:'Engineer', projectleider:'Projectleider', uitvoerder:'Uitvoerder', werkvoorbereider:'Werkvoorbereider' };
+
+// ── Rol dot klik in kolomkop ──
+var _rdpColIdx = -1;
+function openRolDotPicker(e, colIdx) {
+  if (currentMode !== 'editor') return;
+  e.stopPropagation();
+  _rdpColIdx = colIdx;
+  var curRole = TASK_ROLE_MAP[colIdx] || 'engineer';
+  var picker  = document.getElementById('rolDotPicker');
+  var html    = '<div class="rdp-hdr">Rol wijzigen</div>';
+  ['engineer','projectleider','uitvoerder','werkvoorbereider'].forEach(function(rk) {
+    var color = ROLE_COLOR_MAP[rk] || '#999';
+    var label = ROLE_LABEL_MAP[rk] || rk;
+    html += '<div class="rdp-opt'+(rk===curRole?' active':'')+'" data-rk="'+rk+'" onclick="applyRolDot(this.dataset.rk)">'
+      + '<span class="rdp-dot" style="background:'+color+'"></span>'
+      + label + '</div>';
+  });
+  picker.innerHTML = html;
+  var rect = e.currentTarget.getBoundingClientRect();
+  var left = rect.left; var top = rect.bottom + 4;
+  if (left + 175 > window.innerWidth) left = window.innerWidth - 179;
+  picker.style.left = left+'px'; picker.style.top = top+'px';
+  picker.classList.add('open');
+  setTimeout(function(){ document.addEventListener('click', _closeRdp, {once:true}); }, 0);
+}
+function _closeRdp() { document.getElementById('rolDotPicker').classList.remove('open'); _rdpColIdx = -1; }
+function applyRolDot(rk) {
+  _closeRdp();
+  if (_rdpColIdx < 0) return;
+  setTaskRole(_rdpColIdx, rk);
+}
 
 function renderTaakVerdeling() {
   var html = '';
