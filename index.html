@@ -1916,31 +1916,86 @@ function getRowIdx(actualIdx) {
   return db ? db.row_idx : -1;
 }
 
-// Drag handlers — called from inline HTML
-function rowDragStart(e, actualIdx) {
-  _rowDragSrc = getRowIdx(actualIdx);
-  e.dataTransfer.effectAllowed = 'move';
-  e.dataTransfer.setData('text/plain', String(actualIdx));
-  // Highlight source row
-  var tr = e.currentTarget.closest ? e.currentTarget.closest('tr') : e.currentTarget.parentNode;
-  if (tr) { setTimeout(function() { tr.classList.add('row-dragging'); }, 0); }
-}
+// Row drag — event delegation on tbody
+function _initRowDrag() {
+  var tbl = document.getElementById('tbl');
+  if (!tbl || tbl._dragInited) return;
+  tbl._dragInited = true;
 
-function rowDragOver(e, tr) {
-  e.preventDefault();
-  e.dataTransfer.dropEffect = 'move';
-  document.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
-  if (tr) tr.classList.add('row-drag-over');
-}
+  tbl.addEventListener('dragstart', function(e) {
+    var td = e.target.closest ? e.target.closest('td[draggable]') : null;
+    if (!td || !td.dataset.ri) return;
+    var actualIdx = parseInt(td.dataset.ri);
+    _rowDragSrc = getRowIdx(actualIdx);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(actualIdx));
+    var tr = td.parentNode;
+    setTimeout(function() { if (tr) tr.classList.add('row-dragging'); }, 0);
+  });
 
-function rowDragLeave(tr) {
-  if (tr) tr.classList.remove('row-drag-over');
-}
+  tbl.addEventListener('dragover', function(e) {
+    if (_rowDragSrc < 0) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    var tr = e.target.closest ? e.target.closest('tbody tr') : null;
+    if (!tr || !tr.dataset.ri) return;
+    tbl.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
+    tr.classList.add('row-drag-over');
+  });
 
-function rowDragEnd(tr) {
-  _rowDragSrc = -1;
-  if (tr) tr.classList.remove('row-dragging');
-  document.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
+  tbl.addEventListener('dragleave', function(e) {
+    // Only clear if truly leaving the table
+    if (!tbl.contains(e.relatedTarget)) {
+      tbl.querySelectorAll('.row-drag-over').forEach(function(el) { el.classList.remove('row-drag-over'); });
+    }
+  });
+
+  tbl.addEventListener('dragend', function(e) {
+    _rowDragSrc = -1;
+    tbl.querySelectorAll('.row-drag-over, .row-dragging').forEach(function(el) {
+      el.classList.remove('row-drag-over', 'row-dragging');
+    });
+  });
+
+  tbl.addEventListener('drop', function(e) {
+    e.preventDefault(); e.stopPropagation();
+    var tr = e.target.closest ? e.target.closest('tbody tr') : null;
+    var targetActualIdx = tr && tr.dataset.ri ? parseInt(tr.dataset.ri) : -1;
+    tbl.querySelectorAll('.row-drag-over, .row-dragging').forEach(function(el) {
+      el.classList.remove('row-drag-over', 'row-dragging');
+    });
+
+    var srcRi = _rowDragSrc;
+    var tgtRi = targetActualIdx >= 0 ? getRowIdx(targetActualIdx) : -1;
+    _rowDragSrc = -1;
+    if (srcRi < 0 || tgtRi < 0 || srcRi === tgtRi) return;
+
+    // Build ordered list using row_idx
+    var allRows = ROWS.filter(function(r) { return !r._gearchiveerd; });
+    var ordered = getOrderedRows(allRows);
+
+    var srcPos = -1, tgtPos = -1;
+    ordered.forEach(function(r, i) {
+      var ai = ROWS.indexOf(r);
+      var db = DB_ROWS[ai];
+      if (!db) return;
+      if (db.row_idx === srcRi) srcPos = i;
+      if (db.row_idx === tgtRi) tgtPos = i;
+    });
+    if (srcPos < 0 || tgtPos < 0) return;
+
+    var moved = ordered.splice(srcPos, 1)[0];
+    ordered.splice(tgtPos, 0, moved);
+
+    var newOrder = ordered.map(function(r) {
+      var db = DB_ROWS[ROWS.indexOf(r)]; return db ? db.row_idx : -1;
+    }).filter(function(ri) { return ri >= 0; });
+
+    ROW_ORDER = newOrder;
+    render();
+    rvSave(newOrder);
+    showToast('✓ Volgorde opgeslagen', 'success');
+  });
 }
 
 function rowDrop(e, targetActualIdx) {
@@ -3902,19 +3957,14 @@ function render() {
   } else {
     rows.forEach(function(r) {
       var actualIdx = ROWS.indexOf(r);
-      html += '<tr onclick="handleRowClick(event,'+actualIdx+')"'
-        + ' ondragover="rowDragOver(event,this);event.preventDefault()"'
-        + ' ondragleave="rowDragLeave(this)"'
-        + ' ondrop="rowDrop(event,'+actualIdx+')">';
+      html += '<tr data-ri="'+actualIdx+'" onclick="handleRowClick(event,'+actualIdx+')">';
       if (currentMode==='editor') {
         if (archiefModus) {
           html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
         } else {
-          html += '<td class="edit-col-cell" style="cursor:grab;user-select:none"'
-            + ' draggable="true"'
-            + ' ondragstart="rowDragStart(event,'+actualIdx+');event.stopPropagation()"'
-            + ' ondragend="rowDragEnd(this.closest ? this.closest(\'tr\') : this.parentNode)"'
-            + ' onclick="event.stopPropagation()" title="Slepen om rij te verplaatsen">&#8942;</td>';
+          html += '<td class="edit-col-cell" draggable="true" data-ri="'+actualIdx+'"'
+            + ' style="cursor:grab;user-select:none;font-size:15px;color:var(--text-3)"'
+            + ' title="Slepen om rij te verplaatsen">&#8942;</td>';
         }
       }
       vcols.forEach(function(col, ci) {
@@ -4001,6 +4051,7 @@ function render() {
   }
   html += '</tbody>';
   document.getElementById('tbl').innerHTML = html;
+  if (currentMode === 'editor') _initRowDrag();
 }
 
 function sortBy(ci) {
