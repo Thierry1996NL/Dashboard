@@ -1725,7 +1725,22 @@
         <div class="col-mgr-add-title">Nieuwe kolom toevoegen</div>
         <div style="display:flex;flex-direction:column;gap:.5rem">
           <input class="col-mgr-input" id="colMgrNaam" type="text" placeholder="Kolomnaam (bijv. Contractnummer)">
-          <div style="display:flex;gap:.5rem;align-items:center">
+          <div style="display:flex;gap:.5rem">
+            <select class="col-mgr-select" id="colMgrFase" style="flex:1">
+              <option value="Projectinfo">Projectinfo</option>
+              <option value="Analyse">Analyse</option>
+              <option value="VO-Fase">VO-Fase</option>
+              <option value="DO-Fase">DO-Fase</option>
+              <option value="Onderzoeksfase">Onderzoeksfase</option>
+              <option value="UO-Fase">UO-Fase</option>
+              <option value="Natuurtoets">Natuurtoets</option>
+              <option value="Archeologie">Archeologie</option>
+              <option value="Bodem">Bodem</option>
+              <option value="NGE/OO">NGE/OO</option>
+              <option value="Geotechnisch">Geotechnisch</option>
+              <option value="Vergunningen">Vergunningen</option>
+              <option value="Sleufloze technieken">Sleufloze technieken</option>
+            </select>
             <select class="col-mgr-select" id="colMgrType" style="flex:1">
               <option value="tekst">Tekst</option>
               <option value="datum">Datum</option>
@@ -1733,8 +1748,8 @@
               <option value="status">Status (G/L/R/B)</option>
               <option value="nummer">Nummer</option>
             </select>
-            <button class="btn-col-add" onclick="addCustomKolom()">+ Toevoegen</button>
           </div>
+          <button class="btn-col-add" onclick="addCustomKolom()" style="align-self:flex-start">+ Kolom toevoegen</button>
         </div>
       </div>
     </div>
@@ -1821,8 +1836,8 @@ function mergeCustomColsIntoCOLS() {
   // Remove previously merged custom cols
   COLS = COLS.filter(function(c){ return c.i < CX_BASE; });
   // Add custom cols as 'Aangepast' fase
-  CUSTOM_COLS.forEach(function(cc, idx) {
-    COLS.push({ i: CX_BASE + cc.id, f:'Aangepast', n: cc.naam, type: cc.type, cx_id: cc.id });
+  CUSTOM_COLS.forEach(function(cc) {
+    COLS.push({ i: CX_BASE + cc.id, f: cc.fase || 'Projectinfo', n: cc.naam, type: cc.type, cx_id: cc.id });
   });
 }
 
@@ -1875,7 +1890,8 @@ function addCustomKolom() {
     showToast('Kolom "'+naam+'" bestaat al', 'error'); return;
   }
   document.getElementById('colMgrNaam').value = '';
-  cxInsert({ naam:naam, type:type, volgorde: CUSTOM_COLS.length, created_by: currentUser })
+  var fase = (document.getElementById('colMgrFase')||{value:'Projectinfo'}).value;
+  cxInsert({ naam:naam, type:type, fase:fase, volgorde: CUSTOM_COLS.length, created_by: currentUser })
     .then(function(inserted) {
       var ret = Array.isArray(inserted) ? inserted[0] : inserted;
       if (ret && ret.id) {
@@ -2099,7 +2115,7 @@ var FASE_STYLE = {
   'Bodem':        {color:'var(--fase-bodem)',     bg:'var(--fase-bodem-bg)',     cls:'fl-bodem'},
   'NGE/OO':       {color:'var(--fase-nge)',       bg:'var(--fase-nge-bg)',       cls:'fl-nge'},
   'Geotechnisch': {color:'var(--fase-geo)',       bg:'var(--fase-geo-bg)',       cls:'fl-geo'},
-  'Aangepast':    {color:'#636366',                bg:'#F5F5F7',                  cls:'fl-cx'},
+
   'Rollen & Gebruikers': {color:'#3A3A3C', bg:'#F2F2F7', cls:'fl-rollen'},
 };
 
