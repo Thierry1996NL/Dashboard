@@ -1908,8 +1908,8 @@ function rowDragStart(e, actualIdx) {
   _rowDragSrcIdx = actualIdx;
   e.dataTransfer.effectAllowed = 'move';
   e.dataTransfer.setData('text/plain', String(actualIdx));
-  var tr = e.currentTarget;
-  setTimeout(function(){ tr.classList.add('row-dragging'); }, 0);
+  var tr = e.currentTarget.closest ? e.currentTarget.closest('tr') : e.currentTarget.parentNode;
+  if (tr) setTimeout(function(){ tr.classList.add('row-dragging'); }, 0);
 }
 function rowDragOver(e, tr) {
   e.preventDefault(); e.dataTransfer.dropEffect = 'move';
@@ -3864,22 +3864,22 @@ function render() {
   } else {
     rows.forEach(function(r) {
       var actualIdx = ROWS.indexOf(r);
-      var dragRowAttrs = currentMode==='editor'
-        ? ' draggable="true"'
-          +' ondragstart="rowDragStart(event,'+actualIdx+')"'
-          +' ondragover="rowDragOver(event,this);event.preventDefault()"'
-          +' ondragleave="rowDragLeave(this)"'
-          +' ondragend="rowDragEnd(this)"'
-          +' ondrop="rowDrop(event,'+actualIdx+')"'
-        : '';
-      html += '<tr onclick="handleRowClick(event,'+actualIdx+')" title="Klik om project te openen"'+dragRowAttrs+'>';
+      html += '<tr onclick="handleRowClick(event,'+actualIdx+')"'
+        + ' ondragover="rowDragOver(event,this);event.preventDefault()"'
+        + ' ondragleave="rowDragLeave(this)"'
+        + ' ondrop="rowDrop(event,'+actualIdx+')">';
       if (currentMode==='editor') {
         if (archiefModus) {
           html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
         } else {
-          html += '<td class="edit-col-cell" style="cursor:grab" title="Slepen om te verplaatsen">'
-            + '<span class="row-drag-handle" onclick="event.stopPropagation()">&#8942;</span>'
-            + '</td>';
+          // Drag handle cell: draggable, initiates row drag
+          html += '<td class="edit-col-cell" style="cursor:grab;user-select:none"'
+            + ' draggable="true"'
+            + ' ondragstart="event.stopPropagation();rowDragStart(event,'+actualIdx+')"'
+            + ' ondragend="rowDragEnd(this.parentNode)"'
+            + ' onclick="event.stopPropagation()"'
+            + ' title="Slepen om rij te verplaatsen">&#8942;</td>';
+          // Separate edit button cell is no longer shown (use row click instead)
         }
       }
       vcols.forEach(function(col, ci) {
