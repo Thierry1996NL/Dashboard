@@ -2133,6 +2133,9 @@ function deleteCp() {
   }).catch(function(err){ showSaving(false); showToast('✗ '+err.message,'error'); });
 }
 
+function openPlanningPage() { window.open('planning.html', '_blank'); }
+function openAnalysePage()  { window.open('analyse.html',  '_blank'); }
+
 function goBack() {
   if (window.history.length > 1) {
     window.history.back();
