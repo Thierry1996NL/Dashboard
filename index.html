@@ -4078,7 +4078,7 @@ function render() {
       ? '<button class="col-name-edit-btn" onclick="event.stopPropagation();openColNamePicker(event,'+col.i+')" title="Naam aanpassen">&#9998;</button>'
       : '';
     html += dragHandle+'<span onclick="sortBy('+ci+')" style="cursor:pointer">'+esc(colName)+(arrow?'<span class="sort-arrow">'+arrow+'</span>':'')+rolDotHdr+'</span>'+editNameBtn;
-    html += ' <span class="filter-arrow" data-colidx="'+col.i+'" onclick="openColFilterByEl(event,this)" title="Filter op '+esc(col.n)+'">&#9660;</span>';
+
     html += '</th>';
   });
   html += '</tr></thead><tbody>';
