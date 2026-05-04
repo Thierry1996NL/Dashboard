@@ -1180,6 +1180,14 @@
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 12V8M6 12V5M10 12V3M14 12V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Analyse</span>
     </button>
+    <button class="sb-item" onclick="openDuikerDashboard()">
+      <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M4 8c0-2.5 1-4 4-4s4 1.5 4 4M4 8c0 2.5 1 4 4 4s4-1.5 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      <span class="sb-label">Duiker Dashboard</span>
+    </button>
+    <button class="sb-item" onclick="openPSDashboard()">
+      <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="7" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V4a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
+      <span class="sb-label">PS Dashboard</span>
+    </button>
 
     <div class="sb-divider"></div>
 
@@ -3056,6 +3064,9 @@ function openPlanningPage() {
   }));
   window.open('planning.html', '_blank');
 }
+
+function openDuikerDashboard() { window.open('duiker_dashboard.html', '_blank'); }
+function openPSDashboard()      { window.open('ps_dashboard.html',     '_blank'); }
 
 function openAnalysePage() {
   sessionStorage.setItem('analyse_params', JSON.stringify({
