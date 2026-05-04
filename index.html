@@ -3932,25 +3932,31 @@ function sbRenderProjects(search) {
       + '<span class="sb-proj-name">' + esc(r[2]||'—') + wp + '</span>'
       + '</button>';
   });
-  if (!_sbShowAll && items.length > _sbPageSize) {
-    var remaining = items.length - _sbPageSize;
-    html += '<button onclick="_sbShowAll=true;sbRenderProjects(document.getElementById("sbSearch").value)" '
-      + 'style="width:100%;padding:.375rem 1rem;font-size:10px;font-weight:600;color:rgba(255,255,255,.45);'
-      + 'background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.12);border-radius:6px;'
-      + 'margin:.25rem .625rem;width:calc(100% - 1.25rem);cursor:pointer;font-family:inherit;'
-      + 'transition:all .1s;display:flex;align-items:center;justify-content:center;gap:5px"'
-      + '>'
-      + '<svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 2v8M2 6h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>'
-      + '+ ' + remaining + ' meer projecten'
-      + '</button>';
-  } else if (_sbShowAll && items.length > _sbPageSize) {
-    html += '<button onclick="_sbShowAll=false;sbRenderProjects(document.getElementById("sbSearch").value)" '
-      + 'style="width:calc(100% - 1.25rem);margin:.25rem .625rem;padding:.3rem 1rem;font-size:10px;font-weight:500;'
-      + 'color:rgba(255,255,255,.3);background:none;border:none;cursor:pointer;font-family:inherit;text-align:center">'
-      + 'Minder tonen ↑'
-      + '</button>';
-  }
   el.innerHTML = html;
+
+  // "Meer / Minder" button via DOM to avoid quote issues
+  if (items.length > _sbPageSize) {
+    var meerBtn = document.createElement('button');
+    var remaining = items.length - _sbPageSize;
+    if (!_sbShowAll) {
+      meerBtn.textContent = '+ ' + remaining + ' meer projecten';
+      meerBtn.style.cssText = 'width:calc(100% - 1.25rem);margin:.25rem .625rem;padding:.375rem 1rem;font-size:10px;font-weight:600;color:rgba(255,255,255,.45);background:rgba(255,255,255,.05);border:1px dashed rgba(255,255,255,.12);border-radius:6px;cursor:pointer;font-family:inherit;display:block;';
+      meerBtn.onclick = function() {
+        _sbShowAll = true;
+        var q = document.getElementById('sbSearch');
+        sbRenderProjects(q ? q.value : '');
+      };
+    } else {
+      meerBtn.textContent = 'Minder tonen ↑';
+      meerBtn.style.cssText = 'width:calc(100% - 1.25rem);margin:.25rem .625rem;padding:.3rem 1rem;font-size:10px;font-weight:500;color:rgba(255,255,255,.3);background:none;border:none;cursor:pointer;font-family:inherit;text-align:center;display:block;';
+      meerBtn.onclick = function() {
+        _sbShowAll = false;
+        var q = document.getElementById('sbSearch');
+        sbRenderProjects(q ? q.value : '');
+      };
+    }
+    el.appendChild(meerBtn);
+  }
 }
 
 function sbFilterProjects(q) { _sbShowAll = false; sbRenderProjects(q); }
