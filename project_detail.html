@@ -65,6 +65,7 @@
 
   /* MAIN */
   .main { max-width:900px; margin:0 auto; padding:1.125rem 1.5rem 4rem; }
+  .section-panel > .main { padding-top:0; }
 
   /* PROJECT INFO */
   .project-info { background:var(--surface); border:1px solid var(--border); border-radius:var(--r-lg); padding:1rem 1.25rem; margin-bottom:1.125rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:.75rem; box-shadow:var(--sh-sm); }
@@ -102,6 +103,11 @@
   /* Hidden sections */
   .section-panel { display:none; }
   .section-panel.active { display:block; }
+  /* Ensure inner .main centers correctly */
+  .section-panel > .main {
+    max-width:900px; margin-left:auto; margin-right:auto;
+    padding-top:1.125rem; padding-bottom:2rem;
+  }
 
     .fase-section { margin-bottom:.875rem; }
   .fase-section-header { display:flex; align-items:center; gap:7px; margin-bottom:.5rem; cursor:pointer; user-select:none; }
@@ -197,7 +203,158 @@
   @keyframes spin{to{transform:rotate(360deg)}}
   .loading-box { text-align:center; padding:4rem; color:var(--text-3); font-size:13px; }
 
-  @media(max-width:600px) { .main{padding:1rem;} .fase-section-body{grid-template-columns:1fr;} .project-info{grid-template-columns:1fr 1fr;} }
+  /* ════════════════════════════════════════════════════
+     RESPONSIVE — desktop (1280+), laptop (1024), tablet (768), mobile (480/360)
+     ════════════════════════════════════════════════════ */
+
+  /* ── Laptop (max 1280px) ── */
+  @media(max-width:1280px) {
+    .do-grid { grid-template-columns:1fr 88px 60px 100px 120px 60px; }
+    .gantt-row { grid-template-columns:110px 1fr 160px; }
+    .gantt-axis-row { grid-template-columns:110px 1fr 160px; }
+  }
+
+  /* ── Tablet (max 1024px) ── */
+  @media(max-width:1024px) {
+    :root { --sb-w:180px; }
+    .main { max-width:100%; padding:1rem 1.25rem 3rem; }
+    .section-panel > .main { max-width:100%; padding:1rem 1.25rem 2rem; }
+    .project-info { grid-template-columns:repeat(3,1fr); }
+    .fase-section-body { grid-template-columns:1fr 1fr; }
+    .do-grid { grid-template-columns:minmax(100px,1fr) 80px 56px 90px auto 56px; }
+    .gantt-row { grid-template-columns:90px 1fr 140px; }
+    .gantt-axis-row { grid-template-columns:90px 1fr 140px; }
+    .gantt-label { font-size:10px; }
+    .ontwerp-body { flex-direction:column; height:auto; }
+    .ontwerp-sidebar { width:100%; border-right:none; border-bottom:1px solid var(--border); max-height:220px; }
+    #ontwerpMap { height:400px; }
+    .borm-modal, .psm-modal, .dkm-modal { max-width:98vw; }
+    .cp-grid { grid-template-columns:repeat(2,1fr); }
+    .datum-overzicht .do-grid { grid-template-columns:minmax(80px,1fr) 80px 50px 80px auto 52px; }
+  }
+
+  /* ── Tablet portrait / large phone (max 768px) ── */
+  @media(max-width:768px) {
+    :root { --hdr-h:44px; }
+    /* Sidebar: hidden, slide in as overlay */
+    .sidebar {
+      transform:translateX(-100%);
+      box-shadow:none;
+      z-index:200;
+    }
+    .sidebar.mobile-open {
+      transform:translateX(0);
+      box-shadow:4px 0 24px rgba(0,0,0,0.18);
+    }
+    .app-layout { padding-left:0 !important; flex-direction:column; }
+    .section-panel > .main { max-width:100%; padding:.875rem 1rem 2rem; }
+    .main { padding:.875rem 1rem 2rem; }
+
+    /* Header: show hamburger instead */
+    .page-header { padding-left:1rem !important; padding-right:1rem !important; gap:.5rem; }
+    .hdr-project { font-size:12px; }
+    .hdr-meta { display:none; }
+    .hdr-mode-toggle .hdr-mode-btn { padding:3px 8px; font-size:10px; }
+
+    /* Hamburger button */
+    .sb-hamburger {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:32px; height:32px; border-radius:8px; border:1px solid var(--border-md);
+      background:transparent; cursor:pointer; flex-shrink:0;
+      color:var(--text-2); font-size:16px;
+    }
+    .sb-toggle { display:none; }
+    .sb-overlay {
+      display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4);
+      z-index:199; backdrop-filter:blur(2px);
+    }
+    .sb-overlay.show { display:block; }
+
+    /* Layout adjustments */
+    .project-info { grid-template-columns:repeat(2,1fr); gap:.5rem; }
+    .fase-section-body { grid-template-columns:1fr; }
+    .cp-grid { grid-template-columns:1fr; }
+    .do-grid { grid-template-columns:1fr 76px 46px; }  /* hide rol/verantwoordelijke/gereed */
+    .do-row > .do-right > :nth-child(n+2) { display:none; } /* keep only date */
+    .datum-overzicht .do-grid { grid-template-columns:1fr 76px 46px; font-size:10px; }
+
+    /* Gantt */
+    .gantt-row { grid-template-columns:80px 1fr 100px; }
+    .gantt-axis-row { grid-template-columns:80px 1fr 100px; }
+    .gantt-label { font-size:9px; }
+    .gantt-info-date { font-size:9px; width:60px; }
+    .gantt-info-wk { font-size:9px; }
+    .gantt-group-filters { flex-wrap:wrap; gap:3px; }
+    .gantt-gf-btn { font-size:9px; padding:2px 7px; }
+
+    /* Boringen/Proefsleuven/Duikers */
+    .ontwerp-body { flex-direction:column; height:auto; }
+    .ontwerp-sidebar { width:100%; border-right:none; border-bottom:1px solid var(--border); max-height:180px; }
+    #ontwerpMap { height:320px; }
+    .borm-grid, .psm-grid, .dkm-grid { grid-template-columns:1fr; }
+
+    /* Team */
+    .project-info[style*="grid-template-columns:repeat(4"] { grid-template-columns:repeat(2,1fr) !important; }
+
+    /* Opmerkingen */
+    .comments-list { padding:.5rem; }
+    .comment-bubble { font-size:11px; }
+  }
+
+  /* ── Mobile (max 480px) ── */
+  @media(max-width:480px) {
+    :root { --hdr-h:44px; }
+    .main { padding:.75rem .875rem 2rem; }
+    .section-panel > .main { padding:.75rem .875rem 2rem; }
+
+    .page-header { height:44px; }
+    .hdr-avatar { width:24px; height:24px; font-size:9px; }
+    .hdr-mode-toggle { display:none; } /* hide viewer/editor toggle on small screens */
+
+    .project-info { grid-template-columns:1fr; }
+    .cp-card { padding:.625rem .875rem; }
+    .cp-name { font-size:12px; }
+
+    /* Gantt: ultra compact */
+    .gantt-wrap { border-radius:var(--r-lg); }
+    .gantt-body { padding:.5rem .75rem .75rem; }
+    .gantt-row { grid-template-columns:64px 1fr 80px; }
+    .gantt-axis-row { grid-template-columns:64px 1fr 80px; }
+    .gantt-label { font-size:8px; }
+    .gantt-info-date { width:52px; font-size:8px; }
+    .gantt-info-wk { font-size:8px; min-width:26px; }
+    .gantt-track { height:18px; }
+    .gantt-bar { border-radius:3px; }
+    .gantt-month-cell { font-size:7.5px; }
+
+    /* Datum overzicht: show only name + date */
+    .do-grid { grid-template-columns:1fr 72px; }
+    .datum-overzicht .do-grid { grid-template-columns:1fr 72px; }
+
+    /* Map heights */
+    #ontwerpMap { height:260px; }
+    .borm-map-el, .psm-map-el, .dkm-map-el { height:220px !important; }
+
+    /* Modal full screen */
+    .borm-modal, .psm-modal, .dkm-modal, .cp-modal, .opm-modal {
+      max-width:100vw; margin:0; border-radius:var(--r-xl) var(--r-xl) 0 0;
+      position:fixed; bottom:0; left:0; right:0; top:auto;
+    }
+    .borm-overlay, .psm-overlay, .dkm-overlay, .cp-overlay, .opm-overlay {
+      align-items:flex-end; padding:0;
+    }
+
+    .sec-heading { font-size:10px; }
+    .fase-section-hdr { font-size:11px; }
+    .fase-section-body { grid-template-columns:1fr; gap:4px; }
+  }
+
+  /* ── Very small (max 360px) ── */
+  @media(max-width:360px) {
+    .hdr-project { display:none; }
+    .gantt-row { grid-template-columns:54px 1fr 70px; }
+    .gantt-axis-row { grid-template-columns:54px 1fr 70px; }
+  }
 
   /* ── DETAIL FILTERS ── */
   .detail-filter-bar {
@@ -1300,9 +1457,15 @@
   .sb-divider { height:1px; background:rgba(255,255,255,.07); margin:.5rem 1rem; }
 
   /* Main content shifts right */
-  .app-layout { padding-left:var(--sb-w); transition:padding-left .22s cubic-bezier(.4,0,.2,1); }
+  .app-layout {
+    padding-left:var(--sb-w);
+    transition:padding-left .22s cubic-bezier(.4,0,.2,1);
+    min-height:calc(100vh - var(--hdr-h));
+    display:flex; flex-direction:column; align-items:center;
+  }
   .sidebar-collapsed-state .app-layout { padding-left:var(--sb-w-col); }
-  .app-layout > .main, .app-layout > main.main { margin-left:auto; margin-right:auto; }
+  .app-layout > * { width:100%; }
+  .app-layout > .main, .app-layout > main.main { max-width:900px; margin-left:auto; margin-right:auto; }
 
   /* Header adjustment */
   .site-header, .page-header {
@@ -1318,13 +1481,7 @@
   .has-sidebar .hdr-logo,
   .has-sidebar .logo { display:none !important; }
 
-  @media(max-width:768px) {
-    .sidebar { transform:translateX(-100%); }
-    .sidebar.mobile-open { transform:translateX(0); }
-    .app-layout { padding-left:0 !important; }
-    .site-header, .page-header { padding-left:1.5rem !important; }
-    .sb-toggle { display:none; }
-  }
+
 
 </style>
 </head>
@@ -1359,6 +1516,7 @@
     <button class="sb-item"        id="sb-sec-opmerkingen"  onclick="showSection('opmerkingen',this);sbSetActive(this)"><span class="sb-icon">&#x1F4AC;</span><span class="sb-label">Opmerkingen</span></button>
   </div>
 </aside>
+<div class="sb-overlay" id="sbOverlay" onclick="closeMobileSidebar()"></div>
 <button class="sb-toggle" id="sbToggle" onclick="toggleSidebar()" title="Sidebar inklappen">&#x276E;</button>
 
 <header class="page-header" id="pageHeader">
@@ -1374,6 +1532,7 @@
 
   <!-- Rechts: saving | avatar | viewer/bewerker | live | terug | sluiten -->
   <div class="hdr-right">
+    <button class="sb-hamburger" id="sbHamburger" onclick="toggleMobileSidebar()" style="display:none" title="Menu"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></button>
     <span class="hdr-saving" id="hdrSaving"><span class="hdr-saving-dot"></span>opslaan...</span>
     <span class="hdr-avatar" id="hdrAvatar">?</span>
     <div class="hdr-mode-toggle">
@@ -1431,7 +1590,7 @@
 
 <!-- Opmerkingen sectie -->
 <div class="section-panel" id="panel-ontwerp">
-<div class="main" style="padding-top:0;padding-bottom:2rem">
+<div class="main" style="padding-top:0;padding-bottom:2rem;max-width:1100px">
   <div class="sec-heading"><span class="sec-heading-icon">&#x1F5FA;</span>Ontwerp / Trac&eacute;</div>
   <div class="ontwerp-wrap">
     <div class="ontwerp-header">
@@ -5943,7 +6102,29 @@ function sbSetActive(btn) {
 document.addEventListener('DOMContentLoaded', function() {
   _sbApply();
   document.body.classList.add('has-sidebar');
+  // Show hamburger on mobile
+  function checkMobile() {
+    var mob = window.innerWidth <= 768;
+    var hb = document.getElementById('sbHamburger');
+    if (hb) hb.style.display = mob ? 'inline-flex' : 'none';
+  }
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
 });
+
+function toggleMobileSidebar() {
+  var sb  = document.getElementById('appSidebar');
+  var ov  = document.getElementById('sbOverlay');
+  if (!sb) return;
+  var open = sb.classList.toggle('mobile-open');
+  if (ov) ov.classList.toggle('show', open);
+}
+function closeMobileSidebar() {
+  var sb = document.getElementById('appSidebar');
+  var ov = document.getElementById('sbOverlay');
+  if (sb) sb.classList.remove('mobile-open');
+  if (ov) ov.classList.remove('show');
+}
 </script>
 
 <!-- ══ BORINGEN MODAL ══ -->
