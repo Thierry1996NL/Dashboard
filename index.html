@@ -4333,9 +4333,10 @@ function openRolDotPicker(e, colIdx) {
 }
 function _closeRdp() { document.getElementById('rolDotPicker').classList.remove('open'); _rdpColIdx = -1; }
 function applyRolDot(rk) {
+  var ci = _rdpColIdx;  // save before _closeRdp resets it
   _closeRdp();
-  if (_rdpColIdx < 0) return;
-  setTaskRole(_rdpColIdx, rk);
+  if (ci < 0) return;
+  setTaskRole(ci, rk);
 }
 
 function renderTaakVerdeling() {
