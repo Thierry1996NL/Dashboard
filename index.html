@@ -1907,9 +1907,8 @@ function _rdStart(e, actualIdx) {
   if (currentMode !== 'editor') { showToast('Niet in bewerkermodus', 'error'); return; }
   e.preventDefault();
   var db = DB_ROWS[actualIdx];
-  if (!db) { showToast('Geen DB_ROW voor index '+actualIdx, 'error'); return; }
+  if (!db) return;
   _rdSrcRI = db.row_idx;
-  showToast('Drag gestart: '+( ROWS[actualIdx]&&ROWS[actualIdx][2]||'?'), 'info');
 
   // Create ghost label
   _rdGhost = document.createElement('div');
@@ -1963,7 +1962,6 @@ function _rdEnd(e) {
   _rdSrcRI = -1;
   var tgtActual = _rdTarget ? parseInt(_rdTarget.dataset.ri) : -1;
   _rdTarget = null;
-  showToast('Drop: src='+srcRi+' tgt='+tgtActual, 'info');
   if (srcRi < 0 || tgtActual < 0) return;
 
   var tgtDb = DB_ROWS[tgtActual];
@@ -3771,20 +3769,21 @@ function visibleCols() {
   var base;
   if (currentFase === 'alle') {
     base = COLS.filter(function(col) {
-      return col.f === '' || col.f === 'Rollen & Gebruikers' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(col.f) >= 0;
+      return col.f === '' || col.f === 'Rollen & Gebruikers' || ['Analyse','VO-Fase','DO-Fase','Onderzoeksfase','UO-Fase'].indexOf(col.f) >= 0 || col.cx_id !== undefined;
     });
   } else {
     base = COLS.filter(function(col) { return col.f === '' || col.f === 'Rollen & Gebruikers' || col.f === currentFase; });
   }
-  // Apply role filter: keep base cols + cols assigned to active role
+  // Apply role filter
   if (activeRolFilter) {
     base = base.filter(function(col) {
-      if (col.f === '' || col.f === 'Rollen & Gebruikers') return true; // always show projectinfo + roles
+      if (col.f === '' || col.f === 'Rollen & Gebruikers') return true;
       var assigned = TASK_ROLE_MAP[col.i] || 'engineer';
       return assigned === activeRolFilter;
     });
   }
-  return base;
+  // Apply column order
+  return getOrderedCols(base);
 }
 function filterRows() {
   var search = document.getElementById('search').value.toLowerCase();
