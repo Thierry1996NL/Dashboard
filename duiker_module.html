@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HDD Dashboard — Dashboard</title>
+<title>Duiker Dashboard — Dashboard</title>
 
 
 
@@ -122,15 +122,15 @@ td.bold { font-weight:500; }
 .toast.show { transform:translateX(-50%) translateY(0); }
 .toast.success { background:#006B47; } .toast.error { background:#B81518; }
 @media(max-width:768px) { .sidebar { transform:translateX(-100%); } .app-layout { padding-left:0 !important; } .page-header { padding-left:1rem !important; } .sb-toggle { display:none; } }
-.spinner { border-top-color:#0071E3; }
-.btn-primary { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px; border:none; background:#0071E3; color:#fff; cursor:pointer; font-family:inherit; transition:all .12s; }
+.spinner { border-top-color:#0D9488; }
+.btn-primary { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px; border:none; background:#0D9488; color:#fff; cursor:pointer; font-family:inherit; transition:all .12s; }
 .btn-primary:hover { opacity:.88; }
 .btn-back { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:5px 12px; border-radius:20px; border:1px solid var(--border-md); background:rgba(0,0,0,.04); color:var(--text-2); cursor:pointer; font-family:inherit; transition:all .12s; }
 .btn-back:hover { background:rgba(0,0,0,.07); color:var(--text); }
-.f-input:focus,.f-select:focus,.f-textarea:focus { border-color:#0071E3; background:#fff; box-shadow:0 0 0 3px rgba(0,87,255,.08); }
-.search-box:focus { border-color:#0071E3; background:#fff; }
-.btn-save { background:#0071E3; }
-.cb-row input { accent-color:#0071E3; }
+.f-input:focus,.f-select:focus,.f-textarea:focus { border-color:#0D9488; background:#fff; box-shadow:0 0 0 3px rgba(0,87,255,.08); }
+.search-box:focus { border-color:#0D9488; background:#fff; }
+.btn-save { background:#0D9488; }
+.cb-row input { accent-color:#0D9488; }
 
   /* ── Sidebar resize ── */
   .sidebar-resize-handle {
@@ -180,7 +180,7 @@ td.bold { font-weight:500; }
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 1v3M11 1v3M1 6h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Planning</span>
     </button>
-    <button class="sb-item active" onclick="window.open('boringen_module.html','_self')">
+    <button class="sb-item" onclick="window.open('boringen_module.html','_self')">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">HDD Dashboard</span>
     </button>
@@ -188,7 +188,7 @@ td.bold { font-weight:500; }
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 12V8M6 12V5M10 12V3M14 12V7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Analyse</span>
     </button>
-    <button class="sb-item" onclick="window.open('duiker_module.html','_self')">
+    <button class="sb-item active" onclick="window.open('duiker_module.html','_self')">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M4 8c0-2.5 1-4 4-4s4 1.5 4 4M4 8c0 2.5 1 4 4 4s4-1.5 4-4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Duiker Dashboard</span>
     </button>
@@ -206,10 +206,10 @@ td.bold { font-weight:500; }
 
 <header class="page-header">
   <div style="display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0f4c9e,#0071E3);display:flex;align-items:center;justify-content:center">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0a6e5c,#0D9488);display:flex;align-items:center;justify-content:center">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M4 8c0-2.5 1-4 4-4s4 1.5 4 4M4 8c0 2.5 1 4 4 4s4-1.5 4-4" stroke="white" stroke-width="1.8" stroke-linecap="round"/></svg>
     </div>
-    <span style="font-size:14px;font-weight:600;color:var(--text)">HDD Dashboard</span>
+    <span style="font-size:14px;font-weight:600;color:var(--text)">Duiker Dashboard</span>
     <span style="font-size:11px;color:var(--text-3)" id="hdrCount"></span>
   </div>
   <div style="display:flex;align-items:center;gap:.625rem">
@@ -241,10 +241,10 @@ td.bold { font-weight:500; }
     <div class="tbl-scroll">
       <div id="loadingState" style="text-align:center;padding:3rem">
         <div class="spinner"></div>
-        <div style="color:var(--text-3);font-size:12px;margin-top:.5rem">HDD Dashboard laden...</div>
+        <div style="color:var(--text-3);font-size:12px;margin-top:.5rem">Duiker Dashboard laden...</div>
       </div>
       <table id="tbl" style="display:none">
-        <thead><tr><th onclick="sortBy('boring_nr')">Nr.</th><th onclick="sortBy('type_boring')">Type</th><th onclick="sortBy('locatie')">Locatie</th><th onclick="sortBy('lengte_m')">Lengte (m)</th><th onclick="sortBy('diameter_mm')">Ø (mm)</th><th onclick="sortBy('diepte_m')">Diepte (m)</th><th onclick="sortBy('aannemer')">Aannemer</th><th onclick="sortBy('startdatum')">Start</th><th onclick="sortBy('einddatum')">Eind</th><th onclick="sortBy('status')">Status</th><th>Project</th><th style="width:50px"></th></tr></thead>
+        <thead><tr><th onclick="sortBy('duiker_nr')">Nr.</th><th onclick="sortBy('type')">Type</th><th onclick="sortBy('locatie')">Locatie</th><th onclick="sortBy('diameter_mm')">Ø (mm)</th><th onclick="sortBy('lengte_m')">Lengte (m)</th><th onclick="sortBy('materiaal')">Materiaal</th><th onclick="sortBy('inlaat_peil')">Inlaat (NAP)</th><th onclick="sortBy('uitlaat_peil')">Uitlaat (NAP)</th><th onclick="sortBy('aannemer')">Aannemer</th><th onclick="sortBy('startdatum')">Start</th><th onclick="sortBy('status')">Status</th><th>Project</th><th style="width:50px"></th></tr></thead>
         <tbody id="tblBody"></tbody>
       </table>
     </div>
@@ -255,22 +255,26 @@ td.bold { font-weight:500; }
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
   <div class="modal">
     <div class="modal-hdr">
-      <div class="modal-title" id="modalTitle">Boring toevoegen</div>
+      <div class="modal-title" id="modalTitle">Duiker toevoegen</div>
       <button class="modal-close" onclick="closeModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
       <div class="field-grid">
-        <div class="field"><label class="field-label">Boring nr. *</label><input class="f-input" id="fNr" type="text" placeholder="B-01" maxlength="20"></div>
+        <div class="field"><label class="field-label">Duiker nr. *</label><input class="f-input" id="fNr" type="text" placeholder="D-01" maxlength="20"></div>
         <div class="field"><label class="field-label">Project *</label><select class="f-select" id="fProject"></select></div>
         <div class="field"><label class="field-label">Type</label>
-          <select class="f-select" id="fType"><option>HDD</option><option>Gestuurde boring</option><option>Persing</option><option>Microtunneling</option><option>Anders</option></select></div>
-        <div class="field full"><label class="field-label">Locatie</label><input class="f-input" id="fLocatie" type="text" placeholder="bijv. Kruising N381"></div>
+          <select class="f-select" id="fType"><option>Koker</option><option>Buis</option><option>Damwand</option><option>Prefab beton</option><option>Staal</option><option>Anders</option></select></div>
+        <div class="field"><label class="field-label">Materiaal</label>
+          <select class="f-select" id="fMateriaal"><option>Beton</option><option>HDPE</option><option>PVC</option><option>Staal</option><option>Gietijzer</option><option>Anders</option></select></div>
+        <div class="field full"><label class="field-label">Locatie</label><input class="f-input" id="fLocatie" type="text" placeholder="bijv. Kruising Vaartweg"></div>
       </div>
       <div class="sec-title">Technische specs</div>
       <div class="field-grid cols3">
-        <div class="field"><label class="field-label">Lengte (m)</label><input class="f-input" id="fLengte" type="number" placeholder="0" min="0" step="0.1"></div>
         <div class="field"><label class="field-label">Diameter (mm)</label><input class="f-input" id="fDiameter" type="number" placeholder="0" min="0"></div>
-        <div class="field"><label class="field-label">Diepte (m NAP)</label><input class="f-input" id="fDiepte" type="number" placeholder="0" step="0.01"></div>
+        <div class="field"><label class="field-label">Lengte (m)</label><input class="f-input" id="fLengte" type="number" placeholder="0" min="0" step="0.1"></div>
+        <div class="field"></div>
+        <div class="field"><label class="field-label">Inlaatpeil (m NAP)</label><input class="f-input" id="fInlaat" type="number" placeholder="0.00" step="0.01"></div>
+        <div class="field"><label class="field-label">Uitlaatpeil (m NAP)</label><input class="f-input" id="fUitlaat" type="number" placeholder="0.00" step="0.01"></div>
       </div>
       <div class="sec-title">Planning</div>
       <div class="field-grid">
@@ -298,7 +302,7 @@ td.bold { font-weight:500; }
     <div class="modal-ftr">
       <button class="btn-delete" id="btnDelete" onclick="deleteItem()" style="display:none">&#x1F5D1; Verwijderen</button>
       <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
-      <button class="btn-save" id="btnSave" onclick="saveItem()" style="background:#0071E3">Opslaan</button>
+      <button class="btn-save" id="btnSave" onclick="saveItem()" style="background:#0D9488">Opslaan</button>
     </div>
   </div>
 </div>
@@ -324,19 +328,20 @@ function _sbApply(){var sb=document.getElementById('appSidebar'),tog=document.ge
 function toggleSidebar(){_sbCollapsed=!_sbCollapsed;localStorage.setItem('sb_collapsed',_sbCollapsed?'1':'0');_sbApply();}
 document.addEventListener('DOMContentLoaded',function(){_sbApply();document.body.classList.add('has-sidebar');});
 
-function getSearchFields(d){return[PROJECTS[d.werkpakket_id],d.boring_nr,d.type_boring,d.locatie,d.aannemer];}
+function getSearchFields(d){return[PROJECTS[d.werkpakket_id],d.duiker_nr,d.type,d.locatie,d.materiaal,d.aannemer];}
 function renderRow(d){
   var bc=badgeCls(d.status),proj=esc(PROJECTS[d.werkpakket_id]||'—');
   return '<tr onclick="openModal('+d.id+')">'
-    +'<td class="bold">'+esc(d.boring_nr||'—')+'</td>'
-    +'<td>'+esc(d.type_boring||'—')+'</td>'
+    +'<td class="bold">'+esc(d.duiker_nr||'—')+'</td>'
+    +'<td>'+esc(d.type||'—')+'</td>'
     +'<td style="max-width:160px">'+esc(d.locatie||'—')+'</td>'
-    +'<td>'+(d.lengte_m!=null?d.lengte_m:'—')+'</td>'
     +'<td>'+(d.diameter_mm!=null?d.diameter_mm:'—')+'</td>'
-    +'<td>'+(d.diepte_m!=null?d.diepte_m:'—')+'</td>'
+    +'<td>'+(d.lengte_m!=null?d.lengte_m:'—')+'</td>'
+    +'<td>'+esc(d.materiaal||'—')+'</td>'
+    +'<td>'+(d.inlaat_peil!=null?d.inlaat_peil:'—')+'</td>'
+    +'<td>'+(d.uitlaat_peil!=null?d.uitlaat_peil:'—')+'</td>'
     +'<td>'+esc(d.aannemer||'—')+'</td>'
     +'<td>'+esc(d.startdatum||'—')+'</td>'
-    +'<td>'+esc(d.einddatum||'—')+'</td>'
     +'<td><span class="badge '+bc+'">'+esc(d.status||'Nog te starten')+'</span></td>'
     +'<td>'+proj+'</td>'
     +'<td><button onclick="event.stopPropagation();openModal('+d.id+')" style="background:none;border:none;cursor:pointer;color:var(--text-3);font-size:13px;padding:2px 6px;border-radius:4px">&#9998;</button></td>'
@@ -345,15 +350,17 @@ function renderRow(d){
 function openModal(id){
   selId=id===-1?null:id;
   var d=selId!==null?DATA.find(function(x){return x.id===selId;}):null;
-  document.getElementById('modalTitle').textContent=d?'Boring bewerken':'Boring toevoegen';
+  document.getElementById('modalTitle').textContent=d?'Duiker bewerken':'Duiker toevoegen';
   document.getElementById('btnDelete').style.display=d?'':'none';
-  document.getElementById('fNr').value=d?(d.boring_nr||''):'';
+  document.getElementById('fNr').value=d?(d.duiker_nr||''):'';
   document.getElementById('fProject').value=d?(d.werkpakket_id||''):'';
-  document.getElementById('fType').value=d?(d.type_boring||'HDD'):'HDD';
+  document.getElementById('fType').value=d?(d.type||'Koker'):'Koker';
+  document.getElementById('fMateriaal').value=d?(d.materiaal||'Beton'):'Beton';
   document.getElementById('fLocatie').value=d?(d.locatie||''):'';
-  document.getElementById('fLengte').value=d&&d.lengte_m!=null?d.lengte_m:'';
   document.getElementById('fDiameter').value=d&&d.diameter_mm!=null?d.diameter_mm:'';
-  document.getElementById('fDiepte').value=d&&d.diepte_m!=null?d.diepte_m:'';
+  document.getElementById('fLengte').value=d&&d.lengte_m!=null?d.lengte_m:'';
+  document.getElementById('fInlaat').value=d&&d.inlaat_peil!=null?d.inlaat_peil:'';
+  document.getElementById('fUitlaat').value=d&&d.uitlaat_peil!=null?d.uitlaat_peil:'';
   document.getElementById('fAannemer').value=d?(d.aannemer||''):'';
   document.getElementById('fStart').value=d?(d.startdatum||''):'';
   document.getElementById('fEind').value=d?(d.einddatum||''):'';
@@ -367,29 +374,22 @@ function openModal(id){
 }
 function saveItem(){
   var nr=(document.getElementById('fNr').value||'').trim();
-  if(!nr){showToast('\u2717 Boring nr. is verplicht','error');return;}
+  if(!nr){showToast('\u2717 Duiker nr. is verplicht','error');return;}
   var wpId=parseInt(document.getElementById('fProject').value);
   if(!wpId){showToast('\u2717 Kies een project','error');return;}
-  var payload={werkpakket_id:wpId,boring_nr:nr,type_boring:document.getElementById('fType').value||'HDD',locatie:document.getElementById('fLocatie').value||null,lengte_m:parseFloat(document.getElementById('fLengte').value)||null,diameter_mm:parseInt(document.getElementById('fDiameter').value)||null,diepte_m:parseFloat(document.getElementById('fDiepte').value)||null,aannemer:document.getElementById('fAannemer').value||null,startdatum:document.getElementById('fStart').value||null,einddatum:document.getElementById('fEind').value||null,status:curStatus,vergunning_nodig:document.getElementById('fVergNodig').checked,vergunning_datum:document.getElementById('fVergDatum').value||null,opmerkingen:document.getElementById('fOpm').value||null};
+  var payload={werkpakket_id:wpId,duiker_nr:nr,type:document.getElementById('fType').value||'Koker',materiaal:document.getElementById('fMateriaal').value||null,locatie:document.getElementById('fLocatie').value||null,diameter_mm:parseInt(document.getElementById('fDiameter').value)||null,lengte_m:parseFloat(document.getElementById('fLengte').value)||null,inlaat_peil:parseFloat(document.getElementById('fInlaat').value)||null,uitlaat_peil:parseFloat(document.getElementById('fUitlaat').value)||null,aannemer:document.getElementById('fAannemer').value||null,startdatum:document.getElementById('fStart').value||null,einddatum:document.getElementById('fEind').value||null,status:curStatus,vergunning_nodig:document.getElementById('fVergNodig').checked,vergunning_datum:document.getElementById('fVergDatum').value||null,opmerkingen:document.getElementById('fOpm').value||null};
   document.getElementById('btnSave').disabled=true;
-  var p=selId!==null?req('PATCH','/rest/v1/boringen?id=eq.'+selId,payload).then(function(){var i=DATA.findIndex(function(x){return x.id===selId;});if(i>=0)DATA[i]=Object.assign(DATA[i],payload);showToast('\u2713 Opgeslagen','success');}):req('POST','/rest/v1/boringen',payload).then(function(r){var n=Array.isArray(r)?r[0]:r;DATA.push(n);showToast('\u2713 Boring toegevoegd','success');});
+  var p=selId!==null?req('PATCH','/rest/v1/duikers?id=eq.'+selId,payload).then(function(){var i=DATA.findIndex(function(x){return x.id===selId;});if(i>=0)DATA[i]=Object.assign(DATA[i],payload);showToast('\u2713 Opgeslagen','success');}):req('POST','/rest/v1/duikers',payload).then(function(r){var n=Array.isArray(r)?r[0]:r;DATA.push(n);showToast('\u2713 Duiker toegevoegd','success');});
   p.then(function(){document.getElementById('btnSave').disabled=false;closeModal();updateStats();renderTable();}).catch(function(e){document.getElementById('btnSave').disabled=false;showToast('\u2717 '+e.message,'error');});
 }
 function deleteItem(){
   if(!selId)return;
   var d=DATA.find(function(x){return x.id===selId;});
-  if(!confirm('Boring "'+((d&&d.boring_nr)||selId)+'" verwijderen?'))return;
-  req('DELETE','/rest/v1/boringen?id=eq.'+selId).then(function(){DATA=DATA.filter(function(x){return x.id!==selId;});closeModal();updateStats();renderTable();showToast('\u2713 Verwijderd','success');}).catch(function(e){showToast('\u2717 '+e.message,'error');});
+  if(!confirm('Duiker "'+((d&&d.duiker_nr)||selId)+'" verwijderen?'))return;
+  req('DELETE','/rest/v1/duikers?id=eq.'+selId).then(function(){DATA=DATA.filter(function(x){return x.id!==selId;});closeModal();updateStats();renderTable();showToast('\u2713 Verwijderd','success');}).catch(function(e){showToast('\u2717 '+e.message,'error');});
 }
 window.addEventListener('load',function(){
-  loadProjects().then(function(){
-    return req('GET','/rest/v1/boringen?select=*&order=boring_nr.asc');
-  }).then(function(rows){
-    DATA=rows||[];
-    document.getElementById('loadingState').style.display='none';
-    document.getElementById('tbl').style.display='';
-    updateStats(); renderTable();
-  }).catch(function(e){document.getElementById('loadingState').innerHTML='<p style="color:var(--b-fg);padding:2rem">Laden mislukt: '+esc(e.message)+'</p>';});
+  loadProjects().then(function(){return req('GET','/rest/v1/duikers?select=*&order=duiker_nr.asc');}).then(function(rows){DATA=rows||[];document.getElementById('loadingState').style.display='none';document.getElementById('tbl').style.display='';updateStats();renderTable();}).catch(function(e){document.getElementById('loadingState').innerHTML='<p style="color:var(--b-fg);padding:2rem">Laden mislukt: '+esc(e.message)+'</p>';});
 });
 
 // ── Sidebar resize ──

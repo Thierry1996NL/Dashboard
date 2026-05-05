@@ -2,17 +2,20 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Project detail — TPA</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
 
   *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
   :root {
+  --font:"Inter",system-ui,-apple-system,sans-serif;
+  --fz-xs:10px;--fz-sm:11px;--fz-base:12px;--fz-md:13px;--fz-lg:14px;
     --bg:#F0F4FF; --surface:#FFFFFF; --surface2:#EBF0FF; --surface3:#DCE5FF;
     --border:rgba(0,60,200,0.08); --border-md:rgba(0,60,200,0.13); --border-strong:rgba(0,60,200,0.20);
     --text:#0A0F2E; --text-2:#3A4270; --text-3:#7A84B0;
@@ -29,7 +32,7 @@
     --sh-md:0 4px 16px rgba(10,15,35,0.08),0 2px 6px rgba(10,15,35,0.05);
     --sh-lg:0 12px 40px rgba(10,15,35,0.12),0 4px 12px rgba(10,15,35,0.07);
   }
-  body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--text); font-size:13px; line-height:1.5; min-height:100vh; -webkit-font-smoothing:antialiased; }
+  body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; }
 
   /* ── HEADER — index-stijl frosted glass ── */
   .page-header {
@@ -37,7 +40,8 @@
     color:var(--text); padding:0 1.5rem; display:flex; align-items:center; gap:.75rem;
     height:48px; position:sticky; top:0; z-index:100;
     border-bottom:1px solid var(--border); box-shadow:0 1px 0 var(--border),0 1px 4px rgba(10,15,46,0.04);
-  }
+  
+    font-family:var(--font,"Inter",system-ui,sans-serif); font-size:13px;}
   .hdr-logo { display:flex; align-items:center; gap:8px; font-size:13px; font-weight:600; color:var(--text); letter-spacing:-.01em; white-space:nowrap; text-decoration:none; }
   .logo-icon { width:26px; height:26px; background:var(--accent); border-radius:7px; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 2px 8px rgba(0,87,255,0.3); }
   .hdr-sep { width:1px; height:18px; background:var(--border-md); flex-shrink:0; }
@@ -1483,6 +1487,33 @@
 
 
 
+
+  /* ── Sidebar resize ── */
+  .sidebar-resize-handle {
+    position:absolute; right:0; top:0; bottom:0; width:5px;
+    cursor:col-resize; z-index:10; background:transparent;
+    transition:background .15s;
+  }
+  .sidebar-resize-handle:hover, .sidebar.resizing .sidebar-resize-handle {
+    background:var(--accent);
+  }
+  .sidebar-resize-grip {
+    position:absolute; right:-8px; top:50%; transform:translateY(-50%);
+    width:16px; height:32px; background:var(--surface);
+    border:1px solid var(--border-md); border-radius:8px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:2px; cursor:col-resize; z-index:92; box-shadow:0 2px 8px rgba(0,0,0,.1);
+    transition:opacity .15s, background .1s;
+    opacity:0;
+  }
+  .sidebar:hover .sidebar-resize-grip,
+  .sidebar.resizing .sidebar-resize-grip { opacity:1; }
+  .sidebar-resize-grip span {
+    width:2px; height:2px; background:var(--text-3); border-radius:50%;
+  }
+  .sidebar.collapsed .sidebar-resize-handle,
+  .sidebar.collapsed .sidebar-resize-grip { display:none; }
+
 </style>
 </head>
 <body>
@@ -1494,19 +1525,19 @@
       <span style="width:26px;height:26px;background:var(--accent,#0057FF);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
         <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="white" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
       </span>
-      <span class="sb-label" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">Dashboard Engineering</span>
+      <span class="sb-label" style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">Dashboard</span>
     </div>
     <div class="sb-divider"></div>
     <div class="sb-section-label">Navigatie</div>
     <button class="sb-item" onclick="goBack()">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" fill="currentColor" opacity=".7"/><rect x="9" y="1" width="6" height="6" rx="1.5" fill="currentColor"/><rect x="1" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".4"/><rect x="9" y="9" width="6" height="6" rx="1.5" fill="currentColor" opacity=".6"/></svg></span>
-      <span class="sb-label">Dashboard</span>
+      <span class="sb-label">Projecten</span>
     </button>
     <button class="sb-item" onclick="openPlanningPage()">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 1v3M11 1v3M1 6h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M4 9h2M7 9h2M10 9h2M4 12h2M7 12h2" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Planning</span>
     </button>
-    <button class="sb-item" onclick="">
+    <button class="sb-item" onclick="window.open('boringen_module.html','_blank')">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">HDD Dashboard</span>
     </button>
@@ -1521,6 +1552,10 @@
     <button class="sb-item" onclick="openPSDashboard()">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="7" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V4a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">PS Dashboard</span>
+    </button>
+    <button class="sb-item" onclick="window.open('omgevingsmanagement_module.html','_self')">
+      <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 14s0-8 5-8 5 8 5 8M8 6V2M5 9l-2-1M11 9l2-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="sb-label">Omgevingsmanagement</span>
     </button>
     <div class="sb-divider"></div>
     <div class="sb-section-label">Secties</div>
@@ -1543,7 +1578,7 @@
   <!-- Logo -->
   <div class="hdr-logo">
     <span class="logo-icon"><svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 13a3 3 0 100-6 3 3 0 000 6z" stroke="white" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></span>
-    Dashboard Engineering
+    Dashboard
   </div>
   <div class="hdr-sep"></div>
   <!-- Project naam en meta -->
@@ -6150,6 +6185,47 @@ function closeMobileSidebar() {
   if (sb) sb.classList.remove('mobile-open');
   if (ov) ov.classList.remove('show');
 }
+
+// ── Sidebar resize ──
+function _initSidebarResize() {
+  var sb = document.getElementById('appSidebar');
+  var handle = sb ? sb.querySelector('.sidebar-resize-handle') : null;
+  if (!handle || handle._initDone) return;
+  handle._initDone = true;
+  var startX, startW;
+  handle.addEventListener('mousedown', function(e) {
+    e.preventDefault();
+    startX = e.clientX;
+    startW = parseInt(getComputedStyle(sb).width);
+    sb.classList.add('resizing');
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+    function onMove(e) {
+      var newW = Math.max(160, Math.min(380, startW + e.clientX - startX));
+      document.documentElement.style.setProperty('--sb-w', newW + 'px');
+      sb.style.width = newW + 'px';
+      localStorage.setItem('sb_width', newW);
+    }
+    function onUp() {
+      sb.classList.remove('resizing');
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+    }
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+  // Restore saved width
+  var saved = localStorage.getItem('sb_width');
+  if (saved) {
+    var w = parseInt(saved);
+    document.documentElement.style.setProperty('--sb-w', w + 'px');
+    sb.style.width = w + 'px';
+  }
+}
+document.addEventListener('DOMContentLoaded', _initSidebarResize);
+
 </script>
 
 <!-- ══ BORINGEN MODAL ══ -->

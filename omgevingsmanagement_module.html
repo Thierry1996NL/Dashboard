@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300;0,14..32,400;0,14..32,500;0,14..32,600;1,14..32,400&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HDD Dashboard — Dashboard</title>
+<title>Omgevingsmanagement — Dashboard</title>
 
 
 
@@ -122,15 +122,20 @@ td.bold { font-weight:500; }
 .toast.show { transform:translateX(-50%) translateY(0); }
 .toast.success { background:#006B47; } .toast.error { background:#B81518; }
 @media(max-width:768px) { .sidebar { transform:translateX(-100%); } .app-layout { padding-left:0 !important; } .page-header { padding-left:1rem !important; } .sb-toggle { display:none; } }
-.spinner { border-top-color:#0071E3; }
-.btn-primary { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px; border:none; background:#0071E3; color:#fff; cursor:pointer; font-family:inherit; transition:all .12s; }
+.spinner { border-top-color:#1A7F3C; }
+.btn-primary { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px; border:none; background:#1A7F3C; color:#fff; cursor:pointer; font-family:inherit; transition:all .12s; }
 .btn-primary:hover { opacity:.88; }
 .btn-back { display:inline-flex; align-items:center; gap:4px; font-size:11px; font-weight:500; padding:5px 12px; border-radius:20px; border:1px solid var(--border-md); background:rgba(0,0,0,.04); color:var(--text-2); cursor:pointer; font-family:inherit; transition:all .12s; }
 .btn-back:hover { background:rgba(0,0,0,.07); color:var(--text); }
-.f-input:focus,.f-select:focus,.f-textarea:focus { border-color:#0071E3; background:#fff; box-shadow:0 0 0 3px rgba(0,87,255,.08); }
-.search-box:focus { border-color:#0071E3; background:#fff; }
-.btn-save { background:#0071E3; }
-.cb-row input { accent-color:#0071E3; }
+.f-input:focus,.f-select:focus,.f-textarea:focus { border-color:#1A7F3C; background:#fff; box-shadow:0 0 0 3px rgba(0,87,255,.08); }
+.search-box:focus { border-color:#1A7F3C; background:#fff; }
+.btn-save { background:#1A7F3C; }
+.cb-row input { accent-color:#1A7F3C; }
+
+  .ond-filters { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:.75rem; }
+  .ond-btn { padding:4px 12px; font-size:11px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:var(--surface); color:var(--text-2); cursor:pointer; font-family:inherit; transition:all .1s; }
+  .ond-btn:hover { background:var(--surface2); color:var(--text); }
+  .ond-btn.active { background:rgba(26,127,60,.1); color:var(--g-fg); border-color:rgba(26,127,60,.3); font-weight:600; }
 
   /* ── Sidebar resize ── */
   .sidebar-resize-handle {
@@ -180,7 +185,7 @@ td.bold { font-weight:500; }
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="1" y="2" width="14" height="13" rx="1.5" stroke="currentColor" stroke-width="1.4"/><path d="M5 1v3M11 1v3M1 6h14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">Planning</span>
     </button>
-    <button class="sb-item active" onclick="window.open('boringen_module.html','_self')">
+    <button class="sb-item" onclick="window.open('boringen_module.html','_self')">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.4"/><path d="M5 8h6M8 5v6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">HDD Dashboard</span>
     </button>
@@ -196,7 +201,7 @@ td.bold { font-weight:500; }
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><rect x="2" y="7" width="12" height="7" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M5 7V4a3 3 0 016 0v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
       <span class="sb-label">PS Dashboard</span>
     </button>
-    <button class="sb-item" onclick="window.open('omgevingsmanagement_module.html','_self')">
+    <button class="sb-item active" onclick="window.open('omgevingsmanagement_module.html','_self')" class="sb-item active">
       <span class="sb-icon"><svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 14s0-8 5-8 5 8 5 8M8 6V2M5 9l-2-1M11 9l2-1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
       <span class="sb-label">Omgevingsmanagement</span>
     </button>
@@ -206,10 +211,10 @@ td.bold { font-weight:500; }
 
 <header class="page-header">
   <div style="display:flex;align-items:center;gap:10px">
-    <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#0f4c9e,#0071E3);display:flex;align-items:center;justify-content:center">
-      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M12 2v20M7 7l5-5 5 5M7 17l5 5 5-5" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#1a5c30,#1A7F3C);display:flex;align-items:center;justify-content:center">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="none"><path d="M3 14s0-8 5-8 5 8 5 8M8 6V2M5 9l-2-1M11 9l2-1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </div>
-    <span style="font-size:14px;font-weight:600;color:var(--text)">HDD Dashboard</span>
+    <span style="font-size:14px;font-weight:600;color:var(--text)">Omgevingsmanagement</span>
     <span style="font-size:11px;color:var(--text-3)" id="hdrCount"></span>
   </div>
   <div style="display:flex;align-items:center;gap:.625rem">
@@ -228,7 +233,8 @@ td.bold { font-weight:500; }
     <div class="stat"><span class="stat-n orange" id="sReview">—</span><span class="stat-l">Review</span></div>
     <div class="stat"><span class="stat-n red" id="sGeblokkeerd">—</span><span class="stat-l">Geblokkeerd</span></div>
   </div>
-  <div class="filter-bar">
+  <div class="ond-filters"><button class="ond-btn active" data-v="" onclick="setOndFilter(this.dataset.v)">Alle onderwerpen</button><button class="ond-btn" data-v="Natuurtoets" onclick="setOndFilter(this.dataset.v)">Natuurtoets</button><button class="ond-btn" data-v="Archeologie" onclick="setOndFilter(this.dataset.v)">Archeologie</button><button class="ond-btn" data-v="Bodem" onclick="setOndFilter(this.dataset.v)">Bodem</button><button class="ond-btn" data-v="NGE/OO" onclick="setOndFilter(this.dataset.v)">NGE/OO</button><button class="ond-btn" data-v="Geotechnisch" onclick="setOndFilter(this.dataset.v)">Geotechnisch</button><button class="ond-btn" data-v="Vergunningen" onclick="setOndFilter(this.dataset.v)">Vergunningen</button></div>
+<div class="filter-bar">
     <input class="search-box" id="searchBox" type="text" placeholder="&#128269; Zoeken..." oninput="renderTable()">
     <select class="filter-sel" id="filterStatus" onchange="renderTable()">
       <option value="">Alle statussen</option>
@@ -241,10 +247,10 @@ td.bold { font-weight:500; }
     <div class="tbl-scroll">
       <div id="loadingState" style="text-align:center;padding:3rem">
         <div class="spinner"></div>
-        <div style="color:var(--text-3);font-size:12px;margin-top:.5rem">HDD Dashboard laden...</div>
+        <div style="color:var(--text-3);font-size:12px;margin-top:.5rem">Omgevingsmanagement laden...</div>
       </div>
       <table id="tbl" style="display:none">
-        <thead><tr><th onclick="sortBy('boring_nr')">Nr.</th><th onclick="sortBy('type_boring')">Type</th><th onclick="sortBy('locatie')">Locatie</th><th onclick="sortBy('lengte_m')">Lengte (m)</th><th onclick="sortBy('diameter_mm')">Ø (mm)</th><th onclick="sortBy('diepte_m')">Diepte (m)</th><th onclick="sortBy('aannemer')">Aannemer</th><th onclick="sortBy('startdatum')">Start</th><th onclick="sortBy('einddatum')">Eind</th><th onclick="sortBy('status')">Status</th><th>Project</th><th style="width:50px"></th></tr></thead>
+        <thead><tr><th onclick="sortBy('onderwerp')">Onderwerp</th><th onclick="sortBy('taak')">Taak</th><th>Project</th><th onclick="sortBy('bureau')">Bureau</th><th onclick="sortBy('opdracht_datum')">Opdracht</th><th onclick="sortBy('plandatum')">Plandatum</th><th onclick="sortBy('rapport_datum')">Rapport</th><th onclick="sortBy('status')">Status</th><th onclick="sortBy('gereed')">Gereed</th><th style="width:50px"></th></tr></thead>
         <tbody id="tblBody"></tbody>
       </table>
     </div>
@@ -253,52 +259,93 @@ td.bold { font-weight:500; }
 </div>
 
 <div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
-  <div class="modal">
+  <div class="modal" style="max-width:600px">
     <div class="modal-hdr">
-      <div class="modal-title" id="modalTitle">Boring toevoegen</div>
+      <div class="modal-title" id="modalTitle">Omgevingsmanagement toevoegen</div>
       <button class="modal-close" onclick="closeModal()">&#x2715;</button>
     </div>
     <div class="modal-body">
       <div class="field-grid">
-        <div class="field"><label class="field-label">Boring nr. *</label><input class="f-input" id="fNr" type="text" placeholder="B-01" maxlength="20"></div>
         <div class="field"><label class="field-label">Project *</label><select class="f-select" id="fProject"></select></div>
-        <div class="field"><label class="field-label">Type</label>
-          <select class="f-select" id="fType"><option>HDD</option><option>Gestuurde boring</option><option>Persing</option><option>Microtunneling</option><option>Anders</option></select></div>
-        <div class="field full"><label class="field-label">Locatie</label><input class="f-input" id="fLocatie" type="text" placeholder="bijv. Kruising N381"></div>
-      </div>
-      <div class="sec-title">Technische specs</div>
-      <div class="field-grid cols3">
-        <div class="field"><label class="field-label">Lengte (m)</label><input class="f-input" id="fLengte" type="number" placeholder="0" min="0" step="0.1"></div>
-        <div class="field"><label class="field-label">Diameter (mm)</label><input class="f-input" id="fDiameter" type="number" placeholder="0" min="0"></div>
-        <div class="field"><label class="field-label">Diepte (m NAP)</label><input class="f-input" id="fDiepte" type="number" placeholder="0" step="0.01"></div>
+        <div class="field"><label class="field-label">Onderwerp *</label>
+          <select class="f-select" id="fOnderwerp" onchange="filterTaken()">
+            <option value="">— Kies onderwerp —</option>
+            <option value="Natuurtoets">Natuurtoets</option>
+<option value="Archeologie">Archeologie</option>
+<option value="Bodem">Bodem</option>
+<option value="NGE/OO">NGE/OO</option>
+<option value="Geotechnisch">Geotechnisch</option>
+<option value="Vergunningen">Vergunningen</option>
+          </select></div>
+        <div class="field full"><label class="field-label">Taak</label>
+          <select class="f-select" id="fTaak">
+            <option value="">— Kies eerst onderwerp —</option>
+            <option value="Ecologische quickscan" data-ond="Natuurtoets">Ecologische quickscan</option>
+<option value="Vervolgonderzoek" data-ond="Natuurtoets">Vervolgonderzoek</option>
+<option value="Natura 2000 toets" data-ond="Natuurtoets">Natura 2000 toets</option>
+<option value="AERIUS berekening" data-ond="Natuurtoets">AERIUS berekening</option>
+<option value="Voortoets" data-ond="Natuurtoets">Voortoets</option>
+<option value="Bureauonderzoek" data-ond="Archeologie">Bureauonderzoek</option>
+<option value="Inventariserend veldonderzoek" data-ond="Archeologie">Inventariserend veldonderzoek</option>
+<option value="Proefsleuvenonderzoek" data-ond="Archeologie">Proefsleuvenonderzoek</option>
+<option value="Definitief onderzoek" data-ond="Archeologie">Definitief onderzoek</option>
+<option value="Historisch onderzoek" data-ond="Bodem">Historisch onderzoek</option>
+<option value="Verkennend bodemonderzoek" data-ond="Bodem">Verkennend bodemonderzoek</option>
+<option value="Nader bodemonderzoek" data-ond="Bodem">Nader bodemonderzoek</option>
+<option value="Saneringsplan" data-ond="Bodem">Saneringsplan</option>
+<option value="BUS melding" data-ond="Bodem">BUS melding</option>
+<option value="Quickscan NGE" data-ond="NGE/OO">Quickscan NGE</option>
+<option value="Detectieonderzoek" data-ond="NGE/OO">Detectieonderzoek</option>
+<option value="Begeleiding graafwerk" data-ond="NGE/OO">Begeleiding graafwerk</option>
+<option value="Opsporingsrapport" data-ond="NGE/OO">Opsporingsrapport</option>
+<option value="Grondonderzoek" data-ond="Geotechnisch">Grondonderzoek</option>
+<option value="Thermische grondweerstand" data-ond="Geotechnisch">Thermische grondweerstand</option>
+<option value="Grondwateronderzoek" data-ond="Geotechnisch">Grondwateronderzoek</option>
+<option value="Geotechnisch advies" data-ond="Geotechnisch">Geotechnisch advies</option>
+<option value="AVOI-vergunning" data-ond="Vergunningen">AVOI-vergunning</option>
+<option value="Omgevingsvergunning" data-ond="Vergunningen">Omgevingsvergunning</option>
+<option value="CROW-500 melding" data-ond="Vergunningen">CROW-500 melding</option>
+<option value="Watervergunning" data-ond="Vergunningen">Watervergunning</option>
+<option value="Kapvergunning" data-ond="Vergunningen">Kapvergunning</option>
+
+          </select></div>
+        <div class="field full"><label class="field-label">Bureau / Opdrachtnemer</label>
+          <input class="f-input" id="fBureau" type="text" placeholder="naam bureau of adviseur"></div>
       </div>
       <div class="sec-title">Planning</div>
-      <div class="field-grid">
-        <div class="field"><label class="field-label">Aannemer</label><input class="f-input" id="fAannemer" type="text"></div>
-        <div class="field"></div>
-        <div class="field"><label class="field-label">Startdatum</label><input class="f-input" id="fStart" type="date"></div>
-        <div class="field"><label class="field-label">Einddatum</label><input class="f-input" id="fEind" type="date"></div>
+      <div class="field-grid cols3">
+        <div class="field"><label class="field-label">Opdrachtdatum</label><input class="f-input" id="fOpdracht" type="date"></div>
+        <div class="field"><label class="field-label">Plandatum oplevering</label><input class="f-input" id="fPlan" type="date"></div>
+        <div class="field"><label class="field-label">Rapport ontvangen</label><input class="f-input" id="fRapport" type="date"></div>
       </div>
       <div class="sec-title">Status</div>
       <div class="status-row">
         <button class="status-btn" data-s="Nog te starten" onclick="setStatus(this)">&#x2014; Nog te starten</button>
+        <button class="status-btn" data-s="Opdracht verleend" onclick="setStatus(this)">&#x1F4C4; Opdracht</button>
         <button class="status-btn" data-s="Loopt" onclick="setStatus(this)">&#x25B6; Loopt</button>
         <button class="status-btn" data-s="Review" onclick="setStatus(this)">&#x1F441; Review</button>
         <button class="status-btn" data-s="Gereed" onclick="setStatus(this)">&#x2713; Gereed</button>
         <button class="status-btn" data-s="Geblokkeerd" onclick="setStatus(this)">&#x2717; Geblokkeerd</button>
       </div>
-      <div class="sec-title">Vergunning</div>
-      <label class="cb-row"><input type="checkbox" id="fVergNodig" onchange="toggleVerg()"><span class="cb-label">Vergunning benodigd</span></label>
-      <div id="fVergWrap" style="display:none;margin-top:.375rem">
-        <div class="field"><label class="field-label">Vergunningsdatum</label><input class="f-input" id="fVergDatum" type="date"></div>
+      <div class="sec-title" style="margin-top:.75rem">Gereed &amp; Vergunning</div>
+      <div class="field-grid">
+        <div class="field full">
+          <label class="cb-row"><input type="checkbox" id="fGereed"><span class="cb-label">Onderzoek/taak is afgerond</span></label>
+        </div>
+        <div class="field full">
+          <label class="cb-row"><input type="checkbox" id="fVergNodig" onchange="toggleVerg()"><span class="cb-label">Vergunning benodigd</span></label>
+        </div>
+        <div id="fVergWrap" style="display:none;grid-column:1/-1">
+          <div class="field"><label class="field-label">Vergunningsdatum</label><input class="f-input" id="fVergDatum" type="date"></div>
+        </div>
       </div>
       <div class="sec-title">Opmerkingen</div>
-      <textarea class="f-textarea" id="fOpm" placeholder="Notities..." maxlength="500"></textarea>
+      <textarea class="f-textarea" id="fOpm" placeholder="Notities, bevindingen, actiepunten..." maxlength="800" style="min-height:72px"></textarea>
     </div>
     <div class="modal-ftr">
       <button class="btn-delete" id="btnDelete" onclick="deleteItem()" style="display:none">&#x1F5D1; Verwijderen</button>
       <button class="btn-cancel" onclick="closeModal()">Annuleren</button>
-      <button class="btn-save" id="btnSave" onclick="saveItem()" style="background:#0071E3">Opslaan</button>
+      <button class="btn-save" id="btnSave" onclick="saveItem()" style="background:#1A7F3C">Opslaan</button>
     </div>
   </div>
 </div>
@@ -324,72 +371,161 @@ function _sbApply(){var sb=document.getElementById('appSidebar'),tog=document.ge
 function toggleSidebar(){_sbCollapsed=!_sbCollapsed;localStorage.setItem('sb_collapsed',_sbCollapsed?'1':'0');_sbApply();}
 document.addEventListener('DOMContentLoaded',function(){_sbApply();document.body.classList.add('has-sidebar');});
 
-function getSearchFields(d){return[PROJECTS[d.werkpakket_id],d.boring_nr,d.type_boring,d.locatie,d.aannemer];}
-function renderRow(d){
-  var bc=badgeCls(d.status),proj=esc(PROJECTS[d.werkpakket_id]||'—');
+var TAKEN_MAP = {"Natuurtoets": ["Ecologische quickscan", "Vervolgonderzoek", "Natura 2000 toets", "AERIUS berekening", "Voortoets"], "Archeologie": ["Bureauonderzoek", "Inventariserend veldonderzoek", "Proefsleuvenonderzoek", "Definitief onderzoek"], "Bodem": ["Historisch onderzoek", "Verkennend bodemonderzoek", "Nader bodemonderzoek", "Saneringsplan", "BUS melding"], "NGE/OO": ["Quickscan NGE", "Detectieonderzoek", "Begeleiding graafwerk", "Opsporingsrapport"], "Geotechnisch": ["Grondonderzoek", "Thermische grondweerstand", "Grondwateronderzoek", "Geotechnisch advies"], "Vergunningen": ["AVOI-vergunning", "Omgevingsvergunning", "CROW-500 melding", "Watervergunning", "Kapvergunning"]};
+
+function filterTaken() {
+  var ond = document.getElementById('fOnderwerp').value;
+  var sel = document.getElementById('fTaak');
+  sel.innerHTML = '<option value="">— Kies taak —</option>';
+  if (TAKEN_MAP[ond]) {
+    TAKEN_MAP[ond].forEach(function(t) {
+      sel.innerHTML += '<option value="'+t+'">'+t+'</option>';
+    });
+  }
+}
+
+function badgeCls(s) {
+  if(s==='Gereed')return'G'; if(s==='Loopt'||s==='Opdracht verleend')return'L';
+  if(s==='Review')return'R'; if(s==='Geblokkeerd')return'B'; return'N';
+}
+
+function getSearchFields(d) {
+  return [PROJECTS[d.werkpakket_id], d.onderwerp, d.taak, d.bureau, d.opmerkingen];
+}
+
+function renderRow(d) {
+  var bc = badgeCls(d.status), proj = esc(PROJECTS[d.werkpakket_id]||'—');
+  var gereedBadge = d.gereed
+    ? '<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--g-bg);color:var(--g-fg)">&#x2713; Ja</span>'
+    : '<span style="font-size:10px;color:var(--text-3)">Nee</span>';
   return '<tr onclick="openModal('+d.id+')">'
-    +'<td class="bold">'+esc(d.boring_nr||'—')+'</td>'
-    +'<td>'+esc(d.type_boring||'—')+'</td>'
-    +'<td style="max-width:160px">'+esc(d.locatie||'—')+'</td>'
-    +'<td>'+(d.lengte_m!=null?d.lengte_m:'—')+'</td>'
-    +'<td>'+(d.diameter_mm!=null?d.diameter_mm:'—')+'</td>'
-    +'<td>'+(d.diepte_m!=null?d.diepte_m:'—')+'</td>'
-    +'<td>'+esc(d.aannemer||'—')+'</td>'
-    +'<td>'+esc(d.startdatum||'—')+'</td>'
-    +'<td>'+esc(d.einddatum||'—')+'</td>'
+    +'<td><span style="display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;background:rgba(0,87,255,.08);color:#0057FF">'+esc(d.onderwerp||'—')+'</span></td>'
+    +'<td style="max-width:180px">'+esc(d.taak||'—')+'</td>'
+    +'<td style="max-width:160px">'+proj+'</td>'
+    +'<td>'+esc(d.bureau||'—')+'</td>'
+    +'<td>'+esc(d.opdracht_datum||'—')+'</td>'
+    +'<td>'+esc(d.plandatum||'—')+'</td>'
+    +'<td>'+esc(d.rapport_datum||'—')+'</td>'
     +'<td><span class="badge '+bc+'">'+esc(d.status||'Nog te starten')+'</span></td>'
-    +'<td>'+proj+'</td>'
+    +'<td>'+gereedBadge+'</td>'
     +'<td><button onclick="event.stopPropagation();openModal('+d.id+')" style="background:none;border:none;cursor:pointer;color:var(--text-3);font-size:13px;padding:2px 6px;border-radius:4px">&#9998;</button></td>'
     +'</tr>';
 }
-function openModal(id){
-  selId=id===-1?null:id;
-  var d=selId!==null?DATA.find(function(x){return x.id===selId;}):null;
-  document.getElementById('modalTitle').textContent=d?'Boring bewerken':'Boring toevoegen';
-  document.getElementById('btnDelete').style.display=d?'':'none';
-  document.getElementById('fNr').value=d?(d.boring_nr||''):'';
-  document.getElementById('fProject').value=d?(d.werkpakket_id||''):'';
-  document.getElementById('fType').value=d?(d.type_boring||'HDD'):'HDD';
-  document.getElementById('fLocatie').value=d?(d.locatie||''):'';
-  document.getElementById('fLengte').value=d&&d.lengte_m!=null?d.lengte_m:'';
-  document.getElementById('fDiameter').value=d&&d.diameter_mm!=null?d.diameter_mm:'';
-  document.getElementById('fDiepte').value=d&&d.diepte_m!=null?d.diepte_m:'';
-  document.getElementById('fAannemer').value=d?(d.aannemer||''):'';
-  document.getElementById('fStart').value=d?(d.startdatum||''):'';
-  document.getElementById('fEind').value=d?(d.einddatum||''):'';
-  document.getElementById('fVergNodig').checked=d?!!d.vergunning_nodig:false;
-  document.getElementById('fVergDatum').value=d?(d.vergunning_datum||''):'';
-  document.getElementById('fOpm').value=d?(d.opmerkingen||''):'';
-  curStatus=d?(d.status||'Nog te starten'):'Nog te starten';
+
+function openModal(id) {
+  selId = id===-1 ? null : id;
+  var d = selId!==null ? DATA.find(function(x){return x.id===selId;}) : null;
+  document.getElementById('modalTitle').textContent = d ? 'Omgevingsmanagement bewerken' : 'Omgevingsmanagement toevoegen';
+  document.getElementById('btnDelete').style.display = d ? '' : 'none';
+  document.getElementById('fProject').value  = d ? (d.werkpakket_id||'') : '';
+  document.getElementById('fOnderwerp').value = d ? (d.onderwerp||'') : '';
+  filterTaken();
+  document.getElementById('fTaak').value     = d ? (d.taak||'') : '';
+  document.getElementById('fBureau').value   = d ? (d.bureau||'') : '';
+  document.getElementById('fOpdracht').value = d ? (d.opdracht_datum||'') : '';
+  document.getElementById('fPlan').value     = d ? (d.plandatum||'') : '';
+  document.getElementById('fRapport').value  = d ? (d.rapport_datum||'') : '';
+  document.getElementById('fGereed').checked  = d ? !!d.gereed : false;
+  document.getElementById('fVergNodig').checked = d ? !!d.vergunning_nodig : false;
+  document.getElementById('fVergDatum').value = d ? (d.vergunning_datum||'') : '';
+  document.getElementById('fOpm').value      = d ? (d.opmerkingen||'') : '';
+  curStatus = d ? (d.status||'Nog te starten') : 'Nog te starten';
   toggleVerg(); renderStatusBtns();
   document.getElementById('modalOverlay').classList.add('open');
-  setTimeout(function(){document.getElementById('fNr').focus();},80);
+  setTimeout(function(){document.getElementById('fBureau').focus();}, 80);
 }
-function saveItem(){
-  var nr=(document.getElementById('fNr').value||'').trim();
-  if(!nr){showToast('\u2717 Boring nr. is verplicht','error');return;}
-  var wpId=parseInt(document.getElementById('fProject').value);
+
+function saveItem() {
+  var ond = document.getElementById('fOnderwerp').value;
+  if(!ond){showToast('\u2717 Kies een onderwerp','error');return;}
+  var wpId = parseInt(document.getElementById('fProject').value);
   if(!wpId){showToast('\u2717 Kies een project','error');return;}
-  var payload={werkpakket_id:wpId,boring_nr:nr,type_boring:document.getElementById('fType').value||'HDD',locatie:document.getElementById('fLocatie').value||null,lengte_m:parseFloat(document.getElementById('fLengte').value)||null,diameter_mm:parseInt(document.getElementById('fDiameter').value)||null,diepte_m:parseFloat(document.getElementById('fDiepte').value)||null,aannemer:document.getElementById('fAannemer').value||null,startdatum:document.getElementById('fStart').value||null,einddatum:document.getElementById('fEind').value||null,status:curStatus,vergunning_nodig:document.getElementById('fVergNodig').checked,vergunning_datum:document.getElementById('fVergDatum').value||null,opmerkingen:document.getElementById('fOpm').value||null};
-  document.getElementById('btnSave').disabled=true;
-  var p=selId!==null?req('PATCH','/rest/v1/boringen?id=eq.'+selId,payload).then(function(){var i=DATA.findIndex(function(x){return x.id===selId;});if(i>=0)DATA[i]=Object.assign(DATA[i],payload);showToast('\u2713 Opgeslagen','success');}):req('POST','/rest/v1/boringen',payload).then(function(r){var n=Array.isArray(r)?r[0]:r;DATA.push(n);showToast('\u2713 Boring toegevoegd','success');});
-  p.then(function(){document.getElementById('btnSave').disabled=false;closeModal();updateStats();renderTable();}).catch(function(e){document.getElementById('btnSave').disabled=false;showToast('\u2717 '+e.message,'error');});
+  var payload = {
+    werkpakket_id:   wpId,
+    onderwerp:       ond,
+    taak:            document.getElementById('fTaak').value||null,
+    bureau:          document.getElementById('fBureau').value||null,
+    opdracht_datum:  document.getElementById('fOpdracht').value||null,
+    plandatum:       document.getElementById('fPlan').value||null,
+    rapport_datum:   document.getElementById('fRapport').value||null,
+    status:          curStatus,
+    gereed:          document.getElementById('fGereed').checked,
+    vergunning_nodig: document.getElementById('fVergNodig').checked,
+    vergunning_datum: document.getElementById('fVergDatum').value||null,
+    opmerkingen:     document.getElementById('fOpm').value||null
+  };
+  document.getElementById('btnSave').disabled = true;
+  var p = selId!==null
+    ? req('PATCH','/rest/v1/omgevingsmanagement?id=eq.'+selId,payload).then(function(){
+        var i=DATA.findIndex(function(x){return x.id===selId;});
+        if(i>=0)DATA[i]=Object.assign(DATA[i],payload);
+        showToast('\u2713 Opgeslagen','success');
+      })
+    : req('POST','/rest/v1/omgevingsmanagement',payload).then(function(r){
+        var n=Array.isArray(r)?r[0]:r; DATA.push(n);
+        showToast('\u2713 Toegevoegd','success');
+      });
+  p.then(function(){
+    document.getElementById('btnSave').disabled=false;
+    closeModal(); updateStats(); renderTable();
+  }).catch(function(e){
+    document.getElementById('btnSave').disabled=false;
+    showToast('\u2717 '+e.message,'error');
+  });
 }
-function deleteItem(){
+
+function deleteItem() {
   if(!selId)return;
   var d=DATA.find(function(x){return x.id===selId;});
-  if(!confirm('Boring "'+((d&&d.boring_nr)||selId)+'" verwijderen?'))return;
-  req('DELETE','/rest/v1/boringen?id=eq.'+selId).then(function(){DATA=DATA.filter(function(x){return x.id!==selId;});closeModal();updateStats();renderTable();showToast('\u2713 Verwijderd','success');}).catch(function(e){showToast('\u2717 '+e.message,'error');});
+  if(!confirm('Item verwijderen?'))return;
+  req('DELETE','/rest/v1/omgevingsmanagement?id=eq.'+selId).then(function(){
+    DATA=DATA.filter(function(x){return x.id!==selId;});
+    closeModal(); updateStats(); renderTable();
+    showToast('\u2713 Verwijderd','success');
+  }).catch(function(e){showToast('\u2717 '+e.message,'error');});
 }
+
+// Override updateStats to add onderwerp filter
+var _ondFilter = '';
+function setOndFilter(v) {
+  _ondFilter = v;
+  document.querySelectorAll('.ond-btn').forEach(function(b){
+    b.classList.toggle('active', b.dataset.v === v);
+  });
+  renderTable();
+}
+
+// Override renderTable to add onderwerp filter
+var _origRenderTable = renderTable;
+renderTable = function() {
+  var q=(document.getElementById('searchBox').value||'').toLowerCase();
+  var fs=document.getElementById('filterStatus').value;
+  var fp=document.getElementById('filterProject').value;
+  var rows=DATA.filter(function(d){
+    if(fs && d.status!==fs) return false;
+    if(fp && String(d.werkpakket_id)!==fp) return false;
+    if(_ondFilter && d.onderwerp!==_ondFilter) return false;
+    if(q) return getSearchFields(d).some(function(v){return(v||'').toLowerCase().indexOf(q)>=0;});
+    return true;
+  });
+  if(sortCol)rows.sort(function(a,b){var av=String(a[sortCol]||''),bv=String(b[sortCol]||'');return av<bv?-sortDir:av>bv?sortDir:0;});
+  var html='';
+  if(!rows.length){html='<tr><td colspan="20"><div class="empty-state"><strong>Geen resultaten</strong>Pas de filters aan.</div></td></tr>';}
+  else{rows.forEach(function(d){html+=renderRow(d);});}
+  document.getElementById('tblBody').innerHTML=html;
+};
+
 window.addEventListener('load',function(){
   loadProjects().then(function(){
-    return req('GET','/rest/v1/boringen?select=*&order=boring_nr.asc');
+    return req('GET','/rest/v1/omgevingsmanagement?select=*&order=onderwerp.asc,id.asc');
   }).then(function(rows){
-    DATA=rows||[];
+    DATA = rows||[];
     document.getElementById('loadingState').style.display='none';
     document.getElementById('tbl').style.display='';
     updateStats(); renderTable();
-  }).catch(function(e){document.getElementById('loadingState').innerHTML='<p style="color:var(--b-fg);padding:2rem">Laden mislukt: '+esc(e.message)+'</p>';});
+  }).catch(function(e){
+    document.getElementById('loadingState').innerHTML='<p style="color:var(--b-fg);padding:2rem">Laden mislukt: '+esc(e.message)+'</p>';
+  });
 });
 
 // ── Sidebar resize ──
