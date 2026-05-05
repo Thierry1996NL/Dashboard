@@ -44,8 +44,21 @@
   body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; }
 
   /* HEADER */
-  .site-header { background:rgba(255,255,255,0.72); backdrop-filter:saturate(180%) blur(20px); -webkit-backdrop-filter:saturate(180%) blur(20px); color:var(--text); padding:0 1.5rem; display:flex; align-items:center; justify-content:space-between; height:44px; position:sticky; top:0; z-index:100; border-bottom:1px solid rgba(0,0,0,0.08); 
-    font-family:var(--font,"Inter",system-ui,sans-serif); font-size:13px;}
+  .site-header {
+    background:rgba(255,255,255,0.94);
+    backdrop-filter:saturate(180%) blur(24px);
+    -webkit-backdrop-filter:saturate(180%) blur(24px);
+    color:var(--text);
+    display:flex; align-items:center; justify-content:space-between;
+    height:var(--hdr-h,48px);
+    position:sticky; top:0; z-index:100;
+    border-bottom:1px solid var(--border,rgba(0,0,0,.08));
+    box-shadow:0 1px 4px rgba(0,0,0,.05);
+    padding-left:calc(var(--sb-w,220px) + 1rem);
+    padding-right:1.5rem;
+    transition:padding-left .22s cubic-bezier(.4,0,.2,1);
+    font-family:var(--font,"Inter",system-ui,sans-serif); font-size:13px;
+  }
   .site-header .logo { font-size:13px; font-weight:600; letter-spacing:-.01em; color:var(--text); display:flex; align-items:center; gap:8px; font-family:'Poppins',sans-serif; }
   .logo-icon { width:18px; height:18px; background:var(--accent); border-radius:5px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
   .hdr-user { display:flex; align-items:center; gap:5px; }
@@ -103,10 +116,7 @@
   /* LAYOUT */
   .main {
     max-width:1800px; margin:0 auto;
-    padding:.625rem 1rem 0;
-    display:flex; flex-direction:column;
-    height:calc(100vh - var(--hdr-h,48px));
-    overflow:hidden;
+    padding:.75rem 1rem 2rem;
   }
 
   /* KPI */
@@ -146,11 +156,10 @@
     background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     border:1px solid rgba(0,0,0,0.07); border-radius:var(--r-xl);
     overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.05);
-    display:flex; flex-direction:column; flex:1; min-height:0; margin-bottom:.75rem;
-  }
+    }
   .tbl-scroll {
-    overflow-x:auto; overflow-y:auto;
-    flex:1; min-height:0;
+    overflow-x:auto;
+    overflow-y:visible;
   }
   .tbl-scroll::-webkit-scrollbar { width:4px; height:4px; }
   .tbl-scroll::-webkit-scrollbar-track { background:transparent; }
