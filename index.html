@@ -3037,6 +3037,29 @@ var CHANGES     = {};
 var currentFase = 'alle';
 var currentMode = 'viewer';
 var currentUser = '';
+
+// ── Auto-restore session on page load ──
+(function() {
+  var saved = sessionStorage.getItem('tpa_user');
+  if (saved) {
+    currentUser = saved;
+    currentMode = sessionStorage.getItem('tpa_mode') || 'viewer';
+    // Skip login screen, start app directly
+    document.addEventListener('DOMContentLoaded', function() {
+      var ls = document.getElementById('loginScreen');
+      var ap = document.getElementById('app');
+      if (ls) ls.style.display = 'none';
+      if (ap) ap.style.display = '';
+      startApp().catch(function() {
+        // If startup fails, clear session and show login
+        sessionStorage.removeItem('tpa_user');
+        sessionStorage.removeItem('tpa_mode');
+        if (ls) ls.style.display = 'flex';
+        if (ap) ap.style.display = 'none';
+      });
+    });
+  }
+})();
 var sortCol = -1, sortDir = 1;
 var pickerTarget    = null;
 var datePicker_target = null;
@@ -3349,6 +3372,9 @@ function doLogin() {
   if (!eng) { showLoginError('Vul je naam in om verder te gaan.'); return; }
   currentUser = eng;
   currentMode = 'viewer'; // always start as viewer
+  // Save session so navigation between pages doesn't require re-login
+  sessionStorage.setItem('tpa_user', eng);
+  sessionStorage.setItem('tpa_mode', 'viewer');
   var btn = document.getElementById('loginBtn');
   btn.disabled = true;
   btn.textContent = 'Laden...';
@@ -3383,6 +3409,7 @@ function toggleMode() {
   } else {
     // Switch back to viewer immediately, no confirmation needed
     currentMode = 'viewer';
+    sessionStorage.setItem('tpa_mode', 'viewer');
     applyModeUI();
     showToast('◎ Viewermodus actief', 'info');
     loadData();
@@ -3392,6 +3419,7 @@ function toggleMode() {
 function confirmEditorSwitch() {
   document.getElementById('editorConfirmOverlay').classList.remove('open');
   currentMode = 'editor';
+  sessionStorage.setItem('tpa_mode', 'editor');
   applyModeUI();
   showToast('✎ Bewerkermodus actief', 'info');
   loadData();
@@ -3413,6 +3441,8 @@ function doLogout() {
   document.getElementById('onlineUsers').innerHTML = '';
   document.getElementById('loginBtn').disabled = false;
   document.getElementById('loginBtn').textContent = 'Verder \u2192';
+  sessionStorage.removeItem('tpa_user');
+  sessionStorage.removeItem('tpa_mode');
 }
 
 // ══ APP START ══
