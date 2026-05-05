@@ -103,10 +103,7 @@
   /* LAYOUT */
   .main {
     max-width:1800px; margin:0 auto;
-    padding:.625rem 1rem 0;
-    display:flex; flex-direction:column;
-    height:calc(100vh - var(--hdr-h,48px));
-    overflow:hidden;
+    padding:.625rem 1rem 1.5rem;
   }
 
   /* KPI */
@@ -146,11 +143,11 @@
     background:rgba(255,255,255,0.85); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
     border:1px solid rgba(0,0,0,0.07); border-radius:var(--r-xl);
     overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.05);
-    display:flex; flex-direction:column; flex:1; min-height:0; margin-bottom:.75rem;
   }
   .tbl-scroll {
-    overflow-x:auto; overflow-y:auto;
-    flex:1; min-height:0;
+    overflow-x:auto;
+    overflow-y:auto;
+    max-height:calc(100vh - 280px);
   }
   .tbl-scroll::-webkit-scrollbar { width:4px; height:4px; }
   .tbl-scroll::-webkit-scrollbar-track { background:transparent; }
@@ -1649,11 +1646,8 @@ tbody tr      { animation:fadeIn .12s ease both; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
-  /* Prevent body scroll — layout is self-contained */
-  html, body { height:100%; overflow:hidden; }
-  .app-layout { height:calc(100vh - var(--hdr-h,48px)); overflow:hidden; }
-  .page-header { position:fixed !important; top:0; left:0; right:0; z-index:80; }
-  body { padding-top:var(--hdr-h,48px); }
+  html, body { height:auto; overflow:auto; }
+  body { padding-top:0; }
 </style>
 </head>
 <body>
