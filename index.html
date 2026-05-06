@@ -2,54 +2,29 @@
 <html lang="nl">
 <head>
 <meta charset="UTF-8">
+
+
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Dashboard — TPA</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+
 <style>
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  /* ── Single consolidated :root ── */
   :root {
-    /* Sidebar & header dimensions */
-    --sb-w:220px; --sb-w-col:52px; --hdr-h:44px;
-
-    /* Font */
-    --font:"Inter",system-ui,-apple-system,sans-serif;
-
-    /* Type scale */
-    --fz-xs:10px; --fz-sm:11px; --fz-base:12px; --fz-md:13px; --fz-body:13px; --fz-lg:14px;
-
-    /* Font weights */
-    --fw-light:300; --fw-normal:400; --fw-medium:500; --fw-semi:600; --fw-bold:700;
-
-    /* Line heights */
-    --lh:1.5; --lh-tight:1.25; --lh-snug:1.375;
-
-    /* Letter spacing */
-    --ls-tight:-0.02em; --ls-normal:0; --ls-wide:0.04em; --ls-wider:0.08em;
-
-    /* Surfaces & borders */
+  --font:"Inter",system-ui,-apple-system,sans-serif;
+  --fz-xs:10px;--fz-sm:11px;--fz-base:12px;--fz-md:13px;--fz-lg:14px;
     --bg:#F5F5F7; --surface:#FFFFFF; --surface2:#F5F5F7; --surface3:#E8E8ED;
     --border:rgba(0,0,0,0.08); --border-md:rgba(0,0,0,0.12); --border-strong:rgba(0,0,0,0.20);
-
-    /* Text */
     --text:#1D1D1F; --text-2:#6E6E73; --text-3:#A1A1A6;
-
-    /* Accent */
     --accent:#0071E3; --accent-2:rgba(0,113,227,0.08); --accent-3:rgba(0,113,227,0.04);
-
-    /* Dark backgrounds */
     --navy:#1D1D1F; --navy-2:#2D2D2F; --navy-3:#3D3D3F; --navy-4:#515154;
-
-    /* Status colors */
     --g-fg:#1A7F3C; --g-bg:#F0FBF4; --g-mid:#BBE8CB;
     --l-fg:#0071E3; --l-bg:#EAF4FF; --l-mid:#B8DAFF;
     --r-fg:#8E6000; --r-bg:#FFF8ED; --r-mid:#FFE0A0;
     --b-fg:#D70015; --b-bg:#FFF0F0; --b-mid:#FFBBBB;
     --n-fg:#6E6E73; --n-bg:#F5F5F7; --n-mid:#E0E0E5;
-
-    /* Fase colors */
     --fase-analyse:#0071E3; --fase-analyse-bg:#EAF4FF;
     --fase-vo:#1A7F3C;      --fase-vo-bg:#F0FBF4;
     --fase-do:#8E6000;      --fase-do-bg:#FFF8ED;
@@ -60,25 +35,14 @@
     --fase-bodem:#6E6E73;   --fase-bodem-bg:#F5F5F7;
     --fase-nge:#C93400;     --fase-nge-bg:#FFF3ED;
     --fase-geo:#0077B5;     --fase-geo-bg:#EAF4FF;
-
-    /* Radii */
-    --r:8px; --r-md:10px; --r-lg:12px; --r-xl:18px; --r-2xl:20px;
-
-    /* Shadows */
-    --sh-xs:0 1px 2px rgba(0,0,0,0.05);
+    --r:8px; --r-md:10px; --r-lg:12px; --r-xl:18px;
     --sh-sm:0 1px 3px rgba(0,0,0,0.04),0 1px 2px rgba(0,0,0,0.03);
     --sh-md:0 4px 20px rgba(0,0,0,0.06),0 2px 6px rgba(0,0,0,0.04);
     --sh-lg:0 20px 60px rgba(0,0,0,0.10),0 8px 20px rgba(0,0,0,0.06);
-
-    /* Transitions */
-    --t-fast:0.1s ease; --t-base:0.18s ease; --t-slow:0.28s cubic-bezier(.4,0,.2,1);
-    --t-spring:0.3s cubic-bezier(.34,1.56,.64,1);
   }
 
-  /* ── Base reset ── */
-  *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
-  html  { height:100%; overflow:hidden; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
-  body  { font-family:var(--font); font-size:var(--fz-body); line-height:var(--lh); color:var(--text); background:var(--bg); height:100%; overflow:hidden; }
+  html { height:100%; overflow:hidden; }
+  body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; height:100%; overflow:hidden; }
   #app  { height:100%; }
 
   /* HEADER */
@@ -190,6 +154,7 @@
     font-family:var(--font,'Inter',system-ui,sans-serif);
     white-space:nowrap; line-height:1.4;
   }
+  .tab:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
   .tab:hover { background:var(--surface2); color:var(--text); border-color:var(--border-strong); }
   .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
   .filter-row { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
@@ -1277,7 +1242,7 @@
   .bor-badge-empty:hover { border-color:var(--accent); color:var(--accent); background:var(--accent-2); }
 
   /* ══ SIDEBAR ══ */
-  /* ── Sidebar & layout ── */
+  :root { --sb-w:220px; --sb-w-col:52px; --hdr-h:44px; }
   .app-layout { position:fixed; top:var(--hdr-h,44px); left:var(--sb-w,220px); right:0; bottom:0; display:flex; overflow:hidden; transition:left .22s cubic-bezier(.4,0,.2,1); }
   .sidebar {
     width:var(--sb-w); flex-shrink:0;
@@ -1407,9 +1372,123 @@
   .sidebar.collapsed .sidebar-resize-grip { display:none; }
 
 
+/* ═══════════════════════════════════════════════
+   DESIGN SYSTEM — Typography, Color & Animation
+   ═══════════════════════════════════════════════ */
 
+/* ── Font ── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
-/* ── Sidebar typography & colors ──
+:root {
+  /* Typography scale */
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --fz-xs:   10px;
+  --fz-sm:   11px;
+  --fz-base: 12px;
+  --fz-md:   13px;
+  --fz-body: 13px;
+  --fz-lg:   14px;
+  --fz-xl:   16px;
+  --fz-2xl:  20px;
+  --fz-3xl:  24px;
+
+  /* Line heights */
+  --lh-tight: 1.25;
+  --lh-snug:  1.375;
+  --lh:       1.5;
+  --lh-loose: 1.625;
+
+  /* Letter spacing */
+  --ls-tight: -0.02em;
+  --ls-normal: 0;
+  --ls-wide:   0.04em;
+  --ls-wider:  0.08em;
+
+  /* Font weights */
+  --fw-light:   300;
+  --fw-normal:  400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+  --fw-bold:    700;
+
+  /* Color palette — refined */
+  --bg:         #F2F4F8;
+  --surface:    #FFFFFF;
+  --surface2:   #F7F8FA;
+  --surface3:   #EDF0F5;
+  --surface4:   #E4E8F0;
+
+  --border:     rgba(0,0,0,0.06);
+  --border-md:  rgba(0,0,0,0.10);
+  --border-strong: rgba(0,0,0,0.16);
+
+  --text:   #111827;
+  --text-2: #4B5563;
+  --text-3: #9CA3AF;
+  --text-4: #D1D5DB;
+
+  --accent:    #2563EB;
+  --accent-2:  rgba(37,99,235,0.08);
+  --accent-3:  rgba(37,99,235,0.15);
+  --accent-hover: #1D4ED8;
+
+  --navy:    #0F1629;
+  --navy-2:  #1A2340;
+  --navy-3:  #243055;
+
+  /* Status colors — slightly refined */
+  --g-fg:#15803D; --g-bg:#F0FDF4; --g-mid:#86EFAC;
+  --l-fg:#2563EB; --l-bg:#EFF6FF; --l-mid:#93C5FD;
+  --r-fg:#92400E; --r-bg:#FFFBEB; --r-mid:#FCD34D;
+  --b-fg:#B91C1C; --b-bg:#FEF2F2; --b-mid:#FCA5A5;
+  --n-fg:#6B7280; --n-bg:#F9FAFB; --n-mid:#E5E7EB;
+
+  /* Spacing */
+  --sp-xs:  4px;
+  --sp-sm:  8px;
+  --sp-md:  12px;
+  --sp-lg:  16px;
+  --sp-xl:  24px;
+  --sp-2xl: 32px;
+
+  /* Radius */
+  --r:    6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --r-xl: 14px;
+  --r-2xl:20px;
+
+  /* Shadows */
+  --sh-xs: 0 1px 2px rgba(0,0,0,0.05);
+  --sh-sm: 0 1px 4px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --sh-md: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --sh-lg: 0 10px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+
+  /* Transitions */
+  --t-fast:   0.1s ease;
+  --t-base:   0.18s ease;
+  --t-slow:   0.28s cubic-bezier(.4,0,.2,1);
+  --t-spring: 0.3s cubic-bezier(.34,1.56,.64,1);
+}
+
+/* ── Base reset ── */
+*, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+html { -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; text-rendering:optimizeLegibility; }
+body { font-family:var(--font); font-size:var(--fz-body); line-height:var(--lh); color:var(--text); background:var(--bg); }
+
+/* ── Typography hierarchy ── */
+.t-display  { font-size:var(--fz-3xl); font-weight:var(--fw-semi); line-height:var(--lh-tight); letter-spacing:var(--ls-tight); color:var(--text); }
+.t-title    { font-size:var(--fz-xl);  font-weight:var(--fw-semi); line-height:var(--lh-snug);  letter-spacing:var(--ls-tight); color:var(--text); }
+.t-heading  { font-size:var(--fz-lg);  font-weight:var(--fw-semi); line-height:var(--lh-snug);  color:var(--text); }
+.t-subhead  { font-size:var(--fz-md);  font-weight:var(--fw-medium);line-height:var(--lh);       color:var(--text-2); }
+.t-body     { font-size:var(--fz-body);font-weight:var(--fw-normal);line-height:var(--lh);       color:var(--text); }
+.t-label    { font-size:var(--fz-sm);  font-weight:var(--fw-medium);line-height:var(--lh-tight); color:var(--text-2); }
+.t-caption  { font-size:var(--fz-xs);  font-weight:var(--fw-normal);line-height:var(--lh-snug);  color:var(--text-3); }
+.t-overline { font-size:var(--fz-xs);  font-weight:var(--fw-bold);  line-height:var(--lh-tight); letter-spacing:var(--ls-wider); text-transform:uppercase; color:var(--text-3); }
+.t-mono     { font-family:'SF Mono','Fira Code','Fira Mono','Roboto Mono',monospace; font-size:var(--fz-sm); font-variant-numeric:tabular-nums; }
+.t-numeric  { font-variant-numeric:tabular-nums; }
+
+/* ── Sidebar typography ── */
 .sb-section-label {
   font-size:var(--fz-xs); font-weight:var(--fw-bold);
   text-transform:uppercase; letter-spacing:var(--ls-wider);
@@ -1781,49 +1860,56 @@ tbody tr      { animation:fadeIn .12s ease both; }
   }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
-  /* ══ DEFINITIVE LAYOUT & SCROLL FIX ══
-   * .app-layout: fixed viewport anchoring — height always defined
-   * .main / .table-card / .tbl-scroll: flex column chain
-   * #tableCard overrides: !important beats JS inline display:block
-   * Toast: hidden by default, only shown via .show class
-   ════════════════════════════════════════ */
+  /* ═══════════════════════════════════════════
+     SCROLL FIX — overrides all previous rules
+     !important beats any inline style from JS
+  ═══════════════════════════════════════════ */
 
+  /* Fixed viewport container — always correct height */
   .app-layout {
     position:fixed !important;
-    top:var(--hdr-h,44px) !important; left:var(--sb-w,220px);
-    right:0 !important; bottom:0 !important;
-    display:flex !important; overflow:hidden !important;
-    transition:left .22s cubic-bezier(.4,0,.2,1);
+    top:var(--hdr-h,44px) !important;
+    left:var(--sb-w,220px) !important;
+    right:0 !important;
+    bottom:0 !important;
+    display:flex !important;
+    overflow:hidden !important;
   }
-  .sidebar-collapsed-state .app-layout { left:var(--sb-w-col,52px); }
+  .sidebar-collapsed-state .app-layout { left:var(--sb-w-col,52px) !important; }
   @media(max-width:768px){ .app-layout{ left:0 !important; } }
 
+  /* Flex column fills the fixed container */
   .main {
     flex:1 !important; min-height:0 !important; height:100% !important;
     display:flex !important; flex-direction:column !important;
     overflow:hidden !important;
   }
 
+  /* Filter bar never shrinks */
   .top-bar { flex-shrink:0 !important; }
 
+  /* Table card fills all remaining height */
   .table-card {
     flex:1 !important; min-height:0 !important;
     display:flex !important; flex-direction:column !important;
     overflow:hidden !important;
   }
 
-  /* JS sets display:block — !important overrides inline style */
+  /* JS sets display:block — !important wins over inline style */
   #tableCard                { display:flex !important; flex-direction:column; }
   #tableCard[style*="none"] { display:none  !important; }
 
+  /* Scroll container — the ONLY element that scrolls */
   .tbl-scroll {
     flex:1 !important; min-height:0 !important;
-    overflow-x:auto !important; overflow-y:auto !important;
+    overflow-x:auto !important;
+    overflow-y:auto !important;
   }
 
-  /* Toast: invisible when empty, animated when .show */
-  .toast              { opacity:0; animation:none !important; }
-  .toast.show         { opacity:1; animation:popIn .2s var(--t-spring) both !important; }
+  /* Toast: invisible unless .show is applied */
+  .toast              { opacity:0 !important; animation:none !important; }
+  .toast.show         { opacity:1 !important; transform:translateX(-50%) translateY(0) !important; }
+
 
 </style>
 </head>
@@ -3698,8 +3784,7 @@ function doLogout() {
 function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
   var appEl = document.getElementById('app');
-  appEl.style.display = 'flex';
-  appEl.style.flexDirection = 'column';
+  appEl.style.display = 'flex'; appEl.style.flexDirection = 'column';
   var initials = currentUser.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2).toUpperCase();
   document.getElementById('userAvatar').textContent = initials;
   document.getElementById('userName').textContent   = currentUser;
@@ -3838,9 +3923,7 @@ function loadData() {
       buildROWS(data);
       mergeDBEngineersIntoRoleLists();
       document.getElementById('loadingState').style.display = 'none';
-      var tc = document.getElementById('tableCard');
-      tc.style.display = 'flex';
-      tc.style.flexDirection = 'column';
+      var _tc = document.getElementById('tableCard'); _tc.style.display = 'flex'; _tc.style.flexDirection = 'column';
       render();
       buildFilterPanel();
       setRtStatus(true);
@@ -4842,9 +4925,6 @@ function render() {
   }
   html += '</tbody>';
   document.getElementById('tbl').innerHTML = html;
-  // Update sidebar project list after every render
-  var sbSearch = document.getElementById('sbSearch');
-  if (typeof sbRenderProjects === 'function') sbRenderProjects(sbSearch ? sbSearch.value : '');
 }
 
 function sortBy(ci) {
@@ -5506,6 +5586,13 @@ function sbToggleArchief() {
 function sbNavigate(page) {
   // placeholder
 }
+
+// Hook into render to update sidebar project list
+var _origRender = render;
+render = function() {
+  _origRender.apply(this, arguments);
+  sbRenderProjects(document.getElementById('sbSearch') ? document.getElementById('sbSearch').value : '');
+};
 
 
 
