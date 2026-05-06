@@ -765,10 +765,79 @@
   .ts-pct { font-size:11px; color:var(--text-3); white-space:nowrap; }
 
   .top-controls {
-    padding:.25rem 0 .125rem; display:flex; flex-direction:column;
-    gap:.2rem; overflow:hidden; flex-shrink:0;
-    border-bottom:1px solid var(--border); margin-bottom:.5rem;
+    flex-shrink:0;
+    padding:.5rem .125rem .5rem;
+    margin-bottom:.5rem;
+    border-bottom:1px solid var(--border);
   }
+  /* All fases button */
+  .tab-all-btn {
+    display:inline-flex; align-items:center; gap:5px;
+    padding:5px 14px; font-size:12px; font-weight:600;
+    border:none; border-radius:20px; cursor:pointer;
+    font-family:var(--font); transition:all var(--t-fast);
+    background:var(--accent); color:#fff;
+    box-shadow:0 1px 6px rgba(37,99,235,.25);
+  }
+  .tab-all-btn.inactive {
+    background:var(--surface3); color:var(--text-2);
+    box-shadow:none; font-weight:500;
+  }
+  /* Phase filter rows */
+  .fase-rows { display:flex; flex-direction:column; gap:1px; margin-top:.375rem; }
+  .fase-row {
+    display:flex; align-items:center; gap:4px;
+    padding:2px 0; flex-wrap:wrap;
+    border:none;
+  }
+  .fase-group-label {
+    font-size:9px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--text-3);
+    width:108px; min-width:80px; flex-shrink:0;
+    padding-right:6px; font-family:var(--font);
+  }
+  /* Tabs */
+  .tab {
+    padding:3px 11px; font-size:11px; font-weight:500;
+    border:1px solid var(--border-md); border-radius:20px;
+    background:transparent; color:var(--text-2);
+    cursor:pointer; transition:all var(--t-fast);
+    font-family:var(--font); white-space:nowrap; line-height:1.5;
+  }
+  .tab:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
+  .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); font-weight:600; box-shadow:0 1px 4px rgba(37,99,235,.2); }
+  /* Role + search row */
+  .top-tools {
+    display:flex; align-items:center; gap:.5rem;
+    flex-wrap:wrap; margin-top:.375rem;
+    padding-top:.375rem; border-top:1px solid var(--border);
+  }
+  .rol-label {
+    font-size:9px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--text-3);
+    font-family:var(--font); flex-shrink:0;
+  }
+  .rol-btn {
+    display:inline-flex; align-items:center; gap:5px; padding:3px 10px;
+    font-size:11px; font-weight:500; border:1px solid var(--border-md);
+    border-radius:20px; background:transparent; color:var(--text-2);
+    cursor:pointer; transition:all var(--t-fast); font-family:var(--font);
+  }
+  .rol-btn:hover { background:var(--surface3); border-color:var(--border-strong); color:var(--text); }
+  .rol-btn.active-rol { background:var(--accent-2); border-color:rgba(37,99,235,.3); color:var(--accent); font-weight:600; }
+  .rol-dot { width:6px; height:6px; border-radius:50%; flex-shrink:0; }
+  /* Search */
+  .search-wrap { position:relative; flex:1; min-width:200px; }
+  .search-wrap svg { position:absolute; left:10px; top:50%; transform:translateY(-50%); color:var(--text-3); pointer-events:none; }
+  .search-box {
+    width:100%; padding:6px 12px 6px 32px;
+    font-size:12px; font-family:var(--font);
+    border:1px solid var(--border-md); border-radius:20px;
+    background:var(--surface2); color:var(--text); outline:none;
+    transition:all var(--t-fast);
+  }
+  .search-box:focus { border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 3px var(--accent-2); }
+  .search-box::placeholder { color:var(--text-3); }
   .top-tools {
     display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; min-width:0;
   }
@@ -1227,22 +1296,8 @@
   .sidebar-content::-webkit-scrollbar-thumb { background:rgba(255,255,255,.12); border-radius:2px; }
 
   /* Toggle button */
-  .sb-toggle {
-    position:fixed; top:calc(var(--hdr-h) + .75rem); left:calc(var(--sb-w) - 14px);
-    width:28px; height:28px; border-radius:50%;
-    background:var(--surface); border:1px solid var(--border-md);
-    box-shadow:0 2px 8px rgba(0,0,0,.12);
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; z-index:91;
-    transition:left .22s cubic-bezier(.4,0,.2,1), opacity .15s, transform .15s;
-    color:var(--text-2); font-size:12px;
-    opacity:0; transform:scale(.85); pointer-events:none;
-  }
-  .sidebar:hover ~ .sb-toggle, .sb-toggle:hover {
-    opacity:1; transform:scale(1); pointer-events:all;
-  }
-  .sb-toggle:hover { background:var(--surface2); color:var(--text); }
-  .sidebar.collapsed ~ .sb-toggle { left:calc(var(--sb-w-col) - 14px); opacity:1; transform:scale(1); pointer-events:all; }
+  .sidebar:hover ~
+  .sidebar.collapsed ~
 
   /* Sidebar section label */
   .sb-section-label {
@@ -1324,7 +1379,6 @@
     .sidebar.mobile-open { transform:translateX(0); }
     .app-layout { padding-left:0 !important; }
     .site-header, .page-header { padding-left:1.5rem !important; }
-    .sb-toggle { display:none; }
   }
 
 
@@ -1792,8 +1846,6 @@ tbody tr      { animation:fadeIn .12s ease both; }
   </div>
 </aside>
 
-<!-- Toggle button -->
-<button class="sb-toggle" id="sbToggle" onclick="toggleSidebar()" title="Sidebar inklappen">&#x276E;</button>
 
 <header class="site-header">
   <!-- Left: title -->
