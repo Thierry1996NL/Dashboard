@@ -127,18 +127,40 @@
 
 
   /* CONTROLS */
-  .controls-bar { background:transparent; padding:.25rem 0 .5rem; margin-bottom:.25rem; display:flex; flex-direction:column; gap:.375rem; }
+  .controls-bar {
+    background:transparent;
+    padding:.25rem 0 .375rem; margin-bottom:.25rem;
+    display:flex; flex-direction:column; gap:.25rem;
+    flex-shrink:0;
+  }
   .fase-rows { display:flex; flex-direction:column; gap:0; }
-  .fase-row { display:flex; gap:3px; align-items:center; padding:2px 0; border-bottom:1px solid var(--border); flex-wrap:wrap; }
+  .fase-row { display:flex; gap:4px; align-items:center; padding:3px 0; border-bottom:1px solid var(--border); flex-wrap:wrap; }
   .fase-row:last-child { border-bottom:none; }
   .fase-row-top { padding:4px 0; }
   .fase-row-last { border-bottom:none; }
   .fase-label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.06em; color:var(--text-3); margin-right:6px; }
-  .tab { padding:5px 13px; font-size:11px; font-weight:500; border:1px solid var(--border-md); border-radius:20px; background:transparent; color:var(--text-2); cursor:pointer; transition:all .1s; font-family:'Inter',system-ui,-apple-system,sans-serif; white-space:nowrap; }
+  .tab {
+    padding:4px 12px; font-size:11px; font-weight:500;
+    border:1px solid var(--border-md); border-radius:20px;
+    background:transparent; color:var(--text-2);
+    cursor:pointer; transition:all var(--t-fast);
+    font-family:var(--font,'Inter',system-ui,sans-serif);
+    white-space:nowrap; line-height:1.4;
+  }
+  .tab:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
   .tab:hover { background:var(--surface2); color:var(--text); border-color:var(--border-strong); }
   .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
   .filter-row { display:flex; gap:5px; align-items:center; flex-wrap:wrap; }
-  .search-box { flex:1; min-width:180px; padding:7px 12px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:13px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; transition:all .1s; }
+  .search-box {
+    flex:1; min-width:180px;
+    padding:6px 12px 6px 32px;
+    font-family:var(--font,'Inter',system-ui,sans-serif); font-size:12px;
+    border:1px solid var(--border-md); border-radius:20px;
+    background:var(--surface2); color:var(--text); outline:none;
+    transition:all var(--t-fast);
+  }
+  .search-box:focus { border-color:var(--accent); background:var(--surface); box-shadow:0 0 0 3px var(--accent-2); }
+  .search-box::placeholder { color:var(--text-3); }
   .search-box:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
   .search-box::placeholder { color:var(--text-3); }
   select { padding:5px 26px 5px 10px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-size:12px; border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2); color:var(--text); outline:none; cursor:pointer; appearance:none; transition:all .1s; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A8FAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 8px center; }
@@ -743,8 +765,9 @@
   .ts-pct { font-size:11px; color:var(--text-3); white-space:nowrap; }
 
   .top-controls {
-    padding:.25rem 0; display:flex; flex-direction:column;
-    gap:.25rem; overflow:hidden; flex-shrink:0;
+    padding:.25rem 0 .125rem; display:flex; flex-direction:column;
+    gap:.2rem; overflow:hidden; flex-shrink:0;
+    border-bottom:1px solid var(--border); margin-bottom:.5rem;
   }
   .top-tools {
     display:flex; align-items:center; gap:.5rem; flex-wrap:wrap; min-width:0;
@@ -759,9 +782,9 @@
 
   /* ── FASE GROUPS ── */
   .fase-group-label {
-    font-size:8.5px; font-weight:600; text-transform:uppercase; letter-spacing:.1em;
+    font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em;
     color:var(--text-3); white-space:nowrap; align-self:center;
-    font-family:'Poppins',sans-serif; width:130px; min-width:90px; flex-shrink:1; padding-right:6px;
+    font-family:var(--font,'Inter',system-ui,sans-serif); width:120px; min-width:80px; flex-shrink:1; padding-right:8px;
   }
   .fase-group-sep { display:none; }
   .tab-groen, .tab-oranje { }
