@@ -1860,56 +1860,23 @@ tbody tr      { animation:fadeIn .12s ease both; }
   }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
-  /* ═══════════════════════════════════════════
-     SCROLL FIX — overrides all previous rules
-     !important beats any inline style from JS
-  ═══════════════════════════════════════════ */
-
-  /* Fixed viewport container — always correct height */
-  .app-layout {
-    position:fixed !important;
-    top:var(--hdr-h,44px) !important;
-    left:var(--sb-w,220px) !important;
-    right:0 !important;
-    bottom:0 !important;
-    display:flex !important;
-    overflow:hidden !important;
-  }
+  /* ── SCROLL FIX (last-wins, !important beats inline style) ── */
+  #tableCard                { display:flex   !important; flex-direction:column; }
+  #tableCard[style*="none"] { display:none   !important; }
+  .tbl-scroll               { overflow-y:auto!important; overflow-x:auto!important;
+                              flex:1         !important; min-height:0  !important; }
+  .table-card               { display:flex   !important; flex-direction:column!important;
+                              flex:1         !important; min-height:0  !important; overflow:hidden!important; }
+  .main                     { display:flex   !important; flex-direction:column!important;
+                              flex:1         !important; min-height:0  !important; overflow:hidden!important; height:100%!important; }
+  .top-bar                  { flex-shrink:0  !important; }
+  .app-layout               { position:fixed !important; top:var(--hdr-h,44px)!important;
+                              left:var(--sb-w,220px); right:0!important; bottom:0!important;
+                              display:flex   !important; overflow:hidden!important; }
   .sidebar-collapsed-state .app-layout { left:var(--sb-w-col,52px) !important; }
-  @media(max-width:768px){ .app-layout{ left:0 !important; } }
-
-  /* Flex column fills the fixed container */
-  .main {
-    flex:1 !important; min-height:0 !important; height:100% !important;
-    display:flex !important; flex-direction:column !important;
-    overflow:hidden !important;
-  }
-
-  /* Filter bar never shrinks */
-  .top-bar { flex-shrink:0 !important; }
-
-  /* Table card fills all remaining height */
-  .table-card {
-    flex:1 !important; min-height:0 !important;
-    display:flex !important; flex-direction:column !important;
-    overflow:hidden !important;
-  }
-
-  /* JS sets display:block — !important wins over inline style */
-  #tableCard                { display:flex !important; flex-direction:column; }
-  #tableCard[style*="none"] { display:none  !important; }
-
-  /* Scroll container — the ONLY element that scrolls */
-  .tbl-scroll {
-    flex:1 !important; min-height:0 !important;
-    overflow-x:auto !important;
-    overflow-y:auto !important;
-  }
-
-  /* Toast: invisible unless .show is applied */
-  .toast              { opacity:0 !important; animation:none !important; }
-  .toast.show         { opacity:1 !important; transform:translateX(-50%) translateY(0) !important; }
-
+  /* Hide empty toast (black cylinder) */
+  .toast              { opacity:0!important; animation:none!important; }
+  .toast.show         { opacity:1!important; }
 
 </style>
 </head>
@@ -3784,7 +3751,7 @@ function doLogout() {
 function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
   var appEl = document.getElementById('app');
-  appEl.style.display = 'flex'; appEl.style.flexDirection = 'column';
+  appEl.style.display='flex';appEl.style.flexDirection='column';
   var initials = currentUser.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2).toUpperCase();
   document.getElementById('userAvatar').textContent = initials;
   document.getElementById('userName').textContent   = currentUser;
@@ -3923,7 +3890,7 @@ function loadData() {
       buildROWS(data);
       mergeDBEngineersIntoRoleLists();
       document.getElementById('loadingState').style.display = 'none';
-      var _tc = document.getElementById('tableCard'); _tc.style.display = 'flex'; _tc.style.flexDirection = 'column';
+      var _tc=document.getElementById('tableCard');_tc.style.display='flex';_tc.style.flexDirection='column';
       render();
       buildFilterPanel();
       setRtStatus(true);
