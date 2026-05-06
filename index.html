@@ -1860,24 +1860,6 @@ tbody tr      { animation:fadeIn .12s ease both; }
   }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
-  /* ── SCROLL FIX (last-wins, !important beats inline style) ── */
-  #tableCard                { display:flex   !important; flex-direction:column; }
-  #tableCard[style*="none"] { display:none   !important; }
-  .tbl-scroll               { overflow-y:auto!important; overflow-x:auto!important;
-                              flex:1         !important; min-height:0  !important; }
-  .table-card               { display:flex   !important; flex-direction:column!important;
-                              flex:1         !important; min-height:0  !important; overflow:hidden!important; }
-  .main                     { display:flex   !important; flex-direction:column!important;
-                              flex:1         !important; min-height:0  !important; overflow:hidden!important; height:100%!important; }
-  .top-bar                  { flex-shrink:0  !important; }
-  .app-layout               { position:fixed !important; top:var(--hdr-h,44px)!important;
-                              left:var(--sb-w,220px); right:0!important; bottom:0!important;
-                              display:flex   !important; overflow:hidden!important; }
-  .sidebar-collapsed-state .app-layout { left:var(--sb-w-col,52px) !important; }
-  /* Hide empty toast (black cylinder) */
-  .toast              { opacity:0!important; animation:none!important; }
-  .toast.show         { opacity:1!important; }
-
 </style>
 </head>
 <body>
@@ -2159,6 +2141,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
   </div>
 
 </div><!-- /.top-controls -->
+</div><!-- /.top-bar -->
 
 <!-- Editor notice bar (shown in editor mode) -->
   <div id="editorNotice" class="editor-notice" style="display:none">
