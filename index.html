@@ -122,7 +122,6 @@
     display:flex; flex-direction:column;
     flex:1; min-height:0;
     overflow:hidden;
-    height:100%;
   }
 
   /* KPI */
@@ -441,8 +440,8 @@
   .btn-opm-cancel:hover { background:var(--surface2); }
   .btn-opm-save { padding:5px 14px; font-size:12px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--navy); color:#fff; cursor:pointer; transition:all .1s; }
   .btn-opm-save:hover { background:var(--navy-3); }
-  .toast { position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%) translateY(60px); background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:.5rem 1rem; font-size:12px; font-weight:500; z-index:300; transition:transform .22s cubic-bezier(.34,1.56,.64,1); pointer-events:none; white-space:nowrap; display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.07); box-shadow:var(--sh-lg); }
-  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast { position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%) translateY(80px); background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:.5rem 1rem; font-size:12px; font-weight:500; z-index:300; transition:transform .22s cubic-bezier(.34,1.56,.64,1), opacity .18s; pointer-events:none; white-space:nowrap; display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.07); box-shadow:var(--sh-lg); opacity:0; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
   .toast.success { background:#006B47; }
   .toast.error   { background:#B81518; }
   .toast.info    { background:var(--accent); }
@@ -752,6 +751,7 @@
   .top-bar {
     background:rgba(255,255,255,0.80); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px); border:1px solid rgba(0,0,0,0.07); border-radius:var(--r-xl);
     margin-bottom:.875rem; overflow:hidden; box-shadow:0 2px 12px rgba(0,0,0,0.05);
+    flex-shrink:0;
   }
   .top-stats {
     display:flex; align-items:center; gap:1rem; padding:.625rem 1rem;
@@ -1885,7 +1885,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none">
+<div id="app" style="display:none;height:100%">
 
 <!-- ══ SIDEBAR ══ -->
 <aside class="sidebar" id="appSidebar">
