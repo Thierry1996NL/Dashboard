@@ -3872,10 +3872,23 @@ function loadData() {
       buildROWS(data);
       mergeDBEngineersIntoRoleLists();
       document.getElementById('loadingState').style.display = 'none';
-      document.getElementById('tableCard').style.display = 'flex';
+      var tc = document.getElementById('tableCard');
+      tc.style.display = 'flex';
+      tc.style.flexDirection = 'column';
       render();
       buildFilterPanel();
       setRtStatus(true);
+      // Belt-and-suspenders: directly measure and set tbl-scroll height
+      setTimeout(function() {
+        var scroll = document.querySelector('.tbl-scroll');
+        if (!scroll) return;
+        var tcRect = tc.getBoundingClientRect();
+        if (tcRect.height > 0) {
+          scroll.style.height = tcRect.height + 'px';
+          scroll.style.overflowY = 'auto';
+          scroll.style.overflowX = 'auto';
+        }
+      }, 80);
     })
     .catch(function(e) {
       document.getElementById('loadingState').innerHTML =
@@ -5584,6 +5597,18 @@ function _initSidebarResize() {
   }
 }
 document.addEventListener('DOMContentLoaded', _initSidebarResize);
+
+// ── Scroll height fix: recalculate on resize ──
+function recalcScrollHeight() {
+  var tc = document.getElementById('tableCard');
+  var scroll = tc ? tc.querySelector('.tbl-scroll') : null;
+  if (!tc || !scroll || tc.style.display === 'none') return;
+  var tcRect = tc.getBoundingClientRect();
+  if (tcRect.height > 0) {
+    scroll.style.height = tcRect.height + 'px';
+  }
+}
+window.addEventListener('resize', recalcScrollHeight);
 
 </script>
 </body>
