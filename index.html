@@ -41,7 +41,8 @@
     --sh-lg:0 20px 60px rgba(0,0,0,0.10),0 8px 20px rgba(0,0,0,0.06);
   }
 
-  body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  html { height:100%; overflow:hidden; }
+  body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; height:100%; overflow:hidden; }
 
   /* HEADER */
   .site-header {
@@ -121,6 +122,7 @@
     display:flex; flex-direction:column;
     flex:1; min-height:0;
     overflow:hidden;
+    height:100%;
   }
 
   /* KPI */
@@ -199,7 +201,7 @@
   .tbl-scroll::-webkit-scrollbar-track { background:transparent; }
   .tbl-scroll::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
   table { border-collapse:collapse; min-width:100%; font-size:13px; }
-  thead { position:sticky; top:0; z-index:10; }  /* sticks inside tbl-scroll */
+  thead { position:sticky; top:0; z-index:10; background:var(--surface2); }  /* sticks inside tbl-scroll */
   .fase-hdr-row th {
     padding:3px 10px; font-size:9px; font-weight:700; text-transform:uppercase;
     letter-spacing:.07em; text-align:left;
@@ -1239,7 +1241,7 @@
 
   /* ══ SIDEBAR ══ */
   :root { --sb-w:220px; --sb-w-col:52px; --hdr-h:44px; }
-  .app-layout { display:flex; min-height:100vh; }
+  .app-layout { display:flex; height:calc(100vh - var(--hdr-h,48px)); overflow:hidden; }
   .sidebar {
     width:var(--sb-w); flex-shrink:0;
     background:#0A0F2E; color:#fff;
@@ -2067,13 +2069,13 @@ tbody tr      { animation:fadeIn .12s ease both; }
   <div style="display:flex;flex-direction:column;gap:0">
 
     <!-- Alle fases -->
-    <div style="display:flex;align-items:center;gap:6px;padding:3px 0">
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0 3px 10px">
       <span class="fc-label"></span>
       <button class="fc-tab active" onclick="setFase('alle',this)">Alle fases</button>
     </div>
 
     <!-- Fasering -->
-    <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0 3px 10px;border-top:1px solid var(--border)">
       <span class="fc-label">Fasering</span>
       <button class="fc-tab" onclick="setFase('Analyse',this)">Analyse</button>
       <button class="fc-tab" onclick="setFase('VO-Fase',this)">VO-Fase</button>
@@ -2083,7 +2085,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
     </div>
 
     <!-- Omgevingsmanagement -->
-    <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0 3px 10px;border-top:1px solid var(--border)">
       <span class="fc-label">Omgevingsmanagement</span>
       <button class="fc-tab" onclick="setFase('Natuurtoets',this)">Natuurtoets</button>
       <button class="fc-tab" onclick="setFase('Archeologie',this)">Archeologie</button>
@@ -2093,19 +2095,19 @@ tbody tr      { animation:fadeIn .12s ease both; }
     </div>
 
     <!-- Vergunningen -->
-    <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0 3px 10px;border-top:1px solid var(--border)">
       <span class="fc-label">Vergunningen</span>
       <button class="fc-tab" onclick="setFase('Vergunningen',this)">Vergunningen</button>
     </div>
 
     <!-- Sleufloze technieken -->
-    <div style="display:flex;align-items:center;gap:6px;padding:3px 0;border-top:1px solid var(--border)">
+    <div style="display:flex;align-items:center;gap:6px;padding:3px 0 3px 10px;border-top:1px solid var(--border)">
       <span class="fc-label">Sleufloze technieken</span>
       <button class="fc-tab" onclick="setFase('Sleufloze technieken',this)">Sleufloze technieken</button>
     </div>
 
     <!-- Rol + zoek + export — één vaste rij -->
-    <div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-top:1px solid var(--border-md);margin-top:1px">
+    <div style="display:flex;align-items:center;gap:6px;padding:4px 0 4px 10px;border-top:1px solid var(--border-md);margin-top:1px">
       <span class="fc-label">Rol</span>
       <button class="rol-btn rb-eng"  id="rbEng"  onclick="toggleRolFilter('engineer')"><span class="rol-dot" style="background:#2563EB"></span>Engineer</button>
       <button class="rol-btn rb-pl"   id="rbPl"   onclick="toggleRolFilter('projectleider')"><span class="rol-dot" style="background:#15803D"></span>Projectleider</button>
