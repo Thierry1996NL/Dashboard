@@ -116,10 +116,10 @@
 
   /* LAYOUT */
   .main {
-    max-width:1800px; margin:0 auto;
-    padding:.75rem 1rem .75rem;
+    width:100%; max-width:1800px; margin:0 auto;
+    padding:.75rem 1rem .5rem;
     display:flex; flex-direction:column;
-    height:calc(100vh - var(--hdr-h,48px));
+    flex:1; min-height:0;
     overflow:hidden;
   }
 
@@ -1281,7 +1281,6 @@
   /* Main content shifts right */
   .app-layout { padding-left:var(--sb-w); transition:padding-left .22s cubic-bezier(.4,0,.2,1); }
   .sidebar-collapsed-state .app-layout { padding-left:var(--sb-w-col); }
-  .app-layout > .main, .app-layout > main.main { margin-left:auto; margin-right:auto; }
 
   /* Header adjustment */
   .site-header, .page-header {
