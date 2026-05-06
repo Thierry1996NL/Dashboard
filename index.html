@@ -43,6 +43,7 @@
 
   html { height:100%; overflow:hidden; }
   body { font-family:var(--font, 'Inter', system-ui, sans-serif); font-size:13px; line-height:1.5; -webkit-font-smoothing:antialiased; height:100%; overflow:hidden; }
+  #app  { height:100%; }
 
   /* HEADER */
   .site-header {
@@ -53,6 +54,7 @@
     display:flex; align-items:center; gap:.75rem;
     height:var(--hdr-h,48px);
     position:sticky; top:0; z-index:100;
+    flex-shrink:0;
     border-bottom:1px solid var(--border);
     box-shadow:0 1px 0 var(--border);
     padding-left:calc(var(--sb-w,220px) + 1rem);
@@ -441,7 +443,7 @@
   .btn-opm-save { padding:5px 14px; font-size:12px; font-family:'Inter',system-ui,-apple-system,sans-serif; font-weight:600; border:none; border-radius:var(--r); background:var(--navy); color:#fff; cursor:pointer; transition:all .1s; }
   .btn-opm-save:hover { background:var(--navy-3); }
   .toast { position:fixed; bottom:1.25rem; left:50%; transform:translateX(-50%) translateY(80px); background:var(--navy); color:#fff; border-radius:var(--r-lg); padding:.5rem 1rem; font-size:12px; font-weight:500; z-index:300; transition:transform .22s cubic-bezier(.34,1.56,.64,1), opacity .18s; pointer-events:none; white-space:nowrap; display:flex; align-items:center; gap:6px; border:1px solid rgba(255,255,255,0.07); box-shadow:var(--sh-lg); opacity:0; }
-  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; }
+  .toast.show { transform:translateX(-50%) translateY(0); opacity:1; animation:popIn .22s cubic-bezier(.34,1.56,.64,1) both; }
   .toast.success { background:#006B47; }
   .toast.error   { background:#B81518; }
   .toast.info    { background:var(--accent); }
@@ -1241,7 +1243,7 @@
 
   /* ══ SIDEBAR ══ */
   :root { --sb-w:220px; --sb-w-col:52px; --hdr-h:44px; }
-  .app-layout { display:flex; height:calc(100vh - var(--hdr-h,48px)); overflow:hidden; }
+  .app-layout { display:flex; flex:1; min-height:0; overflow:hidden; }
   .sidebar {
     width:var(--sb-w); flex-shrink:0;
     background:#0A0F2E; color:#fff;
@@ -1691,7 +1693,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
 .toast {
   font-size:var(--fz-sm); font-weight:var(--fw-medium);
   border-radius:var(--r-lg); letter-spacing:0.01em;
-  animation:popIn .22s cubic-bezier(.34,1.56,.64,1) both;
+  animation:none;
 }
 
 /* ── Empty state ── */
@@ -3730,7 +3732,9 @@ function doLogout() {
 // ══ APP START ══
 function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('app').style.display = 'block';
+  var appEl = document.getElementById('app');
+  appEl.style.display = 'flex';
+  appEl.style.flexDirection = 'column';
   var initials = currentUser.split(' ').map(function(w) { return w[0]; }).join('').slice(0,2).toUpperCase();
   document.getElementById('userAvatar').textContent = initials;
   document.getElementById('userName').textContent   = currentUser;
