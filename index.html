@@ -2007,6 +2007,16 @@ tbody tr      { animation:fadeIn .12s ease both; }
     <!-- Divider -->
     <div style="width:1px;height:18px;background:var(--border-md);margin:0 2px"></div>
 
+    <!-- Archief -->
+    <button class="btn-archief" id="btnArchief" onclick="toggleArchief()" title="Gearchiveerde projecten tonen/verbergen">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+      Archief
+    </button>
+
     <!-- Nieuw project (editor only) -->
     <button class="btn-add-project editor-only" id="btnAddProject" onclick="openProjectModal(-1)"
       style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;font-size:12px;font-weight:600;border:none;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap">
