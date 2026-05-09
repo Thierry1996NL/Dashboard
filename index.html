@@ -720,6 +720,51 @@
   .edit-col-cell:hover { background:var(--accent-2); color:var(--accent); }
   tbody tr:hover .edit-col-cell { color:var(--accent); }
 
+  /* ── Row action pencil button ── */
+  .row-edit-btn {
+    display:inline-flex; align-items:center; justify-content:center;
+    width:26px; height:26px; border-radius:6px;
+    border:none; background:none; cursor:pointer;
+    color:var(--text-3); transition:all .12s; font-size:13px;
+    opacity:0;
+  }
+  tbody tr:hover .row-edit-btn { opacity:1; color:var(--accent); }
+  .row-edit-btn:hover { background:var(--accent-2); color:var(--accent); }
+
+  /* ── Row action dropdown menu ── */
+  .row-action-menu {
+    position:fixed; z-index:800;
+    background:var(--surface); border:1px solid var(--border-md);
+    border-radius:var(--r-lg); box-shadow:var(--sh-lg);
+    min-width:210px; padding:5px;
+    display:none; animation:popIn .12s cubic-bezier(.34,1.3,.64,1);
+  }
+  .row-action-menu.open { display:block; }
+  @keyframes popIn { from{opacity:0;transform:scale(.93) translateY(-4px)} to{opacity:1;transform:scale(1) translateY(0)} }
+  .ram-header {
+    padding:7px 10px 5px; font-size:10px; font-weight:700;
+    text-transform:uppercase; letter-spacing:.07em; color:var(--text-3);
+    border-bottom:1px solid var(--border); margin-bottom:4px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .ram-item {
+    display:flex; align-items:center; gap:9px;
+    padding:8px 10px; border-radius:var(--r); cursor:pointer;
+    font-size:12px; font-weight:500; color:var(--text);
+    transition:background .07s; border:none; background:none;
+    width:100%; text-align:left; font-family:inherit;
+  }
+  .ram-item:hover { background:var(--surface2); }
+  .ram-item.danger { color:var(--r-fg); }
+  .ram-item.danger:hover { background:var(--r-bg); }
+  .ram-item.success { color:var(--g-fg); }
+  .ram-item.success:hover { background:var(--g-bg); }
+  .ram-item-icon { width:22px; height:22px; border-radius:6px; display:flex; align-items:center; justify-content:center; font-size:13px; flex-shrink:0; }
+  .ram-item.edit .ram-item-icon { background:var(--accent-2); }
+  .ram-item.archive .ram-item-icon { background:var(--r-bg); }
+  .ram-item.restore .ram-item-icon { background:var(--g-bg); }
+  .ram-sep { height:1px; background:var(--border); margin:4px 0; }
+
 
   /* ── COMPACT STATS BAR ── */
   .stats-bar {
@@ -4793,12 +4838,15 @@ function render() {
       html += '<tr data-ri="'+actualIdx+'" onclick="handleRowClick(event,'+actualIdx+')">';
       if (currentMode==='editor') {
         if (archiefModus) {
-          html += '<td class="edit-col-cell" onclick="event.stopPropagation();restoreProject('+actualIdx+')" title="Terugzetten" style="color:var(--g-fg)">↩</td>';
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Acties">'
+            + '<button class="row-edit-btn" style="opacity:1;color:var(--g-fg)">'
+            + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+            + '</button></td>';
         } else {
-          html += '<td class="edit-col-cell" data-ri="'+actualIdx+'"'
-            + ' style="cursor:grab;user-select:none;font-size:15px;color:var(--text-3)"'
-            + ' onmousedown="_rdStart(event,'+actualIdx+')"'
-            + ' title="Slepen om rij te verplaatsen">&#8942;</td>';
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Bewerken">'
+            + '<button class="row-edit-btn">'
+            + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+            + '</button></td>';
         }
       }
       vcols.forEach(function(col, ci) {
@@ -5450,6 +5498,105 @@ function renderBoringCell(wpId,count){
 }
 
 
+// ══ ROW ACTION MENU ══
+var _ramRowIdx = -1;
+
+function openRowMenu(e, rowIdx) {
+  e.stopPropagation();
+  var menu = document.getElementById('rowActionMenu');
+  if (!menu) return;
+  _ramRowIdx = rowIdx;
+
+  var r = ROWS[rowIdx];
+  var naam = r ? (r[2] || 'Project') : 'Project';
+  document.getElementById('ramTitle').textContent = naam;
+
+  // In archiefmodus: toon "Terugzetten", verberg "Archiveren"
+  document.getElementById('ramArchive').style.display  = archiefModus ? 'none'  : 'flex';
+  document.getElementById('ramRestore').style.display  = archiefModus ? 'flex'  : 'none';
+  // In archiefmodus: verberg "Bewerken"
+  document.getElementById('ramEdit').style.display     = archiefModus ? 'none'  : 'flex';
+
+  // Positie bepalen
+  menu.classList.add('open');
+  var rect = e.currentTarget.getBoundingClientRect
+    ? e.currentTarget.getBoundingClientRect()
+    : { right: e.clientX, top: e.clientY };
+  var mw = menu.offsetWidth || 220;
+  var mh = menu.offsetHeight || 140;
+  var left = rect.right - mw;
+  var top  = rect.bottom + 4;
+  if (left < 6) left = 6;
+  if (top + mh > window.innerHeight - 8) top = rect.top - mh - 4;
+  menu.style.left = left + 'px';
+  menu.style.top  = top  + 'px';
+}
+
+function closeRowMenu() {
+  var menu = document.getElementById('rowActionMenu');
+  if (menu) menu.classList.remove('open');
+  _ramRowIdx = -1;
+}
+
+function _ramEdit() {
+  closeRowMenu();
+  if (_ramRowIdx >= 0) openProjectModal(_ramRowIdx);
+}
+
+function _ramArchive() {
+  var ri = _ramRowIdx;
+  closeRowMenu();
+  if (ri < 0) return;
+  var naam = (ROWS[ri] && ROWS[ri][2]) || 'dit project';
+  if (!confirm('Weet je zeker dat je "' + naam + '" wilt archiveren?')) return;
+  var dbRow = DB_ROWS[ri];
+  showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
+    gearchiveerd: true,
+    updated_by: currentUser,
+    updated_at: new Date().toISOString()
+  }).then(function() {
+    showSaving(false);
+    showToast('✓ Project gearchiveerd', 'success');
+    return loadData();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Fout: ' + err.message, 'error');
+  });
+}
+
+function _ramRestore() {
+  var ri = _ramRowIdx;
+  closeRowMenu();
+  if (ri < 0) return;
+  if (!confirm('Project terugzetten naar actief?')) return;
+  var dbRow = DB_ROWS[ri];
+  showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
+    gearchiveerd: false,
+    updated_by: currentUser,
+    updated_at: new Date().toISOString()
+  }).then(function() {
+    showSaving(false);
+    showToast('✓ Project hersteld', 'success');
+    return loadData();
+  }).catch(function(err) {
+    showSaving(false);
+    showToast('✗ Fout: ' + err.message, 'error');
+  });
+}
+
+// Sluit menu bij klik buiten
+document.addEventListener('click', function(e) {
+  var menu = document.getElementById('rowActionMenu');
+  if (menu && menu.classList.contains('open') && !menu.contains(e.target)) {
+    closeRowMenu();
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeRowMenu();
+});
+
 // ══ SIDEBAR ══
 var _sbCollapsed = (localStorage.getItem('sb_collapsed') === '1');
 function _sbApply() {
@@ -5597,5 +5744,37 @@ function _initSidebarResize() {
 document.addEventListener('DOMContentLoaded', _initSidebarResize);
 
 </script>
+<!-- ── Row action dropdown menu ── -->
+<div class="row-action-menu" id="rowActionMenu">
+  <div class="ram-header" id="ramTitle">Project</div>
+  <button class="ram-item edit" id="ramEdit" onclick="_ramEdit()">
+    <span class="ram-item-icon">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    Projectinfo bewerken
+  </button>
+  <div class="ram-sep"></div>
+  <button class="ram-item archive" id="ramArchive" onclick="_ramArchive()">
+    <span class="ram-item-icon">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/>
+        <path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+        <path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+      </svg>
+    </span>
+    Archiveren
+  </button>
+  <button class="ram-item restore" id="ramRestore" style="display:none" onclick="_ramRestore()">
+    <span class="ram-item-icon">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+        <path d="M3 8a5 5 0 105-5H5M5 1v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </span>
+    Terugzetten naar actief
+  </button>
+</div>
+
 </body>
 </html>
