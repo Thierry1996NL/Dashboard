@@ -465,6 +465,9 @@
   .login-btn:hover { background:#0077ED; box-shadow:0 4px 16px rgba(0,113,227,0.35); }
   .login-btn:active { transform:scale(0.99); box-shadow:none; }
   .login-error { font-size:11px; color:#FF8070; background:rgba(184,21,24,0.15); border-radius:var(--r); padding:6px 10px; margin-top:.5rem; display:none; border:1px solid rgba(184,21,24,0.2); }
+  .auth-switch { text-align:center; font-size:11px; color:rgba(255,255,255,0.3); margin-top:1rem; margin-bottom:0; }
+  .auth-switch a { color:rgba(0,162,255,0.8); text-decoration:none; }
+  .auth-switch a:hover { color:#0071E3; text-decoration:underline; }
 
   /* CLICKABLE ROWS */
   tbody tr { cursor:pointer; }
@@ -1947,36 +1950,114 @@ tbody tr      { animation:fadeIn .12s ease both; }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
 </style>
-  <!-- PWA: Dashboard TPA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0071E3">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dashboard TPA">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js");});}</script>
+  <!-- Supabase JS (auth) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══ AUTH SCREEN ══ -->
 <div id="loginScreen">
   <div class="login-box">
-    <div id="localWarning" style="display:none;background:#FFF3E0;border:1px solid #E8870C;border-radius:8px;padding:10px 12px;margin-bottom:1rem;font-size:12px;color:#7A3800;line-height:1.5">
-      <strong>Let op:</strong> Open de app via <a href="https://thierry1996nl.github.io/engineeringsplanning_TPA/" style="color:#E8670C">GitHub Pages</a>, niet als lokaal bestand.
-    </div>
+
+    <!-- Logo (altijd zichtbaar) -->
     <div class="login-logo">
-        <span class="login-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="7" height="2.5" rx="1.25" fill="white"/><rect x="2" y="8.75" width="11" height="2.5" rx="1.25" fill="white" opacity=".75"/><rect x="2" y="14.5" width="9" height="2.5" rx="1.25" fill="white" opacity=".55"/><path d="M11 4.25l1.5 1.5L15 3" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        Dashboard
-      </div>
-    <h1 class="login-title">Welkom terug</h1>
-    <p class="login-sub">Vul je naam in om verder te gaan</p>
-    <div class="login-field">
-      <label class="login-label">Naam</label>
-      <input class="login-input" type="text" id="loginEngineer" placeholder="Bijv. Jan de Vries" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+      <span class="login-logo-mark"><svg width="14" height="14" viewBox="0 0 20 20" fill="none"><rect x="2" y="3" width="7" height="2.5" rx="1.25" fill="white"/><rect x="2" y="8.75" width="11" height="2.5" rx="1.25" fill="white" opacity=".75"/><rect x="2" y="14.5" width="9" height="2.5" rx="1.25" fill="white" opacity=".55"/></svg></span>
+      Dashboard TPA
     </div>
-    <input type="hidden" id="loginRole" value="viewer">
-    <button class="login-btn" id="loginBtn" onclick="doLogin()">Verder →</button>
-    <div class="login-error" id="loginError"></div>
+
+    <!-- ── STATE: inloggen ── -->
+    <div id="authStateLogin">
+      <h1 class="login-title">Welkom terug</h1>
+      <p class="login-sub">Log in met je e-mailadres en wachtwoord</p>
+      <div class="login-field">
+        <label class="login-label">E-mailadres</label>
+        <input class="login-input" type="email" id="authEmail" placeholder="naam@bedrijf.nl" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('authPassword').focus()">
+      </div>
+      <div class="login-field">
+        <label class="login-label">Wachtwoord</label>
+        <input class="login-input" type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSignIn()">
+      </div>
+      <button class="login-btn" id="authSignInBtn" onclick="authSignIn()">Inloggen →</button>
+      <div class="login-error" id="authError"></div>
+      <p class="auth-switch">Nog geen account? <a href="#" onclick="authShowState('register');return false;">Registreren</a></p>
+    </div>
+
+    <!-- ── STATE: registreren ── -->
+    <div id="authStateRegister" style="display:none">
+      <h1 class="login-title">Account aanmaken</h1>
+      <p class="login-sub">Vul je gegevens in — een beheerder keurt je account goed</p>
+      <div class="login-field">
+        <label class="login-label">Naam</label>
+        <input class="login-input" type="text" id="regNaam" placeholder="Jan de Vries" autocomplete="name">
+      </div>
+      <div class="login-field">
+        <label class="login-label">E-mailadres</label>
+        <input class="login-input" type="email" id="regEmail" placeholder="naam@bedrijf.nl" autocomplete="email">
+      </div>
+      <div class="login-field">
+        <label class="login-label">Wachtwoord</label>
+        <input class="login-input" type="password" id="regPassword" placeholder="Minimaal 8 tekens" autocomplete="new-password" onkeydown="if(event.key==='Enter')authSignUp()">
+      </div>
+      <button class="login-btn" id="authSignUpBtn" onclick="authSignUp()">Account aanmaken →</button>
+      <div class="login-error" id="regError"></div>
+      <p class="auth-switch">Al een account? <a href="#" onclick="authShowState('login');return false;">Inloggen</a></p>
+    </div>
+
+    <!-- ── STATE: MFA instellen (eerste keer) ── -->
+    <div id="authStateMfaSetup" style="display:none">
+      <h1 class="login-title">Authenticatie instellen</h1>
+      <p class="login-sub">Scan de QR-code met Microsoft Authenticator</p>
+      <div id="mfaQrContainer" style="text-align:center;margin:1rem 0;background:rgba(255,255,255,0.96);border-radius:10px;padding:12px;display:inline-block;width:100%;box-sizing:border-box"></div>
+      <p style="font-size:11px;color:rgba(255,255,255,0.35);text-align:center;margin:.25rem 0 1rem">Of voer de code handmatig in: <span id="mfaSecret" style="color:rgba(255,255,255,0.6);font-family:monospace;letter-spacing:.05em"></span></p>
+      <div class="login-field">
+        <label class="login-label">Verificatiecode (6 cijfers)</label>
+        <input class="login-input" type="text" id="mfaSetupCode" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')authMfaSetupVerify()">
+      </div>
+      <button class="login-btn" onclick="authMfaSetupVerify()">Verifiëren en verder →</button>
+      <div class="login-error" id="mfaSetupError"></div>
+    </div>
+
+    <!-- ── STATE: MFA code invoeren (elke login) ── -->
+    <div id="authStateMfaVerify" style="display:none">
+      <h1 class="login-title">Verificatie</h1>
+      <p class="login-sub">Open Microsoft Authenticator en voer de 6-cijferige code in</p>
+      <div class="login-field">
+        <label class="login-label">Verificatiecode</label>
+        <input class="login-input" type="text" id="mfaVerifyCode" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" onkeydown="if(event.key==='Enter')authMfaVerify()">
+      </div>
+      <button class="login-btn" onclick="authMfaVerify()">Verifiëren →</button>
+      <div class="login-error" id="mfaVerifyError"></div>
+      <p class="auth-switch"><a href="#" onclick="authSignOut();authShowState('login');return false;">← Terug naar inloggen</a></p>
+    </div>
+
+    <!-- ── STATE: wachten op goedkeuring ── -->
+    <div id="authStatePending" style="display:none">
+      <div style="text-align:center;padding:1rem 0">
+        <div style="width:48px;height:48px;border-radius:50%;background:rgba(0,113,227,0.15);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;border:1px solid rgba(0,113,227,0.3)">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" stroke="#0071E3" stroke-width="1.5"/><path d="M12 6v6l4 2" stroke="#0071E3" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </div>
+        <h1 class="login-title" style="font-size:18px">Account aangevraagd</h1>
+        <p class="login-sub" style="line-height:1.7">Je account is aangemaakt en wacht op goedkeuring van een beheerder.<br>Je ontvangt toegang zodra je account is goedgekeurd.</p>
+      </div>
+      <button class="login-btn" onclick="authSignOut();authShowState('login')" style="background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12)">Uitloggen</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ ADMIN PANEL MODAL ══ -->
+<div id="adminOverlay" style="display:none;position:fixed;inset:0;background:rgba(8,13,31,0.6);z-index:1500;display:none;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:var(--surface);border:1px solid var(--border-md);border-radius:var(--r-xl);width:100%;max-width:520px;max-height:80vh;display:flex;flex-direction:column;overflow:hidden">
+    <div style="padding:.875rem 1.25rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0">
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--text)">Gebruikersbeheer</div>
+        <div style="font-size:11px;color:var(--text-3);margin-top:1px">Accounts goedkeuren en rollen beheren</div>
+      </div>
+      <button onclick="closeAdminPanel()" style="background:none;border:none;cursor:pointer;color:var(--text-3);font-size:16px;padding:4px 6px;border-radius:4px">&#10005;</button>
+    </div>
+    <div style="overflow-y:auto;flex:1;padding:1rem 1.25rem" id="adminUserList">
+      <div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Laden...</div>
+    </div>
   </div>
 </div>
 
@@ -2112,6 +2193,12 @@ tbody tr      { animation:fadeIn .12s ease both; }
       style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;font-size:12px;font-weight:600;border:none;border-radius:20px;background:var(--accent);color:#fff;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap">
       <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
       Nieuw project
+    </button>
+
+    <!-- Admin gebruikersbeheer (alleen zichtbaar voor admins) -->
+    <button class="btn-rollen" id="btnAdminPanel" onclick="openAdminPanel()" style="display:none" title="Gebruikersbeheer">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M1 14c0-2.8 2.2-5 5-5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><circle cx="12" cy="11" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M12 9.5v1.5l1 1" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Gebruikers
     </button>
 
     <!-- Rollen -->
@@ -3238,14 +3325,17 @@ function esc(v) {
 }
 
 // ══ SUPABASE — Promise-based, no async/await ══
+var AUTH_TOKEN = null; // Wordt gezet na succesvolle login
+
 function supaReq(method, path, body) {
   var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   var timer = controller ? setTimeout(function() { controller.abort(); }, 15000) : null;
+  var token = AUTH_TOKEN || SUPA_KEY;
   return fetch(SUPA_URL + path, {
     method: method,
     headers: {
       'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + SUPA_KEY,
+      'Authorization': 'Bearer ' + token,
       'Content-Type': 'application/json',
       'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
     },
@@ -3748,29 +3838,281 @@ function setRole(role) {
   document.getElementById('roleBtnEditor').className = 'role-btn' + (role === 'editor' ? ' active' : '');
 }
 
-function doLogin() {
-  if (window.location.protocol === 'file:') {
-    showLoginError('Open de app via GitHub Pages, niet als lokaal bestand. Ga naar: thierry1996nl.github.io/engineeringsplanning_TPA/');
-    return;
+// ══════════════════════════════════════════
+// SUPABASE AUTH + MFA
+// ══════════════════════════════════════════
+var _supaAuth = null;   // Supabase JS client (alleen voor auth)
+var _mfaFactorId = null;
+var _mfaChallengeId = null;
+var _authProfile = null;
+
+function _getSupaAuth() {
+  if (!_supaAuth) {
+    _supaAuth = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
+      auth: { persistSession: true, autoRefreshToken: true }
+    });
   }
-  var eng  = (document.getElementById('loginEngineer').value || '').trim();
-  if (!eng) { showLoginError('Vul je naam in om verder te gaan.'); return; }
-  currentUser = eng;
-  currentMode = 'viewer'; // always start as viewer
-  // Save session so navigation between pages doesn't require re-login
-  sessionStorage.setItem('tpa_user', eng);
-  sessionStorage.setItem('tpa_mode', 'viewer');
-  var btn = document.getElementById('loginBtn');
-  btn.disabled = true;
-  btn.textContent = 'Laden...';
-  startApp().catch(function(err) {
-    btn.disabled = false;
-    btn.textContent = 'Verder \u2192';
-    showLoginError('Fout: ' + err.message);
+  return _supaAuth;
+}
+
+function authShowState(state) {
+  ['authStateLogin','authStateRegister','authStateMfaSetup','authStateMfaVerify','authStatePending']
+    .forEach(function(id){ document.getElementById(id).style.display = 'none'; });
+  document.getElementById('authState' + state.charAt(0).toUpperCase() + state.slice(1)).style.display = '';
+  // Reset errors
+  ['authError','regError','mfaSetupError','mfaVerifyError'].forEach(function(id){
+    var el = document.getElementById(id); if(el){ el.style.display='none'; el.textContent=''; }
   });
 }
 
-function applyModeUI() {
+function _authShowError(id, msg) {
+  var el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg; el.style.display = 'block';
+}
+
+function _authSetBtnLoading(btnId, loading, label) {
+  var btn = document.getElementById(btnId); if (!btn) return;
+  btn.disabled = loading; btn.textContent = loading ? 'Bezig...' : (label || btn.dataset.label || btn.textContent);
+  if (!loading && label) btn.dataset.label = label;
+}
+
+/* ── Inloggen ── */
+async function authSignIn() {
+  var email = (document.getElementById('authEmail').value||'').trim();
+  var pass  = (document.getElementById('authPassword').value||'').trim();
+  if (!email || !pass) { _authShowError('authError','Vul e-mailadres en wachtwoord in.'); return; }
+  _authSetBtnLoading('authSignInBtn', true);
+  try {
+    var sb = _getSupaAuth();
+    var res = await sb.auth.signInWithPassword({ email: email, password: pass });
+    if (res.error) throw res.error;
+    AUTH_TOKEN = res.data.session.access_token;
+    // Controleer MFA
+    var factors = await sb.auth.mfa.listFactors();
+    var totpFactors = (factors.data && factors.data.totp) ? factors.data.totp : [];
+    if (totpFactors.length > 0) {
+      // MFA ingesteld → vraag code
+      _mfaFactorId = totpFactors[0].id;
+      var ch = await sb.auth.mfa.challenge({ factorId: _mfaFactorId });
+      if (ch.error) throw ch.error;
+      _mfaChallengeId = ch.data.id;
+      authShowState('mfaVerify');
+      setTimeout(function(){ document.getElementById('mfaVerifyCode').focus(); }, 80);
+    } else {
+      // Geen MFA → controleer profiel
+      await _authLoadProfile(res.data.session);
+    }
+  } catch(e) {
+    _authShowError('authError', _authFriendlyError(e.message));
+  } finally { _authSetBtnLoading('authSignInBtn', false, 'Inloggen →'); }
+}
+
+/* ── Registreren ── */
+async function authSignUp() {
+  var naam  = (document.getElementById('regNaam').value||'').trim();
+  var email = (document.getElementById('regEmail').value||'').trim();
+  var pass  = (document.getElementById('regPassword').value||'').trim();
+  if (!naam)           { _authShowError('regError','Vul je naam in.'); return; }
+  if (!email)          { _authShowError('regError','Vul je e-mailadres in.'); return; }
+  if (pass.length < 8) { _authShowError('regError','Wachtwoord moet minimaal 8 tekens zijn.'); return; }
+  _authSetBtnLoading('authSignUpBtn', true);
+  try {
+    var sb = _getSupaAuth();
+    var res = await sb.auth.signUp({ email: email, password: pass });
+    if (res.error) throw res.error;
+    // Maak profiel aan
+    var uid = res.data.user.id;
+    await fetch(SUPA_URL + '/rest/v1/profiles', {
+      method: 'POST',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ id: uid, naam: naam, email: email, rol: 'viewer', goedgekeurd: false })
+    });
+    authShowState('pending');
+  } catch(e) {
+    _authShowError('regError', _authFriendlyError(e.message));
+  } finally { _authSetBtnLoading('authSignUpBtn', false, 'Account aanmaken →'); }
+}
+
+/* ── MFA verifiëren bij inloggen ── */
+async function authMfaVerify() {
+  var code = (document.getElementById('mfaVerifyCode').value||'').replace(/\s/g,'');
+  if (code.length !== 6) { _authShowError('mfaVerifyError','Voer een 6-cijferige code in.'); return; }
+  try {
+    var sb = _getSupaAuth();
+    var res = await sb.auth.mfa.verify({ factorId: _mfaFactorId, challengeId: _mfaChallengeId, code: code });
+    if (res.error) throw res.error;
+    AUTH_TOKEN = res.data.session.access_token;
+    var sess = await sb.auth.getSession();
+    await _authLoadProfile(sess.data.session);
+  } catch(e) {
+    _authShowError('mfaVerifyError', 'Verkeerde code. Probeer opnieuw.');
+  }
+}
+
+/* ── MFA instellen (eerste keer) ── */
+async function authMfaSetup() {
+  try {
+    var sb = _getSupaAuth();
+    var res = await sb.auth.mfa.enroll({ factorType: 'totp', issuer: 'Dashboard TPA' });
+    if (res.error) throw res.error;
+    _mfaFactorId = res.data.id;
+    // Toon QR code
+    var qrContainer = document.getElementById('mfaQrContainer');
+    if (res.data.totp.qr_code) {
+      qrContainer.innerHTML = res.data.totp.qr_code; // SVG
+    } else {
+      // Fallback: toon URI als link
+      qrContainer.innerHTML = '<p style="font-size:11px;color:#333;word-break:break-all">'+res.data.totp.uri+'</p>';
+    }
+    document.getElementById('mfaSecret').textContent = res.data.totp.secret;
+    authShowState('mfaSetup');
+    setTimeout(function(){ document.getElementById('mfaSetupCode').focus(); }, 80);
+  } catch(e) {
+    showToast('MFA setup fout: ' + e.message, 'error');
+  }
+}
+
+async function authMfaSetupVerify() {
+  var code = (document.getElementById('mfaSetupCode').value||'').replace(/\s/g,'');
+  if (code.length !== 6) { _authShowError('mfaSetupError','Voer een 6-cijferige code in.'); return; }
+  try {
+    var sb = _getSupaAuth();
+    var res = await sb.auth.mfa.challengeAndVerify({ factorId: _mfaFactorId, code: code });
+    if (res.error) throw res.error;
+    AUTH_TOKEN = res.data.session.access_token;
+    var sess = await sb.auth.getSession();
+    await _authLoadProfile(sess.data.session);
+  } catch(e) {
+    _authShowError('mfaSetupError', 'Verkeerde code. Probeer opnieuw.');
+  }
+}
+
+/* ── Profiel laden na succesvolle auth ── */
+async function _authLoadProfile(session) {
+  if (!session) { authShowState('login'); return; }
+  AUTH_TOKEN = session.access_token;
+  try {
+    var res = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.user.id + '&select=*', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
+    });
+    var profiles = await res.json();
+    if (!profiles || !profiles.length) { authShowState('pending'); return; }
+    _authProfile = profiles[0];
+    if (!_authProfile.goedgekeurd) { authShowState('pending'); return; }
+    // Check MFA — als nog niet ingesteld, verplicht instellen
+    var sb = _getSupaAuth();
+    var factors = await sb.auth.mfa.listFactors();
+    var hasMfa = factors.data && factors.data.totp && factors.data.totp.length > 0;
+    if (!hasMfa) { await authMfaSetup(); return; }
+    // Alles OK → app starten
+    currentUser = _authProfile.naam;
+    currentMode = _authProfile.rol === 'editor' || _authProfile.rol === 'admin' ? 'editor' : 'viewer';
+    sessionStorage.setItem('tpa_user', currentUser);
+    sessionStorage.setItem('tpa_mode', currentMode);
+    // Toon admin-knop voor admins
+    if (_authProfile.rol === 'admin') {
+      var adminBtn = document.getElementById('btnAdminPanel');
+      if (adminBtn) adminBtn.style.display = 'inline-flex';
+    }
+    startApp().catch(function(err){ showToast('Fout bij laden: ' + err.message, 'error'); });
+  } catch(e) {
+    authShowState('login');
+    _authShowError('authError', 'Fout bij laden profiel: ' + e.message);
+  }
+}
+
+/* ── Uitloggen ── */
+async function authSignOut() {
+  try { var sb = _getSupaAuth(); await sb.auth.signOut(); } catch(e){}
+  AUTH_TOKEN = null; _authProfile = null;
+}
+
+/* ── Vriendelijke foutmeldingen ── */
+function _authFriendlyError(msg) {
+  if (!msg) return 'Er is een fout opgetreden.';
+  if (msg.includes('Invalid login')) return 'E-mailadres of wachtwoord klopt niet.';
+  if (msg.includes('Email not confirmed')) return 'Bevestig eerst je e-mailadres via de mail die je hebt ontvangen.';
+  if (msg.includes('User already registered')) return 'Dit e-mailadres is al geregistreerd.';
+  if (msg.includes('Password should be')) return 'Wachtwoord moet minimaal 8 tekens zijn.';
+  return msg;
+}
+
+/* ── Legacy doLogin (voor backwards compatibility) ── */
+function doLogin() { authSignIn(); }
+
+/* ── Admin panel ── */
+async function openAdminPanel() {
+  var overlay = document.getElementById('adminOverlay');
+  overlay.style.display = 'flex';
+  await loadAdminUsers();
+}
+function closeAdminPanel() {
+  document.getElementById('adminOverlay').style.display = 'none';
+}
+async function loadAdminUsers() {
+  var container = document.getElementById('adminUserList');
+  container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Laden...</div>';
+  try {
+    var res = await fetch(SUPA_URL + '/rest/v1/profiles?order=aangemaakt_op.desc&select=*', {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
+    });
+    var users = await res.json();
+    if (!users.length) { container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Geen gebruikers gevonden.</div>'; return; }
+    var ROL_LABELS = { viewer:'Viewer', editor:'Bewerker', admin:'Admin' };
+    var html = '';
+    users.forEach(function(u) {
+      var statusColor = u.goedgekeurd ? 'var(--g-fg)' : 'var(--b-fg)';
+      var statusTxt   = u.goedgekeurd ? 'Goedgekeurd' : 'Wacht op goedkeuring';
+      html += '<div style="display:flex;align-items:center;gap:10px;padding:.625rem 0;border-bottom:1px solid var(--border)">'
+        + '<div style="width:32px;height:32px;border-radius:50%;background:var(--accent-2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--accent);flex-shrink:0">'
+        +   u.naam.split(' ').map(function(w){return w[0];}).join('').slice(0,2).toUpperCase()
+        + '</div>'
+        + '<div style="flex:1;min-width:0">'
+        +   '<div style="font-size:12px;font-weight:500;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+esc(u.naam)+'</div>'
+        +   '<div style="font-size:10px;color:var(--text-3)">'+esc(u.email)+'</div>'
+        + '</div>'
+        + '<select onchange="adminSetRol(\''+u.id+'\',this.value)" style="font-size:11px;padding:3px 6px;border-radius:5px;border:1px solid var(--border-md);background:var(--surface2);color:var(--text);cursor:pointer">'
+        +   ['viewer','editor','admin'].map(function(r){ return '<option value="'+r+'"'+(u.rol===r?' selected':'')+'>'+ROL_LABELS[r]+'</option>'; }).join('')
+        + '</select>';
+      if (!u.goedgekeurd) {
+        html += '<button onclick="adminGoedkeuren(\''+u.id+'\')" style="padding:4px 10px;font-size:11px;font-weight:600;background:var(--g-bg);color:var(--g-fg);border:1px solid var(--g-mid);border-radius:5px;cursor:pointer;white-space:nowrap">Goedkeuren</button>';
+      } else {
+        html += '<span style="font-size:10px;color:'+statusColor+';white-space:nowrap">✓ Actief</span>';
+      }
+      html += '</div>';
+    });
+    container.innerHTML = html;
+  } catch(e) {
+    container.innerHTML = '<div style="color:var(--r-fg);font-size:12px;padding:1rem">Fout: '+esc(e.message)+'</div>';
+  }
+}
+async function adminGoedkeuren(userId) {
+  try {
+    await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ goedgekeurd: true, goedgekeurd_op: new Date().toISOString(), goedgekeurd_door: currentUser })
+    });
+    showToast('✓ Gebruiker goedgekeurd', 'success');
+    await loadAdminUsers();
+  } catch(e) { showToast('Fout: ' + e.message, 'error'); }
+}
+async function adminSetRol(userId, rol) {
+  try {
+    await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
+      method: 'PATCH',
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      body: JSON.stringify({ rol: rol })
+    });
+    showToast('✓ Rol bijgewerkt', 'success');
+  } catch(e) { showToast('Fout: ' + e.message, 'error'); }
+}
+
+function doLogout() {
   var sw = document.getElementById('modeSwitch');
   if (sw) {
     sw.className = 'mode-switch ' + (currentMode === 'editor' ? 'is-editor' : 'is-viewer');
@@ -3815,19 +4157,18 @@ function cancelEditorSwitch() {
 }
 
 function doLogout() {
+  authSignOut();
   clearInterval(pollTimer);
   pollTimer = null;
   ROWS = []; DB_ROWS = []; OPMERKINGEN = {}; CHANGES = {};
   activeFilters = {}; activeStatusFilter = '';
   document.getElementById('app').style.display = 'none';
   document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('loginEngineer').value = '';
-  document.getElementById('loginRole').value = 'viewer';
-  document.getElementById('onlineUsers').innerHTML = '';
-  document.getElementById('loginBtn').disabled = false;
-  document.getElementById('loginBtn').textContent = 'Verder \u2192';
+  var adminBtn = document.getElementById('btnAdminPanel');
+  if (adminBtn) adminBtn.style.display = 'none';
   sessionStorage.removeItem('tpa_user');
   sessionStorage.removeItem('tpa_mode');
+  authShowState('login');
 }
 
 // ══ APP START ══
