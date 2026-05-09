@@ -3750,13 +3750,6 @@ function clearColFilter(colIdx) {
   render();
 }
 
-;
-  activeStatusFilter = '';
-  document.getElementById('search').value = '';
-  updateChips();
-  render();
-
-}
 
 function updateChips() {
   var chips = '';
@@ -5892,7 +5885,7 @@ function saveBoring(){
     renderBorList();updateBorProgress();showBorForm();_rebuildBorCache();render();
   }).catch(function(err){showSaving(false);document.getElementById('btnBorSave').disabled=false;showToast('✗ Opslaan mislukt: '+err.message,'error');});
 }
-function deleteBoring(){
+async function deleteBoring(){
   if(borSelId===null)return;
   var b=borData.find(function(x){return x.id===borSelId;});
   if(!(await tpaConfirm('Weet je zeker dat je "'+(b?b.boring_nr:'deze boring')+'" wilt verwijderen?', {type:'danger',title:'Boring verwijderen',okTxt:'Verwijderen'}))) return;

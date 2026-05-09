@@ -2578,7 +2578,7 @@ function saveCp() {
   }).catch(function(err){ showSaving(false); showToast('✗ '+err.message,'error'); });
 }
 
-function deleteCp() {
+async function deleteCp() {
   if (!cpEditId || !(await tpaConfirm('Contactpersoon verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'}))) return;
   closeCpModal();
   showSaving(true);
@@ -5741,7 +5741,7 @@ function saveDkm(){
 }
 
 // ── Delete ──
-function deleteDkm(){
+async function deleteDkm(){
   if(dkmSelId===null) return;
   var d=DK_DATA.find(function(x){return x.id===dkmSelId;});
   var nr=d?d.duiker_nr:'deze duiker';
@@ -6368,7 +6368,7 @@ function savePsm() {
 }
 
 // ── Verwijderen ──
-function deletePsm() {
+async function deletePsm() {
   if (psmSelId===null) return;
   var s  = PS_DATA.find(function(x){ return x.id===psmSelId; });
   var nr = s ? s.sleuf_nr : 'deze proefsleuf';
