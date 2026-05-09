@@ -469,6 +469,45 @@
   .auth-switch a { color:rgba(0,162,255,0.8); text-decoration:none; }
   .auth-switch a:hover { color:#0071E3; text-decoration:underline; }
 
+  /* ── Confirm modal ── */
+  .tpa-confirm-overlay {
+    position:fixed; inset:0; background:rgba(8,13,31,0.6);
+    z-index:9000; display:none; align-items:center; justify-content:center; padding:1rem;
+  }
+  .tpa-confirm-overlay.open { display:flex; }
+  .tpa-confirm-box {
+    background:var(--surface); border:1px solid var(--border-md);
+    border-radius:var(--r-xl); box-shadow:var(--sh-lg);
+    width:100%; max-width:380px; padding:1.5rem 1.5rem 1.25rem;
+    animation:ramPop .15s cubic-bezier(.34,1.3,.64,1);
+  }
+  .tpa-confirm-icon {
+    width:40px; height:40px; border-radius:50%; display:flex;
+    align-items:center; justify-content:center; margin-bottom:1rem;
+  }
+  .tpa-confirm-icon.danger  { background:var(--r-bg); }
+  .tpa-confirm-icon.warning { background:#FFF3E0; }
+  .tpa-confirm-icon.info    { background:var(--accent-2); }
+  .tpa-confirm-title { font-size:15px; font-weight:600; color:var(--text); margin-bottom:.5rem; }
+  .tpa-confirm-msg   { font-size:13px; color:var(--text-2); line-height:1.6; margin-bottom:1.25rem; }
+  .tpa-confirm-btns  { display:flex; gap:.5rem; justify-content:flex-end; }
+  .tpa-confirm-cancel {
+    padding:8px 16px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit;
+    background:var(--surface2); color:var(--text-2); border:1px solid var(--border-md);
+    border-radius:var(--r-md); transition:all .1s;
+  }
+  .tpa-confirm-cancel:hover { background:var(--surface3); color:var(--text); }
+  .tpa-confirm-ok {
+    padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit;
+    border:none; border-radius:var(--r-md); transition:all .1s;
+  }
+  .tpa-confirm-ok.danger  { background:var(--r-fg); color:#fff; }
+  .tpa-confirm-ok.danger:hover  { background:#c0392b; }
+  .tpa-confirm-ok.warning { background:#E8870C; color:#fff; }
+  .tpa-confirm-ok.warning:hover { background:#d17a0a; }
+  .tpa-confirm-ok.info    { background:var(--accent); color:#fff; }
+  .tpa-confirm-ok.info:hover    { background:#0044CC; }
+
   /* CLICKABLE ROWS */
   tbody tr { cursor:pointer; }
   .row-link-icon { font-size:9px; opacity:0; margin-left:2px; transition:opacity .08s; }
@@ -1950,13 +1989,15 @@ tbody tr      { animation:fadeIn .12s ease both; }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
 </style>
+  <!-- QR code generator -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Supabase JS (auth) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
 <body>
 
 <!-- ══ AUTH SCREEN ══ -->
-<div id="loginScreen" style="display:none">
+<div id="loginScreen">
   <div class="login-box">
 
     <!-- Logo (altijd zichtbaar) -->
@@ -2732,14 +2773,16 @@ function rvSave(order) {
   });
   fetch(SUPA_URL + '/rest/v1/rij_volgorde', {
     method: 'POST',
-    headers: _sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
+      'Content-Type': 'application/json',
+      'Prefer': 'resolution=merge-duplicates,return=minimal' },
     body: JSON.stringify(rows)
   }).catch(function() {});
 }
 
 function loadRijVolgorde() {
   return fetch(SUPA_URL + '/rest/v1/rij_volgorde?select=row_idx,pos&order=pos.asc', {
-    headers: _sh()
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
   }).then(function(r) { return r.json(); })
     .then(function(rows) {
       if (Array.isArray(rows) && rows.length) {
@@ -2861,7 +2904,7 @@ var _dragSrcColIdx = -1;
 
 function kvLoad() {
   return fetch(SUPA_URL+'/rest/v1/kolom_volgorde?select=*&order=pos.asc',{
-    headers:_sh()
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){return r.json();}).catch(function(){return [];});
 }
 function kvSave(order) {
@@ -2869,7 +2912,8 @@ function kvSave(order) {
   var rows = order.map(function(ci,pos){ return {col_idx:ci, pos:pos, updated_by:currentUser}; });
   return fetch(SUPA_URL+'/rest/v1/kolom_volgorde',{
     method:'POST',
-    headers:_sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'},
     body:JSON.stringify(rows)
   });
 }
@@ -3086,13 +3130,14 @@ var ALLE_FASEN = ['Projectinfo','Analyse','VO-Fase','DO-Fase','Onderzoeksfase','
 // Supabase helpers for fase overrides
 function foLoad() {
   return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides?select=*',{
-    headers:_sh()
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){return r.json();}).catch(function(){return [];});
 }
 function foUpsert(colIdx, fase) {
   return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides',{
     method:'POST',
-    headers:_sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
+      'Prefer':'resolution=merge-duplicates,return=minimal'},
     body:JSON.stringify({col_idx:colIdx, fase:fase, updated_by:currentUser, updated_at:new Date().toISOString()})
   });
 }
@@ -3157,7 +3202,7 @@ function applyFaseOverride(newFase) {
   if (ci >= CX_BASE && col.cx_id) {
     fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+col.cx_id,{
       method:'PATCH',
-      headers:_sh(),
+      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
       body:JSON.stringify({fase:newFase})
     }).catch(function(){});
     var cc = CUSTOM_COLS.find(function(c){ return c.id===col.cx_id; });
@@ -3177,20 +3222,20 @@ var CX_BASE = 2000;          // offset for custom col indices (cx_2000, cx_2001,
 // Supabase helpers
 function cxLoad() {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen?order=volgorde.asc,id.asc&select=*',{
-    headers:_sh()
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){return r.json();});
 }
 function cxInsert(o) {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen',{
     method:'POST',
-    headers:_sh({'Prefer':'return=representation'}),
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
     body:JSON.stringify(o)
   }).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error((d&&d.message)||'HTTP '+r.status);return d;});});
 }
 function cxDelete(id) {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+id,{
     method:'DELETE',
-    headers:_sh()
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
   }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);});
 }
 
@@ -3284,10 +3329,10 @@ function addCustomKolom() {
     }).catch(function(err){ showToast('✗ '+err.message,'error'); });
 }
 
-function deleteCustomKolom(id) {
+async function deleteCustomKolom(id) {
   id = parseInt(id);
   var cc = CUSTOM_COLS.find(function(c){ return c.id===id; });
-  if (!cc || !confirm('Kolom "'+cc.naam+'" en alle bijbehorende data verwijderen?')) return;
+  if (!cc || !await tpaConfirm('Kolom "'+cc.naam+'" en alle bijbehorende data verwijderen? Dit kan niet ongedaan worden gemaakt.', {type:'danger',title:'Kolom verwijderen',okTxt:'Verwijderen'})) return;
   cxDelete(id).then(function() {
     CUSTOM_COLS = CUSTOM_COLS.filter(function(c){ return c.id!==id; });
     mergeCustomColsIntoCOLS();
@@ -3323,33 +3368,24 @@ function esc(v) {
 // ══ SUPABASE — Promise-based, no async/await ══
 var AUTH_TOKEN = null; // Wordt gezet na succesvolle login
 
-/* Centrale helper — altijd correcte auth headers */
-function _sh(extra) {
-  var token = AUTH_TOKEN || SUPA_KEY;
-  var h = {
-    'apikey':        SUPA_KEY,
-    'Authorization': 'Bearer ' + token,
-    'Content-Type':  'application/json',
-    'Prefer':        'return=minimal'
-  };
-  if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
-  return h;
-}
-
 function supaReq(method, path, body) {
   var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   var timer = controller ? setTimeout(function() { controller.abort(); }, 15000) : null;
+  var token = AUTH_TOKEN || SUPA_KEY;
   return fetch(SUPA_URL + path, {
-    method:  method,
-    headers: _sh({ 'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal' }),
-    body:    body ? JSON.stringify(body) : undefined,
-    signal:  controller ? controller.signal : undefined
+    method: method,
+    headers: {
+      'apikey': SUPA_KEY,
+      'Authorization': 'Bearer ' + token,
+      'Content-Type': 'application/json',
+      'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: controller ? controller.signal : undefined
   }).then(function(r) {
     if (timer) clearTimeout(timer);
     if (!r.ok) {
-      // Token verlopen → uitloggen
-      if (r.status === 401) { doLogout(); throw new Error('Sessie verlopen. Log opnieuw in.'); }
-      return r.json().catch(function(){ return {}; }).then(function(e) {
+      return r.json().catch(function() { return {}; }).then(function(e) {
         throw new Error(e.message || 'HTTP ' + r.status);
       });
     }
@@ -3518,31 +3554,7 @@ var currentFase = 'alle';
 var currentMode = 'viewer';
 var currentUser = '';
 
-// ── Session herstellen via Supabase auth ──
-document.addEventListener('DOMContentLoaded', async function() {
-  try {
-    var sb = _getSupaAuth();
-
-    // Luister naar token-verversing (automatisch elke ~55 min)
-    sb.auth.onAuthStateChange(function(event, session) {
-      if (session) {
-        AUTH_TOKEN = session.access_token;
-      } else if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
-        AUTH_TOKEN = null;
-      }
-    });
-
-    // Probeer bestaande sessie te herstellen
-    var result = await sb.auth.getSession();
-    if (result.data && result.data.session) {
-      AUTH_TOKEN = result.data.session.access_token;
-      await _authLoadProfile(result.data.session);
-      return; // Klaar — _authLoadProfile start de app
-    }
-  } catch(e) { /* geen sessie beschikbaar */ }
-  // Geen geldige sessie → toon inlogscherm
-  document.getElementById('loginScreen').style.display = 'flex';
-});
+// ── Session wordt hersteld via Supabase auth (zie DOMContentLoaded onderaan) ──
 var sortCol = -1, sortDir = 1;
 var pickerTarget    = null;
 var datePicker_target = null;
@@ -3933,7 +3945,8 @@ async function authSignUp() {
     var uid = res.data.user.id;
     await fetch(SUPA_URL + '/rest/v1/profiles', {
       method: 'POST',
-      headers: _sh(),
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ id: uid, naam: naam, email: email, rol: 'viewer', goedgekeurd: false })
     });
     authShowState('pending');
@@ -3970,32 +3983,40 @@ async function authMfaSetup() {
   try {
     var sb = _getSupaAuth();
 
-    // Verwijder eventuele eerdere onvoltooide enrollments
+    // Verwijder ALLE bestaande factors (verified én unverified) om conflicten te voorkomen
     var existing = await sb.auth.mfa.listFactors();
-    if (existing.data && existing.data.all) {
-      for (var i = 0; i < existing.data.all.length; i++) {
-        var f = existing.data.all[i];
-        if (f.status === 'unverified') {
-          await sb.auth.mfa.unenroll({ factorId: f.id });
-        }
-      }
+    var all = (existing.data && existing.data.all) ? existing.data.all : [];
+    for (var i = 0; i < all.length; i++) {
+      await sb.auth.mfa.unenroll({ factorId: all[i].id });
     }
 
     var res = await sb.auth.mfa.enroll({ factorType: 'totp', issuer: 'Dashboard TPA' });
     if (res.error) throw res.error;
     _mfaFactorId = res.data.id;
 
+    // QR code: genereer via canvas-library in tijdelijke div
+    // qrcodejs maakt ook een <img> — we pakken alleen de <canvas>
     var qrContainer = document.getElementById('mfaQrContainer');
-    var qr = res.data.totp.qr_code;
-    if (qr) {
-      if (qr.startsWith('data:')) {
-        qrContainer.innerHTML = '<img src="'+qr+'" style="width:180px;height:180px;display:block;margin:0 auto" alt="QR code">';
-      } else {
-        qrContainer.innerHTML = qr;
+    qrContainer.innerHTML = '';
+    var uri = res.data.totp.uri;
+    if (uri && typeof QRCode !== 'undefined') {
+      var tmp = document.createElement('div');
+      document.body.appendChild(tmp);
+      new QRCode(tmp, {
+        text: uri, width: 180, height: 180,
+        colorDark: '#000000', colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+      var canvas = tmp.querySelector('canvas');
+      if (canvas) {
+        canvas.style.cssText = 'display:block;margin:0 auto;border-radius:6px';
+        qrContainer.appendChild(canvas);
       }
+      document.body.removeChild(tmp);
     } else {
-      qrContainer.innerHTML = '<p style="font-size:11px;color:#333">Gebruik de handmatige code hieronder.</p>';
+      qrContainer.innerHTML = '<p style="font-size:12px;color:#444;text-align:center;padding:.5rem">Gebruik de handmatige code hieronder in Microsoft Authenticator.</p>';
     }
+
     document.getElementById('mfaSecret').textContent = res.data.totp.secret;
     authShowState('mfaSetup');
     setTimeout(function(){ document.getElementById('mfaSetupCode').focus(); }, 80);
@@ -4033,7 +4054,7 @@ async function _authLoadProfile(session) {
   AUTH_TOKEN = session.access_token;
   try {
     var res = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.user.id + '&select=*', {
-      headers: _sh()
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
     });
     var profiles = await res.json();
     if (!profiles || !profiles.length) { authShowState('pending'); return; }
@@ -4094,7 +4115,7 @@ async function loadAdminUsers() {
   container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Laden...</div>';
   try {
     var res = await fetch(SUPA_URL + '/rest/v1/profiles?order=aangemaakt_op.desc&select=*', {
-      headers: _sh()
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
     });
     var users = await res.json();
     if (!users.length) { container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Geen gebruikers gevonden.</div>'; return; }
@@ -4130,7 +4151,8 @@ async function adminGoedkeuren(userId) {
   try {
     await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
       method: 'PATCH',
-      headers: _sh(),
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ goedgekeurd: true, goedgekeurd_op: new Date().toISOString(), goedgekeurd_door: currentUser })
     });
     showToast('✓ Gebruiker goedgekeurd', 'success');
@@ -4141,7 +4163,8 @@ async function adminSetRol(userId, rol) {
   try {
     await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
       method: 'PATCH',
-      headers: _sh(),
+      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
+                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
       body: JSON.stringify({ rol: rol })
     });
     showToast('✓ Rol bijgewerkt', 'success');
@@ -4414,7 +4437,7 @@ function loadOpmerkingen() {
       });
     })
     .catch(function(e) {
-      // Opmerkingen niet beschikbaar
+      console.warn('Opmerkingen laden mislukt:', e.message);
     });
 }
 
@@ -5016,10 +5039,10 @@ function saveProject() {
   }
 }
 
-function deleteProject() {
+async function deleteProject() {
   if (projModalRowIdx < 0) return;
   var naam = ROWS[projModalRowIdx][2] || 'dit project';
-  if (!confirm('Weet je zeker dat je "' + naam + '" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
+  if (!await tpaConfirm('Weet je zeker dat je "' + naam + '" wilt verwijderen? Dit kan niet ongedaan worden gemaakt.', {type:'danger',title:'Project verwijderen',okTxt:'Verwijderen'})) return;
 
   var ri    = projModalRowIdx;
   var dbRow = DB_ROWS[ri];
@@ -5068,10 +5091,10 @@ function toggleArchief() {
   render();
 }
 
-function archiveProject() {
+async function archiveProject() {
   if (projModalRowIdx < 0) return;
   var naam = ROWS[projModalRowIdx][2] || 'dit project';
-  if (!confirm('Weet je zeker dat je "' + naam + '" wilt archiveren?')) return;
+  if (!await tpaConfirm('Weet je zeker dat je "' + naam + '" wilt archiveren?', {type:'warning',title:'Project archiveren',okTxt:'Archiveren'})) return;
   var ri    = projModalRowIdx;
   var dbRow = DB_ROWS[ri];
   closeProjModal();
@@ -5090,8 +5113,8 @@ function archiveProject() {
   });
 }
 
-function restoreProject(rowIdx) {
-  if (!confirm('Project terugzetten naar actief?')) return;
+async function restoreProject(rowIdx) {
+  if (!await tpaConfirm('Project terugzetten naar actief?', {type:'info',title:'Project herstellen',okTxt:'Terugzetten'})) return;
   var dbRow = DB_ROWS[rowIdx];
   showSaving(true);
   supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
@@ -5108,7 +5131,7 @@ function restoreProject(rowIdx) {
   });
 }
 
-function deleteProject() { archiveProject(); }
+async function deleteProject() { archiveProject(); }
 
 
 // ══ RENDER HELPERS ══
@@ -5744,13 +5767,13 @@ var BOR_TOTAL_LENGTHS = {};
 
 function borGet(wid){ return supaGet('/rest/v1/boringen?werkpakket_id=eq.'+wid+'&order=boring_nr.asc&select=*'); }
 function borInsert(obj){
-  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:_sh({'Prefer':'return=representation'}),body:JSON.stringify(obj)}).then(function(r){return r.json();});
+  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(obj)}).then(function(r){return r.json();});
 }
 function borPatch(id,obj){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:_sh(),body:JSON.stringify(obj)}).then(function(r){return r.ok?null:r.json().then(function(e){throw new Error(e.message);});});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(obj)}).then(function(r){return r.ok?null:r.json().then(function(e){throw new Error(e.message);});});
 }
 function borDelete(id){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:_sh()}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete mislukt'));});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete mislukt'));});
 }
 
 function loadBoringCounts(){
@@ -5895,7 +5918,7 @@ function saveBoring(){
 function deleteBoring(){
   if(borSelId===null)return;
   var b=borData.find(function(x){return x.id===borSelId;});
-  if(!confirm('Weet je zeker dat je "'+(b?b.boring_nr:'deze boring')+'" wilt verwijderen?'))return;
+  if(!await tpaConfirm('Weet je zeker dat je "'+(b?b.boring_nr:'deze boring')+'" wilt verwijderen?', {type:'danger',title:'Boring verwijderen',okTxt:'Verwijderen'}))return;
   showSaving(true);
   borDelete(borSelId).then(function(){
     borData=borData.filter(function(x){return x.id!==borSelId;});borSelId=null;
@@ -6099,11 +6122,11 @@ function saveQuickEdit() {
 }
 
 /* Archiveren */
-function _ramArchive() {
+async function _ramArchive() {
   var ri = _ramRowIdx; closeRowMenu();
   if (ri < 0) return;
   var naam = (ROWS[ri]&&ROWS[ri][2])||'dit project';
-  if (!confirm('Weet je zeker dat je "'+naam+'" wilt archiveren?')) return;
+  if (!await tpaConfirm('Weet je zeker dat je "'+naam+'" wilt archiveren?', {type:'warning',title:'Project archiveren',okTxt:'Archiveren'})) return;
   var dbRow = DB_ROWS[ri]; showSaving(true);
   supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx,
     {gearchiveerd:true,updated_by:currentUser,updated_at:new Date().toISOString()})
@@ -6112,10 +6135,10 @@ function _ramArchive() {
 }
 
 /* Terugzetten */
-function _ramRestore() {
+async function _ramRestore() {
   var ri = _ramRowIdx; closeRowMenu();
   if (ri < 0) return;
-  if (!confirm('Project terugzetten naar actief?')) return;
+  if (!await tpaConfirm('Project terugzetten naar actief?', {type:'info',title:'Project herstellen',okTxt:'Terugzetten'})) return;
   var dbRow = DB_ROWS[ri]; showSaving(true);
   supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx,
     {gearchiveerd:false,updated_by:currentUser,updated_at:new Date().toISOString()})
@@ -6132,6 +6155,49 @@ document.addEventListener('click', function(e) {
 });
 document.addEventListener('keydown', function(e) {
   if (e.key==='Escape') { closeRowMenu(); closeQuickEdit(); }
+});
+
+// ══ CONFIRM MODAL ══
+var _tpaConfirmResolve = null;
+
+function tpaConfirm(msg, opts) {
+  opts = opts || {};
+  var type   = opts.type   || 'danger';
+  var title  = opts.title  || (type === 'danger' ? 'Verwijderen?' : type === 'warning' ? 'Weet je het zeker?' : 'Bevestigen?');
+  var okTxt  = opts.okTxt  || (type === 'danger' ? 'Verwijderen' : type === 'warning' ? 'Doorgaan' : 'OK');
+  var iconColor = type === 'danger' ? 'var(--r-fg)' : type === 'warning' ? '#E8870C' : 'var(--accent)';
+
+  document.getElementById('tpaConfirmTitle').textContent = title;
+  document.getElementById('tpaConfirmMsg').textContent   = msg;
+  document.getElementById('tpaConfirmIcon').className    = 'tpa-confirm-icon ' + type;
+  document.getElementById('tpaConfirmIconSvg').style.color = iconColor;
+  var okBtn = document.getElementById('tpaConfirmOkBtn');
+  okBtn.textContent = okTxt;
+  okBtn.className   = 'tpa-confirm-ok ' + type;
+  document.getElementById('tpaConfirmOverlay').classList.add('open');
+
+  return new Promise(function(resolve) {
+    _tpaConfirmResolve = function(val) {
+      document.getElementById('tpaConfirmOverlay').classList.remove('open');
+      _tpaConfirmResolve = null;
+      resolve(val);
+    };
+  });
+}
+
+// Sluit bij klik buiten of Escape
+document.addEventListener('click', function(e) {
+  var o = document.getElementById('tpaConfirmOverlay');
+  if (o && o.classList.contains('open') && e.target === o) {
+    if (_tpaConfirmResolve) _tpaConfirmResolve(false);
+  }
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && _tpaConfirmResolve) _tpaConfirmResolve(false);
+  if (e.key === 'Enter') {
+    var o = document.getElementById('tpaConfirmOverlay');
+    if (o && o.classList.contains('open') && _tpaConfirmResolve) _tpaConfirmResolve(true);
+  }
 });
 
 // ══ SIDEBAR ══
@@ -6319,6 +6385,23 @@ document.addEventListener('DOMContentLoaded', _initSidebarResize);
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="vertical-align:-1px;margin-right:4px"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Opslaan
     </button>
+  </div>
+</div>
+
+<!-- ── Confirm modal ── -->
+<div class="tpa-confirm-overlay" id="tpaConfirmOverlay">
+  <div class="tpa-confirm-box">
+    <div class="tpa-confirm-icon" id="tpaConfirmIcon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="tpaConfirmIconSvg">
+        <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="tpa-confirm-title" id="tpaConfirmTitle">Weet je het zeker?</div>
+    <div class="tpa-confirm-msg"   id="tpaConfirmMsg"></div>
+    <div class="tpa-confirm-btns">
+      <button class="tpa-confirm-cancel" onclick="_tpaConfirmResolve(false)">Annuleren</button>
+      <button class="tpa-confirm-ok danger" id="tpaConfirmOkBtn" onclick="_tpaConfirmResolve(true)">Verwijderen</button>
+    </div>
   </div>
 </div>
 

@@ -492,15 +492,44 @@ tbody tr      { animation:fadeIn .12s ease both; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
+
+  .tpa-confirm-overlay { position:fixed; inset:0; background:rgba(8,13,31,0.6); z-index:9000; display:none; align-items:center; justify-content:center; padding:1rem; }
+  .tpa-confirm-overlay.open { display:flex; }
+  .tpa-confirm-box { background:#fff; border:1px solid #ddd; border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.15); width:100%; max-width:380px; padding:1.5rem; }
+  .tpa-confirm-title { font-size:15px; font-weight:600; color:#111; margin-bottom:.5rem; }
+  .tpa-confirm-msg   { font-size:13px; color:#555; line-height:1.6; margin-bottom:1.25rem; }
+  .tpa-confirm-btns  { display:flex; gap:.5rem; justify-content:flex-end; }
+  .tpa-confirm-cancel { padding:8px 16px; font-size:12px; cursor:pointer; font-family:inherit; background:#f5f5f5; border:1px solid #ddd; border-radius:8px; }
+  .tpa-confirm-ok { padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; border:none; border-radius:8px; background:#e74c3c; color:#fff; }
 </style>
-  <!-- PWA: Dashboard TPA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0071E3">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dashboard TPA">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js");});}</script>
+  <!-- Auth guard: redirect naar login als geen sessie -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+  (function() {
+    var SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
+    var _sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth:{persistSession:true}}) : null;
+    if (!_sb) return; // Library nog niet geladen, DOMContentLoaded handelt het af
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        var result = await _sb.auth.getSession();
+        if (!result.data || !result.data.session) {
+          window.location.replace('/index.html');
+          return;
+        }
+        // Stel AUTH_TOKEN in voor alle API-calls op deze pagina
+        window.AUTH_TOKEN = result.data.session.access_token;
+        // Token refresh luisteren
+        _sb.auth.onAuthStateChange(function(event, session) {
+          if (session) window.AUTH_TOKEN = session.access_token;
+          else if (event === 'SIGNED_OUT') window.location.replace('/index.html');
+        });
+      } catch(e) {
+        window.location.replace('/index.html');
+      }
+    });
+  })();
+  </script>
 </head>
 <body>
 
@@ -721,10 +750,10 @@ function saveItem(){
   var p=selId!==null?req('PATCH','/rest/v1/proefsleuven?id=eq.'+selId,payload).then(function(){var i=DATA.findIndex(function(x){return x.id===selId;});if(i>=0)DATA[i]=Object.assign(DATA[i],payload);showToast('\u2713 Opgeslagen','success');}):req('POST','/rest/v1/proefsleuven',payload).then(function(r){var n=Array.isArray(r)?r[0]:r;DATA.push(n);showToast('\u2713 Proefsleuv toegevoegd','success');});
   p.then(function(){document.getElementById('btnSave').disabled=false;closeModal();updateStats();renderTable();}).catch(function(e){document.getElementById('btnSave').disabled=false;showToast('\u2717 '+e.message,'error');});
 }
-function deleteItem(){
+async function deleteItem(){
   if(!selId)return;
   var d=DATA.find(function(x){return x.id===selId;});
-  if(!confirm('Proefsleuv "'+((d&&d.proefsleuv_nr)||selId)+'" verwijderen?'))return;
+  if(!await tpaConfirm('Proefsleuv "'+((d&&d.proefsleuv_nr)||selId)+'" verwijderen?',{type:'danger',okTxt:'Verwijderen'}))return;
   req('DELETE','/rest/v1/proefsleuven?id=eq.'+selId).then(function(){DATA=DATA.filter(function(x){return x.id!==selId;});closeModal();updateStats();renderTable();showToast('\u2713 Verwijderd','success');}).catch(function(e){showToast('\u2717 '+e.message,'error');});
 }
 window.addEventListener('load',function(){
@@ -771,6 +800,31 @@ function _initSidebarResize() {
 }
 document.addEventListener('DOMContentLoaded', _initSidebarResize);
 
+
+var _tpaConfirmResolve=null;
+function tpaConfirm(msg,opts){
+  opts=opts||{};
+  document.getElementById('tpaConfirmTitle').textContent=opts.title||'Weet je het zeker?';
+  document.getElementById('tpaConfirmMsg').textContent=msg;
+  document.getElementById('tpaConfirmOkBtn').textContent=opts.okTxt||'Verwijderen';
+  document.getElementById('tpaConfirmOverlay').classList.add('open');
+  return new Promise(function(resolve){
+    _tpaConfirmResolve=function(val){ document.getElementById('tpaConfirmOverlay').classList.remove('open'); _tpaConfirmResolve=null; resolve(val); };
+  });
+}
+document.addEventListener('click',function(e){ var o=document.getElementById('tpaConfirmOverlay'); if(o&&o.classList.contains('open')&&e.target===o&&_tpaConfirmResolve)_tpaConfirmResolve(false); });
+document.addEventListener('keydown',function(e){ if(e.key==='Escape'&&_tpaConfirmResolve)_tpaConfirmResolve(false); });
 </script>
+
+<div class="tpa-confirm-overlay" id="tpaConfirmOverlay">
+  <div class="tpa-confirm-box">
+    <div class="tpa-confirm-title" id="tpaConfirmTitle">Weet je het zeker?</div>
+    <div class="tpa-confirm-msg" id="tpaConfirmMsg"></div>
+    <div class="tpa-confirm-btns">
+      <button class="tpa-confirm-cancel" onclick="_tpaConfirmResolve(false)">Annuleren</button>
+      <button class="tpa-confirm-ok" id="tpaConfirmOkBtn" onclick="_tpaConfirmResolve(true)">Verwijderen</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

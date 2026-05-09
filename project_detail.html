@@ -1868,15 +1868,54 @@ tbody tr      { animation:fadeIn .12s ease both; }
 ::-webkit-scrollbar-track { background:transparent; }
 ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
+
+  /* ── Confirm modal ── */
+  .tpa-confirm-overlay { position:fixed; inset:0; background:rgba(8,13,31,0.6); z-index:9000; display:none; align-items:center; justify-content:center; padding:1rem; }
+  .tpa-confirm-overlay.open { display:flex; animation:fadeIn .1s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .tpa-confirm-box { background:var(--surface,#fff); border:1px solid var(--border-md,#ddd); border-radius:16px; box-shadow:0 8px 32px rgba(0,0,0,.15); width:100%; max-width:380px; padding:1.5rem 1.5rem 1.25rem; animation:popIn .15s cubic-bezier(.34,1.3,.64,1); }
+  @keyframes popIn { from{opacity:0;transform:scale(.93)} to{opacity:1;transform:none} }
+  .tpa-confirm-icon { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; margin-bottom:1rem; }
+  .tpa-confirm-icon.danger  { background:#fdecea; }
+  .tpa-confirm-icon.warning { background:#FFF3E0; }
+  .tpa-confirm-icon.info    { background:#e8f0fe; }
+  .tpa-confirm-title { font-size:15px; font-weight:600; color:var(--text,#111); margin-bottom:.5rem; }
+  .tpa-confirm-msg   { font-size:13px; color:var(--text-2,#555); line-height:1.6; margin-bottom:1.25rem; }
+  .tpa-confirm-btns  { display:flex; gap:.5rem; justify-content:flex-end; }
+  .tpa-confirm-cancel { padding:8px 16px; font-size:12px; font-weight:500; cursor:pointer; font-family:inherit; background:var(--surface2,#f5f5f5); color:var(--text-2,#555); border:1px solid var(--border-md,#ddd); border-radius:8px; transition:all .1s; }
+  .tpa-confirm-ok { padding:8px 16px; font-size:12px; font-weight:600; cursor:pointer; font-family:inherit; border:none; border-radius:8px; transition:all .1s; }
+  .tpa-confirm-ok.danger  { background:#e74c3c; color:#fff; }
+  .tpa-confirm-ok.warning { background:#E8870C; color:#fff; }
+  .tpa-confirm-ok.info    { background:#0057FF; color:#fff; }
 </style>
-  <!-- PWA: Dashboard TPA -->
-  <link rel="manifest" href="/manifest.json">
-  <meta name="theme-color" content="#0071E3">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Dashboard TPA">
-  <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js");});}</script>
+  <!-- Auth guard: redirect naar login als geen sessie -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script>
+  (function() {
+    var SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
+    var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
+    var _sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth:{persistSession:true}}) : null;
+    if (!_sb) return; // Library nog niet geladen, DOMContentLoaded handelt het af
+    document.addEventListener('DOMContentLoaded', async function() {
+      try {
+        var result = await _sb.auth.getSession();
+        if (!result.data || !result.data.session) {
+          window.location.replace('/index.html');
+          return;
+        }
+        // Stel AUTH_TOKEN in voor alle API-calls op deze pagina
+        window.AUTH_TOKEN = result.data.session.access_token;
+        // Token refresh luisteren
+        _sb.auth.onAuthStateChange(function(event, session) {
+          if (session) window.AUTH_TOKEN = session.access_token;
+          else if (event === 'SIGNED_OUT') window.location.replace('/index.html');
+        });
+      } catch(e) {
+        window.location.replace('/index.html');
+      }
+    });
+  })();
+  </script>
 </head>
 <body>
 
@@ -2540,7 +2579,7 @@ function saveCp() {
 }
 
 function deleteCp() {
-  if (!cpEditId || !confirm('Contactpersoon verwijderen?')) return;
+  if (!cpEditId || !await tpaConfirm('Contactpersoon verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
   closeCpModal();
   showSaving(true);
   cpDelete(cpEditId).then(function(){
@@ -4035,7 +4074,7 @@ async function postComment() {
 }
 
 async function deleteComment(faseKey) {
-  if (!confirm('Opmerking verwijderen?')) return;
+  if (!await tpaConfirm('Opmerking verwijderen?', {type:'danger',title:'Opmerking verwijderen',okTxt:'Verwijderen'})) return;
   try {
     await supa.req('DELETE', '/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.'+encodeURIComponent(faseKey));
     await loadComments();
@@ -5706,7 +5745,7 @@ function deleteDkm(){
   if(dkmSelId===null) return;
   var d=DK_DATA.find(function(x){return x.id===dkmSelId;});
   var nr=d?d.duiker_nr:'deze duiker';
-  if(!confirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?')) return;
+  if(!await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
   showSaving(true);
   dkDel(dkmSelId).then(function(){
     DK_DATA=DK_DATA.filter(function(x){return x.id!==dkmSelId;});
@@ -6333,7 +6372,7 @@ function deletePsm() {
   if (psmSelId===null) return;
   var s  = PS_DATA.find(function(x){ return x.id===psmSelId; });
   var nr = s ? s.sleuf_nr : 'deze proefsleuf';
-  if (!confirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?')) return;
+  if (!await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
   showSaving(true);
   psDel(psmSelId).then(function() {
     PS_DATA = PS_DATA.filter(function(x){ return x.id!==psmSelId; });
@@ -6553,7 +6592,7 @@ async function deleteBorm() {
   if (borSelId === null) return;
   var b   = BOR_DATA.find(function(x){ return x.id === borSelId; });
   var lbl = b ? '"'+b.boring_nr+'"' : 'deze boring';
-  if (!confirm('Weet je zeker dat je '+lbl+' wilt verwijderen?')) return;
+  if (!await tpaConfirm('Weet je zeker dat je '+lbl+' wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
   try {
     await borDel(borSelId);
     BOR_DATA = BOR_DATA.filter(function(x){ return x.id !== borSelId; });
@@ -6669,6 +6708,37 @@ function _initSidebarResize() {
 }
 document.addEventListener('DOMContentLoaded', _initSidebarResize);
 
+
+// ── Confirm modal ──
+var _tpaConfirmResolve = null;
+function tpaConfirm(msg, opts) {
+  opts = opts || {};
+  var type = opts.type || 'danger';
+  var title = opts.title || (type==='danger'?'Verwijderen?':type==='warning'?'Weet je het zeker?':'Bevestigen?');
+  var okTxt = opts.okTxt || (type==='danger'?'Verwijderen':type==='warning'?'Doorgaan':'OK');
+  var iconColor = type==='danger'?'#e74c3c':type==='warning'?'#E8870C':'#0057FF';
+  document.getElementById('tpaConfirmTitle').textContent = title;
+  document.getElementById('tpaConfirmMsg').textContent = msg;
+  document.getElementById('tpaConfirmIcon').className = 'tpa-confirm-icon '+type;
+  document.getElementById('tpaConfirmIconSvg').style.color = iconColor;
+  var okBtn = document.getElementById('tpaConfirmOkBtn');
+  okBtn.textContent = okTxt; okBtn.className = 'tpa-confirm-ok '+type;
+  document.getElementById('tpaConfirmOverlay').classList.add('open');
+  return new Promise(function(resolve) {
+    _tpaConfirmResolve = function(val) {
+      document.getElementById('tpaConfirmOverlay').classList.remove('open');
+      _tpaConfirmResolve = null; resolve(val);
+    };
+  });
+}
+document.addEventListener('click', function(e) {
+  var o = document.getElementById('tpaConfirmOverlay');
+  if (o && o.classList.contains('open') && e.target===o && _tpaConfirmResolve) _tpaConfirmResolve(false);
+});
+document.addEventListener('keydown', function(e) {
+  if (e.key==='Escape' && _tpaConfirmResolve) _tpaConfirmResolve(false);
+  if (e.key==='Enter') { var o=document.getElementById('tpaConfirmOverlay'); if(o&&o.classList.contains('open')&&_tpaConfirmResolve) _tpaConfirmResolve(true); }
+});
 </script>
 
 <!-- ══ BORINGEN MODAL ══ -->
@@ -7546,4 +7616,21 @@ document.addEventListener('DOMContentLoaded', _initSidebarResize);
   </div>
 </div>
 
+
+<!-- Confirm modal -->
+<div class="tpa-confirm-overlay" id="tpaConfirmOverlay">
+  <div class="tpa-confirm-box">
+    <div class="tpa-confirm-icon danger" id="tpaConfirmIcon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="tpaConfirmIconSvg" style="color:#e74c3c">
+        <path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="tpa-confirm-title" id="tpaConfirmTitle">Weet je het zeker?</div>
+    <div class="tpa-confirm-msg" id="tpaConfirmMsg"></div>
+    <div class="tpa-confirm-btns">
+      <button class="tpa-confirm-cancel" onclick="_tpaConfirmResolve(false)">Annuleren</button>
+      <button class="tpa-confirm-ok danger" id="tpaConfirmOkBtn" onclick="_tpaConfirmResolve(true)">Verwijderen</button>
+    </div>
+  </div>
+</div>
 </body>
