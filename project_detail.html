@@ -174,6 +174,26 @@
   .btn-date-clear { background:transparent; color:var(--b-fg); border-color:transparent; margin-right:auto; }
   .btn-date-clear:hover { background:var(--b-bg); }
 
+  /* Inline tekst popup (custom cols) */
+  .inline-text-popup {
+    position:fixed; z-index:510; background:var(--surface);
+    border:1px solid var(--border-md); border-radius:var(--r-lg);
+    box-shadow:var(--sh-lg); padding:.625rem; min-width:220px;
+    display:none; flex-direction:column; gap:5px;
+    animation:popIn .1s ease;
+  }
+  .inline-text-popup.open { display:flex; }
+  .itp-label { font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--text-3); }
+  .itp-row { display:flex; gap:4px; align-items:center; }
+  .itp-input { flex:1; padding:5px 9px; font-family:'DM Sans',sans-serif; font-size:12px;
+    border:1px solid var(--border-md); border-radius:var(--r); background:var(--surface2);
+    color:var(--text); outline:none; transition:all .1s; }
+  .itp-input:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .itp-ok  { padding:5px 9px; background:var(--navy); color:#fff; border:none; border-radius:var(--r); cursor:pointer; font-size:12px; font-weight:600; transition:all .1s; }
+  .itp-ok:hover { background:var(--navy-3); }
+  .itp-clr { padding:5px 8px; background:none; border:1px solid var(--border-md); border-radius:var(--r); cursor:pointer; font-size:12px; color:var(--b-fg); transition:all .1s; }
+  .itp-clr:hover { background:var(--b-bg); }
+
   /* MODAL */
   .opm-overlay { position:fixed; inset:0; background:rgba(8,13,31,0.45); z-index:600; display:flex; align-items:center; justify-content:center; padding:1rem; opacity:0; pointer-events:none; transition:opacity .15s; }
   .opm-overlay.open { opacity:1; pointer-events:all; }
@@ -2082,6 +2102,17 @@ tbody tr      { animation:fadeIn .12s ease both; }
   </div>
 </div>
 
+<!-- Inline tekst popup (voor custom tekst/nummer velden) -->
+<div class="inline-text-popup" id="inlineTextPopup">
+  <div class="itp-label" id="itpLabel">Waarde</div>
+  <div class="itp-row">
+    <input class="itp-input" id="itpInput" type="text" placeholder="Waarde invoeren..."
+      onkeydown="if(event.key==='Enter')saveInlineText();if(event.key==='Escape')closeInlineText();">
+    <button class="itp-ok"  onclick="saveInlineText()">&#10003;</button>
+    <button class="itp-clr" onclick="clearInlineText()" title="Wissen">&#10007;</button>
+  </div>
+</div>
+
 <!-- Opmerking modal -->
 <div class="opm-overlay" id="opmOverlay" onclick="if(event.target===this)closeOpmModal()">
   <div class="opm-modal">
@@ -2584,7 +2615,7 @@ const supa = {
   post:  (p,b)  => supa.req('POST',p,b),
 };
 
-const COLS = [
+var COLS = [
   {i:0,f:"",n:"Projectnummer intern"},{i:1,f:"",n:"Projectnummer extern"},{i:2,f:"",n:"Projectnaam"},
   {i:3,f:"",n:"APD Bouwdeel"},{i:4,f:"",n:"Liander Tracédeel"},{i:5,f:"",n:"WP nummer"},
   {i:6,f:"",n:"Tracé start"},{i:7,f:"",n:"Tracé eind"},{i:8,f:"",n:"Engineer"},
@@ -2826,6 +2857,19 @@ window.addEventListener('load', async function() {
     }
   } catch(e) {}
 
+  // ── Laad custom kolommen en voeg toe aan COLS ──
+  const CX_BASE = 2000;
+  try {
+    var cxRows = await supa.get('/rest/v1/custom_kolommen?order=volgorde.asc,id.asc&select=*');
+    if (Array.isArray(cxRows)) {
+      // Verwijder eventuele eerder geladen custom cols om duplicaten te voorkomen
+      while (COLS.length > 0 && COLS[COLS.length-1].cx_id !== undefined) COLS.pop();
+      cxRows.forEach(function(cc) {
+        COLS.push({ i: CX_BASE + cc.id, f: cc.fase || 'Projectinfo', n: cc.naam, type: cc.type, cx_id: cc.id });
+      });
+    }
+  } catch(e) { /* custom_kolommen tabel niet beschikbaar, geen probleem */ }
+
   await loadProject();
   await loadComments();
 });
@@ -2845,7 +2889,7 @@ async function loadProject() {
     var data = await supa.get('/rest/v1/werkpakketten?row_idx=eq.'+ROW_IDX+'&select=*');
     if (!data || !data.length) throw new Error('Project niet gevonden');
     DB_ROW = data[0];
-    ROW_DATA = new Array(420).fill('');
+    ROW_DATA = new Array(5000).fill('');   // ruim genoeg voor custom-col indices (2000+id)
     var cd = DB_ROW.cel_data || {};
     Object.keys(cd).forEach(function(k){ ROW_DATA[parseInt(k)] = cd[k]||''; });
 
@@ -3172,9 +3216,17 @@ function renderPage() {
     faseCols.forEach(function(col) {
       var raw = ROW_DATA[col.i] || '';
       var bc  = badgeCls(raw);
-      var isDate   = DATE_COL_INDICES.indexOf(col.i) >= 0;
-      var isJaNee  = JANEE_COL_INDICES.indexOf(col.i) >= 0;
+
+      /* Voor custom kolommen: type bepaalt hoe we renderen/editten */
+      var isCx       = col.cx_id !== undefined;
+      var cxType     = isCx ? (col.type || 'tekst') : null;
+      var isDate   = DATE_COL_INDICES.indexOf(col.i) >= 0 || (isCx && cxType === 'datum');
+      var isJaNee  = JANEE_COL_INDICES.indexOf(col.i) >= 0 || (isCx && cxType === 'janee');
       var isVirt   = VIRT_COLS.indexOf(col.i) >= 0;
+      var isCxStatus = isCx && cxType === 'status';
+      var isCxText   = isCx && (cxType === 'tekst' || cxType === 'nummer');
+      /* Status badge geldt ook voor custom-status cols */
+      if (isCxStatus && !bc && raw) bc = badgeCls(raw) || 'N'; // fallback badge
       var isWeek   = col.n.indexOf('Weken resterend') >= 0;
       var isFullW  = isVirt || col.n.length > 35;
 
@@ -3217,6 +3269,9 @@ function renderPage() {
           editCls   = ' editable';
         } else if (isVirt) {
           clickAttr = ' onclick="openOpmModal(event,'+col.i+')"';
+          editCls   = ' editable';
+        } else if (isCxText) {
+          clickAttr = ' onclick="openInlineText(event,'+col.i+')"';
           editCls   = ' editable';
         }
       }
@@ -3996,6 +4051,51 @@ async function saveCell(ci, newVal, oldVal) {
     showToast('&#10007; '+err.message,'error');
   } finally { showSaving(false); }
 }
+
+// ── Inline tekst-editor (voor custom tekst/nummer kolommen) ──
+var _itpColIdx = null;
+function openInlineText(e, colIdx) {
+  e.stopPropagation();
+  _itpColIdx = colIdx;
+  var popup = document.getElementById('inlineTextPopup');
+  /* Zoek kolomnaam voor label */
+  var col = COLS.find(function(c){ return c.i === colIdx; });
+  document.getElementById('itpLabel').textContent = col ? col.n : 'Waarde';
+  var inp = document.getElementById('itpInput');
+  inp.type = (col && col.type === 'nummer') ? 'number' : 'text';
+  inp.value = ROW_DATA[colIdx] || '';
+  positionPopup(popup, e, 240, 80);
+  popup.classList.add('open');
+  setTimeout(function(){ inp.focus(); inp.select(); }, 30);
+}
+function closeInlineText() {
+  var p = document.getElementById('inlineTextPopup');
+  if (p) p.classList.remove('open');
+  _itpColIdx = null;
+}
+async function saveInlineText() {
+  if (_itpColIdx === null) return;
+  var ci  = _itpColIdx;
+  var old = ROW_DATA[ci];
+  var nw  = (document.getElementById('itpInput').value || '').trim();
+  closeInlineText();
+  ROW_DATA[ci] = nw;
+  renderPage();
+  await saveCell(ci, nw, old);
+}
+async function clearInlineText() {
+  if (_itpColIdx === null) return;
+  var ci = _itpColIdx, old = ROW_DATA[ci];
+  closeInlineText();
+  ROW_DATA[ci] = '';
+  renderPage();
+  await saveCell(ci, '', old);
+}
+/* Sluit inline-tekst popup bij klik buiten */
+document.addEventListener('click', function(e) {
+  var p = document.getElementById('inlineTextPopup');
+  if (p && p.classList.contains('open') && !p.contains(e.target)) closeInlineText();
+});
 async function saveCells(updates, oldVals) {
   showSaving(true);
   try {

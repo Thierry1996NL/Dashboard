@@ -723,132 +723,88 @@
   /* ── Pencil button ── */
   .row-edit-btn {
     display:inline-flex; align-items:center; justify-content:center;
-    width:26px; height:26px; border-radius:6px;
-    border:none; background:none; cursor:pointer;
-    color:var(--text-3); transition:all .12s; font-size:13px;
-    opacity:0; pointer-events:none;
+    width:26px; height:26px; border-radius:6px; border:none;
+    background:none; cursor:pointer; color:var(--text-3);
+    transition:all .12s; opacity:0; pointer-events:none;
   }
   tbody tr:hover .row-edit-btn { opacity:1; pointer-events:all; color:var(--accent); }
   .row-edit-btn:hover { background:var(--accent-2); }
 
-  /* ── Small action dropdown ── */
+  /* ── Small row action dropdown ── */
   .row-action-menu {
     position:fixed; z-index:820;
     background:var(--surface); border:1px solid var(--border-md);
     border-radius:var(--r-lg); box-shadow:var(--sh-lg);
-    min-width:200px; padding:5px;
-    display:none;
+    min-width:200px; padding:5px; display:none;
     animation:ramPop .13s cubic-bezier(.34,1.3,.64,1);
   }
   .row-action-menu.open { display:block; }
   @keyframes ramPop { from{opacity:0;transform:scale(.93) translateY(-4px)} to{opacity:1;transform:none} }
-  .ram-header {
-    padding:6px 10px 5px; font-size:10px; font-weight:700;
-    text-transform:uppercase; letter-spacing:.07em; color:var(--text-3);
-    border-bottom:1px solid var(--border); margin-bottom:4px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px;
-  }
-  .ram-item {
-    display:flex; align-items:center; gap:9px;
-    padding:8px 10px; border-radius:var(--r); cursor:pointer;
-    font-size:12px; font-weight:500; color:var(--text);
-    transition:background .07s; border:none; background:none;
-    width:100%; text-align:left; font-family:inherit;
-  }
+  .ram-header { padding:6px 10px 5px; font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--text-3); border-bottom:1px solid var(--border);
+    margin-bottom:4px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:190px; }
+  .ram-item { display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:var(--r);
+    cursor:pointer; font-size:12px; font-weight:500; color:var(--text);
+    transition:background .07s; border:none; background:none; width:100%; text-align:left; font-family:inherit; }
   .ram-item:hover { background:var(--surface2); }
-  .ram-item.danger  { color:var(--r-fg); }
-  .ram-item.danger:hover  { background:var(--r-bg); }
-  .ram-item.success { color:var(--g-fg); }
-  .ram-item.success:hover { background:var(--g-bg); }
-  .ram-item-icon {
-    width:22px; height:22px; border-radius:6px;
-    display:flex; align-items:center; justify-content:center;
-    font-size:13px; flex-shrink:0;
-  }
-  .ram-item.edit .ram-item-icon    { background:var(--accent-2); }
+  .ram-item.danger  { color:var(--r-fg); } .ram-item.danger:hover  { background:var(--r-bg); }
+  .ram-item.success { color:var(--g-fg); } .ram-item.success:hover { background:var(--g-bg); }
+  .ram-item-icon { width:22px; height:22px; border-radius:6px; display:flex; align-items:center;
+    justify-content:center; font-size:13px; flex-shrink:0; }
+  .ram-item.edit .ram-item-icon    { background:var(--accent-2); color:var(--accent); }
   .ram-item.archive .ram-item-icon { background:var(--r-bg); }
   .ram-item.restore .ram-item-icon { background:var(--g-bg); }
   .ram-sep { height:1px; background:var(--border); margin:4px 0; }
 
-  /* ── Inline project edit panel ── */
-  .proj-quick-panel {
-    position:fixed; z-index:830;
-    background:var(--surface); border:1px solid var(--border-md);
-    border-radius:var(--r-xl); box-shadow:var(--sh-lg);
-    width:420px; max-width:calc(100vw - 24px);
-    max-height:calc(100vh - 40px);
-    display:none; flex-direction:column;
-    animation:ramPop .15s cubic-bezier(.34,1.3,.64,1);
-    overflow:hidden;
+  /* ── Quick edit panel ── */
+  .pqp {
+    position:fixed; z-index:830; background:var(--surface);
+    border:1px solid var(--border-md); border-radius:var(--r-xl);
+    box-shadow:var(--sh-lg); width:420px; max-width:calc(100vw - 24px);
+    max-height:calc(100vh - 40px); display:none; flex-direction:column;
+    animation:ramPop .15s cubic-bezier(.34,1.3,.64,1); overflow:hidden;
   }
-  .proj-quick-panel.open { display:flex; }
-  .pqp-header {
-    padding:.875rem 1rem .75rem; border-bottom:1px solid var(--border);
-    display:flex; align-items:flex-start; justify-content:space-between;
-    flex-shrink:0;
-  }
+  .pqp.open { display:flex; }
+  .pqp-hdr { padding:.875rem 1rem .75rem; border-bottom:1px solid var(--border);
+    display:flex; align-items:flex-start; justify-content:space-between; flex-shrink:0; }
   .pqp-title { font-size:14px; font-weight:600; color:var(--text); line-height:1.3; }
   .pqp-sub   { font-size:11px; color:var(--text-3); margin-top:2px; }
-  .pqp-close {
-    background:none; border:none; cursor:pointer; color:var(--text-3);
-    font-size:16px; line-height:1; padding:2px 4px; border-radius:4px;
-    transition:all .1s; flex-shrink:0; margin-top:-1px;
-  }
+  .pqp-close { background:none; border:none; cursor:pointer; color:var(--text-3);
+    font-size:16px; line-height:1; padding:2px 5px; border-radius:4px;
+    transition:all .1s; flex-shrink:0; }
   .pqp-close:hover { background:var(--surface3); color:var(--text); }
-  .pqp-body {
-    padding:.875rem 1rem; overflow-y:auto; flex:1;
-  }
+  .pqp-body { padding:.875rem 1rem; overflow-y:auto; flex:1; }
   .pqp-body::-webkit-scrollbar { width:4px; }
   .pqp-body::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:2px; }
-  .pqp-grid {
-    display:grid; grid-template-columns:1fr 1fr; gap:.625rem;
-  }
+  .pqp-grid { display:grid; grid-template-columns:1fr 1fr; gap:.625rem; }
   .pqp-field { display:flex; flex-direction:column; gap:4px; }
   .pqp-field.full { grid-column:1/-1; }
-  .pqp-label {
-    font-size:10px; font-weight:700; text-transform:uppercase;
-    letter-spacing:.06em; color:var(--text-3);
-  }
-  .pqp-label span { color:var(--b-fg); margin-left:2px; }
-  .pqp-input, .pqp-select {
+  .pqp-lbl { font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.06em; color:var(--text-3); }
+  .pqp-lbl span { color:var(--b-fg); margin-left:2px; }
+  .pqp-input, .pqp-sel {
     padding:6px 10px; font-family:'Inter',system-ui,sans-serif; font-size:12px;
     border:1px solid var(--border-md); border-radius:var(--r-md);
     background:var(--surface2); color:var(--text); outline:none;
-    transition:all .12s; width:100%;
+    transition:all .12s; width:100%; box-sizing:border-box;
   }
-  .pqp-input:focus, .pqp-select:focus {
-    border-color:var(--accent); background:#fff;
-    box-shadow:0 0 0 3px var(--accent-2);
-  }
-  .pqp-select {
-    appearance:none; cursor:pointer;
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A8FAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:no-repeat; background-position:right 8px center; background-color:var(--surface2);
-    padding-right:26px;
-  }
-  .pqp-section-title {
-    grid-column:1/-1; font-size:10px; font-weight:700; text-transform:uppercase;
-    letter-spacing:.07em; color:var(--text-2);
-    border-top:1px solid var(--border); padding-top:.625rem; margin-top:.25rem;
-  }
-  .pqp-footer {
-    padding:.75rem 1rem; border-top:1px solid var(--border);
-    display:flex; align-items:center; gap:.5rem; flex-shrink:0;
-  }
-  .pqp-btn-save {
-    flex:1; padding:8px 16px; font-size:12px; font-weight:600;
-    background:var(--accent); color:#fff; border:none;
-    border-radius:var(--r-md); cursor:pointer; font-family:inherit;
-    transition:all .12s;
-  }
-  .pqp-btn-save:hover { background:#0044CC; }
-  .pqp-btn-cancel {
-    padding:8px 14px; font-size:12px; font-weight:500;
-    background:var(--surface2); color:var(--text-2);
-    border:1px solid var(--border-md); border-radius:var(--r-md);
-    cursor:pointer; font-family:inherit; transition:all .12s;
-  }
-  .pqp-btn-cancel:hover { background:var(--surface3); color:var(--text); }
+  .pqp-input:focus, .pqp-sel:focus { border-color:var(--accent); background:#fff; box-shadow:0 0 0 3px var(--accent-2); }
+  .pqp-sel { appearance:none; cursor:pointer; padding-right:26px;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%238A8FAA' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 8px center; background-color:var(--surface2); }
+  .pqp-section { grid-column:1/-1; font-size:10px; font-weight:700; text-transform:uppercase;
+    letter-spacing:.07em; color:var(--text-2); border-top:1px solid var(--border);
+    padding-top:.625rem; margin-top:.25rem; }
+  .pqp-ftr { padding:.75rem 1rem; border-top:1px solid var(--border);
+    display:flex; align-items:center; gap:.5rem; flex-shrink:0; }
+  .pqp-save { flex:1; padding:8px 16px; font-size:12px; font-weight:600;
+    background:var(--accent); color:#fff; border:none; border-radius:var(--r-md);
+    cursor:pointer; font-family:inherit; transition:all .12s; }
+  .pqp-save:hover { background:#0044CC; }
+  .pqp-cancel { padding:8px 14px; font-size:12px; font-weight:500;
+    background:var(--surface2); color:var(--text-2); border:1px solid var(--border-md);
+    border-radius:var(--r-md); cursor:pointer; font-family:inherit; transition:all .12s; }
+  .pqp-cancel:hover { background:var(--surface3); color:var(--text); }
 
 
   /* ── COMPACT STATS BAR ── */
@@ -2138,12 +2094,8 @@ tbody tr      { animation:fadeIn .12s ease both; }
     <div style="width:1px;height:18px;background:var(--border-md);margin:0 2px"></div>
 
     <!-- Archief -->
-    <button class="btn-archief" id="btnArchief" onclick="toggleArchief()" title="Gearchiveerde projecten tonen/verbergen">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
-        <rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/>
-        <path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-        <path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-      </svg>
+    <button class="btn-archief" id="btnArchief" onclick="toggleArchief()" title="Gearchiveerde projecten">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
       Archief
     </button>
 
@@ -4922,16 +4874,11 @@ function render() {
       var actualIdx = ROWS.indexOf(r);
       html += '<tr data-ri="'+actualIdx+'" onclick="handleRowClick(event,'+actualIdx+')">';
       if (currentMode==='editor') {
+        var pencilSvg = '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>';
         if (archiefModus) {
-          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Acties">'
-            + '<button class="row-edit-btn" style="opacity:1;color:var(--g-fg)">'
-            + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-            + '</button></td>';
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Acties"><button class="row-edit-btn" style="opacity:1;color:var(--g-fg)">'+pencilSvg+'</button></td>';
         } else {
-          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Bewerken">'
-            + '<button class="row-edit-btn">'
-            + '<svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-            + '</button></td>';
+          html += '<td class="edit-col-cell" onclick="event.stopPropagation();openRowMenu(event,'+actualIdx+')" title="Bewerken"><button class="row-edit-btn">'+pencilSvg+'</button></td>';
         }
       }
       vcols.forEach(function(col, ci) {
@@ -5583,113 +5530,136 @@ function renderBoringCell(wpId,count){
 }
 
 
-// ══ ROW ACTION MENU + QUICK EDIT PANEL ══
+// ══ ROW ACTION MENU + QUICK EDIT ══
 var _ramRowIdx = -1;
 
-/* ── Positie-helper ── */
-function _positionPopup(el, anchorEl) {
-  var aw   = el.offsetWidth  || 420;
-  var ah   = el.offsetHeight || 300;
-  var rect = anchorEl.getBoundingClientRect();
-  var left = rect.right - aw;
-  var top  = rect.bottom + 6;
+/* Positiebepaling popup */
+function _popupPos(el, anchor) {
+  el.style.visibility = 'hidden'; el.style.display = 'flex';
+  var aw = el.offsetWidth || 420, ah = el.offsetHeight || 300;
+  el.style.display = ''; el.style.visibility = '';
+  var r = anchor.getBoundingClientRect();
+  var left = r.right - aw, top = r.bottom + 6;
   if (left < 8) left = 8;
   if (left + aw > window.innerWidth  - 8) left = window.innerWidth  - aw - 8;
-  if (top  + ah > window.innerHeight - 8) top  = rect.top - ah - 6;
+  if (top  + ah > window.innerHeight - 8) top  = r.top - ah - 6;
   if (top < 8) top = 8;
-  el.style.left = left + 'px';
-  el.style.top  = top  + 'px';
+  el.style.left = left + 'px'; el.style.top = top + 'px';
 }
 
-/* ── Open kleine dropdown ── */
+/* Kleine dropdown openen */
 function openRowMenu(e, rowIdx) {
   e.stopPropagation();
   closeQuickEdit();
-  var menu = document.getElementById('rowActionMenu');
-  if (!menu) return;
   _ramRowIdx = rowIdx;
-  var r    = ROWS[rowIdx];
-  var naam = r ? (r[2] || 'Project') : 'Project';
-  document.getElementById('ramTitle').textContent = naam;
+  var menu = document.getElementById('rowActionMenu');
+  var r = ROWS[rowIdx];
+  document.getElementById('ramTitle').textContent = (r && r[2]) || 'Project';
   document.getElementById('ramEdit').style.display    = archiefModus ? 'none' : 'flex';
   document.getElementById('ramArchive').style.display = archiefModus ? 'none' : 'flex';
   document.getElementById('ramRestore').style.display = archiefModus ? 'flex' : 'none';
   menu.classList.add('open');
-  _positionPopup(menu, e.currentTarget);
+  _popupPos(menu, e.currentTarget);
 }
-
 function closeRowMenu() {
   var m = document.getElementById('rowActionMenu');
   if (m) m.classList.remove('open');
 }
 
-/* ── Selectbox vullen (engineers / rollen) ── */
-function _fillQefSelect(id, selectedVal) {
-  var sel = document.getElementById(id);
-  if (!sel) return;
-  // Haal opties op uit de matching proj-select
-  var src = document.getElementById(id.replace('qef','pf'));
-  if (src) {
-    sel.innerHTML = src.innerHTML;
-  } else {
-    sel.innerHTML = '<option value="">— Kies —</option>';
-  }
-  sel.value = selectedVal || '';
+/* Vul een <select> vanuit ROLE_LISTS of ENGINEER_OPTIONS */
+function _pqpFillSelect(id, roleKey, selectedVal, placeholderLabel) {
+  var sel = document.getElementById(id); if (!sel) return;
+  var list = (ROLE_LISTS && ROLE_LISTS[roleKey] && ROLE_LISTS[roleKey].length)
+    ? ROLE_LISTS[roleKey] : (ENGINEER_OPTIONS || []);
+  sel.innerHTML = '<option value="">' + (placeholderLabel || '— Kies —') + '</option>';
+  list.forEach(function(name) {
+    var o = document.createElement('option');
+    o.value = name; o.textContent = name;
+    if (name === selectedVal) o.selected = true;
+    sel.appendChild(o);
+  });
 }
 
-/* ── Open inline edit-panel (vanuit dropdown) ── */
-function _ramOpenEdit() {
-  closeRowMenu();
-  openQuickEdit(_ramRowIdx);
-}
+/* Open het inline edit-panel */
+function _ramOpenEdit() { closeRowMenu(); openQuickEdit(_ramRowIdx); }
 
 function openQuickEdit(rowIdx) {
   if (rowIdx < 0) return;
-  // Zorg dat het proj-modal ook zijn selects bijvult zodat we die kunnen kopiëren
-  refreshProjectModalSelect && refreshProjectModalSelect();
-
-  var panel = document.getElementById('projQuickPanel');
-  if (!panel) return;
   _ramRowIdx = rowIdx;
   var r = ROWS[rowIdx] || [];
+  var panel = document.getElementById('projQuickPanel');
   document.getElementById('pqpTitle').textContent = r[2] || 'Project bewerken';
   document.getElementById('pqpSub').textContent   = (r[0] || '') + (r[5] ? ' · ' + r[5] : '');
 
-  // Tekst-velden vullen
-  var map = {qef0:0,qef1:1,qef2:2,qef3:3,qef4:4,qef5:5,qef6:6,qef7:7,qef9:9,qef10:10,qef11:11};
-  for (var id in map) {
-    var el = document.getElementById(id);
-    if (el) el.value = r[map[id]] || '';
-  }
-  // Select-velden vullen
-  _fillQefSelect('qef8',   r[8]   || '');
-  _fillQefSelect('qef179', r[179] || '');
-  _fillQefSelect('qef180', r[180] || '');
-  _fillQefSelect('qef181', r[181] || '');
+  /* Bouw grid dynamisch zodat custom-kolommen er automatisch in staan */
+  var BASE_FIELDS = [
+    {id:'qef0',  ci:0,   label:'Projectnummer intern',  type:'text',   ph:'bijv. KC1234', full:false},
+    {id:'qef1',  ci:1,   label:'Projectnummer extern',  type:'text',   ph:'bijv. 210145', full:false},
+    {id:'qef2',  ci:2,   label:'Projectnaam',           type:'text',   ph:'naam',         full:true,  req:true},
+    {id:'qef3',  ci:3,   label:'APD Bouwdeel',          type:'text',   ph:'bijv. Oost',   full:false},
+    {id:'qef4',  ci:4,   label:'Liander Tracédeel',     type:'text',   ph:'bijv. APD1',   full:false},
+    {id:'qef5',  ci:5,   label:'WP nummer',             type:'text',   ph:'bijv. WP1',    full:false, req:true},
+    {id:'qef6',  ci:6,   label:'Tracé start',           type:'text',   ph:'bijv. RS 4',   full:false},
+    {id:'qef7',  ci:7,   label:'Tracé eind',            type:'text',   ph:'bijv. DR01',   full:false},
+    {id:'qef9',  ci:9,   label:'Lengte nieuw (m)',       type:'number', ph:'0',            full:false},
+    {id:'qef10', ci:10,  label:'Lengte verwijderen (m)', type:'number', ph:'0',            full:false},
+    {id:'qef11', ci:11,  label:'Overdracht VO aannemer', type:'text',   ph:'23-10-2025',   full:true},
+  ];
+  var ROLE_FIELDS = [
+    {id:'qef8',   ci:8,   label:'Engineer',        roleKey:'engineer',       req:true,  ph:'— Kies engineer —'},
+    {id:'qef179', ci:179, label:'Projectleider',   roleKey:'projectleider',  ph:'— Kies projectleider —'},
+    {id:'qef180', ci:180, label:'Uitvoerder',      roleKey:'uitvoerder',     ph:'— Kies uitvoerder —'},
+    {id:'qef181', ci:181, label:'Werkvoorbereider',roleKey:'werkvoorbereider',ph:'— Kies werkvoorbereider —'},
+  ];
 
-  // Positioneer het panel rechts naast de aangeklikte rij
+  var html = '';
+  BASE_FIELDS.forEach(function(f) {
+    html += '<div class="pqp-field'+(f.full?' full':'')+'">'
+      + '<label class="pqp-lbl">'+esc(f.label)+(f.req?' <span>*</span>':'')+'</label>'
+      + '<input class="pqp-input" id="'+f.id+'" type="'+(f.type||'text')+'" placeholder="'+esc(f.ph||'')+'" value="'+esc(r[f.ci]||'')+'">'
+      + '</div>';
+  });
+  /* Custom kolommen (Projectinfo) */
+  var cxInfo = (typeof CUSTOM_COLS !== 'undefined') ? CUSTOM_COLS.filter(function(c){ return (c.fase||'Projectinfo') === 'Projectinfo'; }) : [];
+  if (cxInfo.length) {
+    html += '<div class="pqp-section">Aangepaste velden</div>';
+    cxInfo.forEach(function(cc) {
+      var ci = CX_BASE + cc.id;
+      var val = r[ci] || '';
+      html += '<div class="pqp-field'+(cc.naam.length>25?' full':'')+'">'
+        + '<label class="pqp-lbl">'+esc(cc.naam)+'</label>'
+        + '<input class="pqp-input" id="qefcx'+cc.id+'" type="'+(cc.type==='nummer'?'number':'text')+'" value="'+esc(val)+'">'
+        + '</div>';
+    });
+  }
+  /* Rollen */
+  html += '<div class="pqp-section">Rollen</div>';
+  ROLE_FIELDS.forEach(function(f) {
+    html += '<div class="pqp-field'+(f.id==='qef8'?' full':'')+'">'
+      + '<label class="pqp-lbl">'+esc(f.label)+(f.req?' <span>*</span>':'')+'</label>'
+      + '<select class="pqp-sel" id="'+f.id+'"></select>'
+      + '</div>';
+  });
+  document.getElementById('pqpGrid').innerHTML = html;
+
+  /* Vul select-velden */
+  ROLE_FIELDS.forEach(function(f) { _pqpFillSelect(f.id, f.roleKey, r[f.ci]||'', f.ph); });
+
+  /* Positioneer panel naast de rij */
   panel.classList.add('open');
-
-  // Zoek de TR voor deze rij om positie te bepalen
-  var tr = document.querySelector('tr[data-ri="' + rowIdx + '"]');
+  var tr = document.querySelector('tr[data-ri="'+rowIdx+'"]');
   if (tr) {
-    var rect  = tr.getBoundingClientRect();
-    var pw    = panel.offsetWidth  || 420;
-    var ph    = panel.offsetHeight || 400;
-    var left  = rect.right + 8;
-    var top   = rect.top;
-    if (left + pw > window.innerWidth - 8)  left = rect.left - pw - 8;
+    var rect = tr.getBoundingClientRect();
+    var pw = 420, ph2 = panel.offsetHeight || 500;
+    var left = rect.right + 10;
+    if (left + pw > window.innerWidth - 8) left = rect.left - pw - 10;
     if (left < 8) left = 8;
-    if (top  + ph > window.innerHeight - 8) top  = window.innerHeight - ph - 8;
-    if (top < 8)  top  = 8;
-    panel.style.left = left + 'px';
-    panel.style.top  = top  + 'px';
+    var top = rect.top;
+    if (top + ph2 > window.innerHeight - 8) top = window.innerHeight - ph2 - 8;
+    if (top < 8) top = 8;
+    panel.style.left = left + 'px'; panel.style.top = top + 'px';
   }
-
-  // Focus op naam-veld
-  setTimeout(function() {
-    var f = document.getElementById('qef2'); if (f) f.focus();
-  }, 80);
+  setTimeout(function() { var el = document.getElementById('qef2'); if(el) el.focus(); }, 80);
 }
 
 function closeQuickEdit() {
@@ -5697,82 +5667,78 @@ function closeQuickEdit() {
   if (p) p.classList.remove('open');
 }
 
-/* ── Opslaan vanuit het inline panel ── */
+/* Opslaan vanuit quick panel */
 function saveQuickEdit() {
-  var naam = (document.getElementById('qef2').value || '').trim();
-  var wp   = (document.getElementById('qef5').value || '').trim();
-  var eng  = (document.getElementById('qef8').value  || '').trim();
+  var naam = (document.getElementById('qef2').value||'').trim();
+  var wp   = (document.getElementById('qef5').value||'').trim();
+  var eng  = (document.getElementById('qef8') && document.getElementById('qef8').value||'').trim();
   if (!naam) { showToast('✗ Projectnaam is verplicht', 'error'); return; }
   if (!wp)   { showToast('✗ WP nummer is verplicht',   'error'); return; }
   if (!eng)  { showToast('✗ Kies een engineer',         'error'); return; }
 
-  var ri    = _ramRowIdx;
-  var dbRow = DB_ROWS[ri];
+  var ri = _ramRowIdx, dbRow = DB_ROWS[ri];
+  /* Kopieer bestaande cel_data */
   var celData = {};
-  // Kopieer bestaande cel_data zodat we niets overschrijven
   if (dbRow && dbRow.cel_data) {
-    try { var existing = typeof dbRow.cel_data === 'string' ? JSON.parse(dbRow.cel_data) : dbRow.cel_data;
-          for (var k in existing) celData[k] = existing[k]; } catch(e) {}
+    try { var ex = typeof dbRow.cel_data==='string'?JSON.parse(dbRow.cel_data):dbRow.cel_data;
+          for (var k in ex) celData[k] = ex[k]; } catch(e){}
   }
-  // Schrijf de ingevulde velden
-  var qmap = {qef0:0,qef1:1,qef2:2,qef3:3,qef4:4,qef5:5,qef6:6,qef7:7,qef9:9,qef10:10,qef11:11};
-  for (var qid in qmap) {
-    var el = document.getElementById(qid);
-    if (el) { var v = el.value.trim(); if (v) celData[String(qmap[qid])] = v; else delete celData[String(qmap[qid])]; }
-  }
-  // Rol-selects
-  [['qef8',8],['qef179',179],['qef180',180],['qef181',181]].forEach(function(pair) {
-    var el = document.getElementById(pair[0]);
-    if (el) { var v = el.value.trim(); if (v) celData[String(pair[1])] = v; else delete celData[String(pair[1])]; }
+  /* Schrijf basisvelden */
+  var BASE_MAP = {qef0:0,qef1:1,qef2:2,qef3:3,qef4:4,qef5:5,qef6:6,qef7:7,qef9:9,qef10:10,qef11:11};
+  Object.keys(BASE_MAP).forEach(function(id) {
+    var el = document.getElementById(id); if (!el) return;
+    var v = el.value.trim();
+    if (v) celData[String(BASE_MAP[id])] = v; else delete celData[String(BASE_MAP[id])];
   });
+  /* Rol-selects */
+  [{id:'qef8',ci:8},{id:'qef179',ci:179},{id:'qef180',ci:180},{id:'qef181',ci:181}].forEach(function(p){
+    var el = document.getElementById(p.id); if (!el) return;
+    var v = el.value.trim();
+    if (v) celData[String(p.ci)] = v; else delete celData[String(p.ci)];
+  });
+  /* Custom-kolommen */
+  if (typeof CUSTOM_COLS !== 'undefined') {
+    CUSTOM_COLS.forEach(function(cc) {
+      var el = document.getElementById('qefcx'+cc.id); if (!el) return;
+      var v = el.value.trim(), ci = CX_BASE + cc.id;
+      if (v) celData[String(ci)] = v; else delete celData[String(ci)];
+    });
+  }
 
   closeQuickEdit();
   showSaving(true);
-
-  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
-    cel_data:   celData,
-    updated_by: currentUser,
-    updated_at: new Date().toISOString()
-  }).then(function() {
-    showSaving(false);
-    showToast('✓ Project opgeslagen', 'success');
-    return loadData();
-  }).catch(function(err) {
-    showSaving(false);
-    showToast('✗ Fout: ' + err.message, 'error');
-  });
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx, {
+    cel_data: celData, updated_by: currentUser, updated_at: new Date().toISOString()
+  }).then(function(){ showSaving(false); showToast('✓ Project opgeslagen','success'); return loadData(); })
+  .catch(function(err){ showSaving(false); showToast('✗ Fout: '+err.message,'error'); });
 }
 
-/* ── Archiveren vanuit dropdown ── */
+/* Archiveren */
 function _ramArchive() {
-  var ri = _ramRowIdx;
-  closeRowMenu();
+  var ri = _ramRowIdx; closeRowMenu();
   if (ri < 0) return;
-  var naam = (ROWS[ri] && ROWS[ri][2]) || 'dit project';
-  if (!confirm('Weet je zeker dat je "' + naam + '" wilt archiveren?')) return;
-  var dbRow = DB_ROWS[ri];
-  showSaving(true);
-  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
-    gearchiveerd: true, updated_by: currentUser, updated_at: new Date().toISOString()
-  }).then(function() { showSaving(false); showToast('✓ Project gearchiveerd', 'success'); return loadData(); })
-  .catch(function(err) { showSaving(false); showToast('✗ Fout: ' + err.message, 'error'); });
+  var naam = (ROWS[ri]&&ROWS[ri][2])||'dit project';
+  if (!confirm('Weet je zeker dat je "'+naam+'" wilt archiveren?')) return;
+  var dbRow = DB_ROWS[ri]; showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx,
+    {gearchiveerd:true,updated_by:currentUser,updated_at:new Date().toISOString()})
+  .then(function(){ showSaving(false); showToast('✓ Project gearchiveerd','success'); return loadData(); })
+  .catch(function(err){ showSaving(false); showToast('✗ Fout: '+err.message,'error'); });
 }
 
-/* ── Terugzetten vanuit dropdown (archiefmodus) ── */
+/* Terugzetten */
 function _ramRestore() {
-  var ri = _ramRowIdx;
-  closeRowMenu();
+  var ri = _ramRowIdx; closeRowMenu();
   if (ri < 0) return;
   if (!confirm('Project terugzetten naar actief?')) return;
-  var dbRow = DB_ROWS[ri];
-  showSaving(true);
-  supaPatch('/rest/v1/werkpakketten?row_idx=eq.' + dbRow.row_idx, {
-    gearchiveerd: false, updated_by: currentUser, updated_at: new Date().toISOString()
-  }).then(function() { showSaving(false); showToast('✓ Project hersteld', 'success'); return loadData(); })
-  .catch(function(err) { showSaving(false); showToast('✗ Fout: ' + err.message, 'error'); });
+  var dbRow = DB_ROWS[ri]; showSaving(true);
+  supaPatch('/rest/v1/werkpakketten?row_idx=eq.'+dbRow.row_idx,
+    {gearchiveerd:false,updated_by:currentUser,updated_at:new Date().toISOString()})
+  .then(function(){ showSaving(false); showToast('✓ Project hersteld','success'); return loadData(); })
+  .catch(function(err){ showSaving(false); showToast('✗ Fout: '+err.message,'error'); });
 }
 
-/* ── Sluit alles bij klik buiten of Escape ── */
+/* Sluit bij klik buiten of Escape */
 document.addEventListener('click', function(e) {
   var menu  = document.getElementById('rowActionMenu');
   var panel = document.getElementById('projQuickPanel');
@@ -5780,7 +5746,7 @@ document.addEventListener('click', function(e) {
   if (panel && panel.classList.contains('open') && !panel.contains(e.target)) closeQuickEdit();
 });
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Escape') { closeRowMenu(); closeQuickEdit(); }
+  if (e.key==='Escape') { closeRowMenu(); closeQuickEdit(); }
 });
 
 // ══ SIDEBAR ══
@@ -5934,119 +5900,37 @@ document.addEventListener('DOMContentLoaded', _initSidebarResize);
 <div class="row-action-menu" id="rowActionMenu">
   <div class="ram-header" id="ramTitle">Project</div>
   <button class="ram-item edit" id="ramEdit" onclick="_ramOpenEdit()">
-    <span class="ram-item-icon">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </span>
+    <span class="ram-item-icon"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M11.5 2.5a1.414 1.414 0 012 2L5 13H3v-2L11.5 2.5z" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     Projectinfo bewerken
   </button>
   <div class="ram-sep"></div>
   <button class="ram-item danger archive" id="ramArchive" onclick="_ramArchive()">
-    <span class="ram-item-icon">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
-    </span>
+    <span class="ram-item-icon"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><rect x="1" y="3" width="14" height="3" rx="1" stroke="currentColor" stroke-width="1.4"/><path d="M2.5 6v7a1 1 0 001 1h9a1 1 0 001-1V6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M6 9.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></span>
     Archiveren
   </button>
   <button class="ram-item success restore" id="ramRestore" style="display:none" onclick="_ramRestore()">
-    <span class="ram-item-icon">
-      <svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 105-5H5M5 1v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-    </span>
+    <span class="ram-item-icon"><svg width="13" height="13" viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 105-5H5M5 1v4h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     Terugzetten naar actief
   </button>
 </div>
 
-<!-- ── Inline project edit panel ── -->
-<div class="proj-quick-panel" id="projQuickPanel">
-  <div class="pqp-header">
+<!-- ── Quick edit panel ── -->
+<div class="pqp" id="projQuickPanel">
+  <div class="pqp-hdr">
     <div>
       <div class="pqp-title" id="pqpTitle">Project bewerken</div>
       <div class="pqp-sub" id="pqpSub">Wijzigingen worden direct opgeslagen</div>
     </div>
-    <button class="pqp-close" onclick="closeQuickEdit()" title="Sluiten">&#10005;</button>
+    <button class="pqp-close" onclick="closeQuickEdit()">&#10005;</button>
   </div>
   <div class="pqp-body">
-    <div class="pqp-grid">
-
-      <!-- Projectnummers -->
-      <div class="pqp-field">
-        <label class="pqp-label">Projectnummer intern</label>
-        <input class="pqp-input" id="qef0" type="text" placeholder="bijv. KC1234">
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Projectnummer extern</label>
-        <input class="pqp-input" id="qef1" type="text" placeholder="bijv. 210145">
-      </div>
-
-      <!-- Naam -->
-      <div class="pqp-field full">
-        <label class="pqp-label">Projectnaam <span>*</span></label>
-        <input class="pqp-input" id="qef2" type="text" placeholder="bijv. Spannenburg Uitbreiding">
-      </div>
-
-      <!-- APD / Liander -->
-      <div class="pqp-field">
-        <label class="pqp-label">APD Bouwdeel</label>
-        <input class="pqp-input" id="qef3" type="text" placeholder="bijv. Oost">
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Liander Tracédeel</label>
-        <input class="pqp-input" id="qef4" type="text" placeholder="bijv. APD1">
-      </div>
-
-      <!-- WP / Tracés -->
-      <div class="pqp-field">
-        <label class="pqp-label">WP nummer <span>*</span></label>
-        <input class="pqp-input" id="qef5" type="text" placeholder="bijv. WP1">
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Tracé start</label>
-        <input class="pqp-input" id="qef6" type="text" placeholder="bijv. RS 4">
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Tracé eind</label>
-        <input class="pqp-input" id="qef7" type="text" placeholder="bijv. DR01">
-      </div>
-
-      <!-- Lengtes -->
-      <div class="pqp-field">
-        <label class="pqp-label">Lengte nieuw (m)</label>
-        <input class="pqp-input" id="qef9" type="number" placeholder="0">
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Lengte verwijderen (m)</label>
-        <input class="pqp-input" id="qef10" type="number" placeholder="0">
-      </div>
-
-      <!-- Overdracht -->
-      <div class="pqp-field full">
-        <label class="pqp-label">Overdracht VO aannemer</label>
-        <input class="pqp-input" id="qef11" type="text" placeholder="bijv. 23-10-2025">
-      </div>
-
-      <!-- Rollen sectie -->
-      <div class="pqp-section-title">Rollen</div>
-
-      <div class="pqp-field full">
-        <label class="pqp-label">Engineer <span>*</span></label>
-        <select class="pqp-select" id="qef8"></select>
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Projectleider</label>
-        <select class="pqp-select" id="qef179"></select>
-      </div>
-      <div class="pqp-field">
-        <label class="pqp-label">Uitvoerder</label>
-        <select class="pqp-select" id="qef180"></select>
-      </div>
-      <div class="pqp-field full">
-        <label class="pqp-label">Werkvoorbereider</label>
-        <select class="pqp-select" id="qef181"></select>
-      </div>
-
+    <div class="pqp-grid" id="pqpGrid">
+      <!-- Velden worden dynamisch gevuld door openQuickEdit() -->
     </div>
   </div>
-  <div class="pqp-footer">
-    <button class="pqp-btn-cancel" onclick="closeQuickEdit()">Annuleren</button>
-    <button class="pqp-btn-save" onclick="saveQuickEdit()">
+  <div class="pqp-ftr">
+    <button class="pqp-cancel" onclick="closeQuickEdit()">Annuleren</button>
+    <button class="pqp-save" onclick="saveQuickEdit()">
       <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style="vertical-align:-1px;margin-right:4px"><path d="M3 8l4 4 6-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Opslaan
     </button>
