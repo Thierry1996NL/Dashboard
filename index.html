@@ -3942,12 +3942,19 @@ async function authMfaVerify() {
   try {
     var sb = _getSupaAuth();
     var res = await sb.auth.mfa.verify({ factorId: _mfaFactorId, challengeId: _mfaChallengeId, code: code });
-    if (res.error) throw res.error;
+    if (res.error) {
+      document.getElementById('mfaVerifyCode').value = '';
+      document.getElementById('mfaVerifyCode').focus();
+      _authShowError('mfaVerifyError', 'Code onjuist of verlopen. Wacht op een nieuwe code in de app.');
+      return;
+    }
     AUTH_TOKEN = res.data.session.access_token;
     var sess = await sb.auth.getSession();
     await _authLoadProfile(sess.data.session);
   } catch(e) {
-    _authShowError('mfaVerifyError', 'Verkeerde code. Probeer opnieuw.');
+    document.getElementById('mfaVerifyCode').value = '';
+    document.getElementById('mfaVerifyCode').focus();
+    _authShowError('mfaVerifyError', 'Code onjuist of verlopen. Wacht op een nieuwe code in de app.');
   }
 }
 
@@ -3955,16 +3962,32 @@ async function authMfaVerify() {
 async function authMfaSetup() {
   try {
     var sb = _getSupaAuth();
+
+    // Verwijder eventuele eerdere onvoltooide enrollments
+    var existing = await sb.auth.mfa.listFactors();
+    if (existing.data && existing.data.all) {
+      for (var i = 0; i < existing.data.all.length; i++) {
+        var f = existing.data.all[i];
+        if (f.status === 'unverified') {
+          await sb.auth.mfa.unenroll({ factorId: f.id });
+        }
+      }
+    }
+
     var res = await sb.auth.mfa.enroll({ factorType: 'totp', issuer: 'Dashboard TPA' });
     if (res.error) throw res.error;
     _mfaFactorId = res.data.id;
-    // Toon QR code
+
     var qrContainer = document.getElementById('mfaQrContainer');
-    if (res.data.totp.qr_code) {
-      qrContainer.innerHTML = res.data.totp.qr_code; // SVG
+    var qr = res.data.totp.qr_code;
+    if (qr) {
+      if (qr.startsWith('data:')) {
+        qrContainer.innerHTML = '<img src="'+qr+'" style="width:180px;height:180px;display:block;margin:0 auto" alt="QR code">';
+      } else {
+        qrContainer.innerHTML = qr;
+      }
     } else {
-      // Fallback: toon URI als link
-      qrContainer.innerHTML = '<p style="font-size:11px;color:#333;word-break:break-all">'+res.data.totp.uri+'</p>';
+      qrContainer.innerHTML = '<p style="font-size:11px;color:#333">Gebruik de handmatige code hieronder.</p>';
     }
     document.getElementById('mfaSecret').textContent = res.data.totp.secret;
     authShowState('mfaSetup');
@@ -3980,12 +4003,20 @@ async function authMfaSetupVerify() {
   try {
     var sb = _getSupaAuth();
     var res = await sb.auth.mfa.challengeAndVerify({ factorId: _mfaFactorId, code: code });
-    if (res.error) throw res.error;
+    if (res.error) {
+      // Code verlopen of onjuist
+      document.getElementById('mfaSetupCode').value = '';
+      document.getElementById('mfaSetupCode').focus();
+      _authShowError('mfaSetupError', 'Code onjuist of verlopen. Wacht op een nieuwe code in de app en probeer opnieuw.');
+      return;
+    }
     AUTH_TOKEN = res.data.session.access_token;
     var sess = await sb.auth.getSession();
     await _authLoadProfile(sess.data.session);
   } catch(e) {
-    _authShowError('mfaSetupError', 'Verkeerde code. Probeer opnieuw.');
+    document.getElementById('mfaSetupCode').value = '';
+    document.getElementById('mfaSetupCode').focus();
+    _authShowError('mfaSetupError', 'Code onjuist of verlopen. Wacht op een nieuwe code en probeer opnieuw.');
   }
 }
 
