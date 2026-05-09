@@ -1956,7 +1956,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
 <body>
 
 <!-- ══ AUTH SCREEN ══ -->
-<div id="loginScreen">
+<div id="loginScreen" style="display:none">
   <div class="login-box">
 
     <!-- Logo (altijd zichtbaar) -->
@@ -2732,16 +2732,14 @@ function rvSave(order) {
   });
   fetch(SUPA_URL + '/rest/v1/rij_volgorde', {
     method: 'POST',
-    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
-      'Content-Type': 'application/json',
-      'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    headers: _sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
     body: JSON.stringify(rows)
   }).catch(function() {});
 }
 
 function loadRijVolgorde() {
   return fetch(SUPA_URL + '/rest/v1/rij_volgorde?select=row_idx,pos&order=pos.asc', {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    headers: _sh()
   }).then(function(r) { return r.json(); })
     .then(function(rows) {
       if (Array.isArray(rows) && rows.length) {
@@ -2863,7 +2861,7 @@ var _dragSrcColIdx = -1;
 
 function kvLoad() {
   return fetch(SUPA_URL+'/rest/v1/kolom_volgorde?select=*&order=pos.asc',{
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:_sh()
   }).then(function(r){return r.json();}).catch(function(){return [];});
 }
 function kvSave(order) {
@@ -2871,8 +2869,7 @@ function kvSave(order) {
   var rows = order.map(function(ci,pos){ return {col_idx:ci, pos:pos, updated_by:currentUser}; });
   return fetch(SUPA_URL+'/rest/v1/kolom_volgorde',{
     method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
-      'Prefer':'resolution=merge-duplicates,return=minimal'},
+    headers:_sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
     body:JSON.stringify(rows)
   });
 }
@@ -3089,14 +3086,13 @@ var ALLE_FASEN = ['Projectinfo','Analyse','VO-Fase','DO-Fase','Onderzoeksfase','
 // Supabase helpers for fase overrides
 function foLoad() {
   return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides?select=*',{
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:_sh()
   }).then(function(r){return r.json();}).catch(function(){return [];});
 }
 function foUpsert(colIdx, fase) {
   return fetch(SUPA_URL+'/rest/v1/kolom_fase_overrides',{
     method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json',
-      'Prefer':'resolution=merge-duplicates,return=minimal'},
+    headers:_sh({'Prefer':'resolution=merge-duplicates,return=minimal'}),
     body:JSON.stringify({col_idx:colIdx, fase:fase, updated_by:currentUser, updated_at:new Date().toISOString()})
   });
 }
@@ -3161,7 +3157,7 @@ function applyFaseOverride(newFase) {
   if (ci >= CX_BASE && col.cx_id) {
     fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+col.cx_id,{
       method:'PATCH',
-      headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+      headers:_sh(),
       body:JSON.stringify({fase:newFase})
     }).catch(function(){});
     var cc = CUSTOM_COLS.find(function(c){ return c.id===col.cx_id; });
@@ -3181,20 +3177,20 @@ var CX_BASE = 2000;          // offset for custom col indices (cx_2000, cx_2001,
 // Supabase helpers
 function cxLoad() {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen?order=volgorde.asc,id.asc&select=*',{
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:_sh()
   }).then(function(r){return r.json();});
 }
 function cxInsert(o) {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen',{
     method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    headers:_sh({'Prefer':'return=representation'}),
     body:JSON.stringify(o)
   }).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error((d&&d.message)||'HTTP '+r.status);return d;});});
 }
 function cxDelete(id) {
   return fetch(SUPA_URL+'/rest/v1/custom_kolommen?id=eq.'+id,{
     method:'DELETE',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:_sh()
   }).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);});
 }
 
@@ -3327,24 +3323,33 @@ function esc(v) {
 // ══ SUPABASE — Promise-based, no async/await ══
 var AUTH_TOKEN = null; // Wordt gezet na succesvolle login
 
+/* Centrale helper — altijd correcte auth headers */
+function _sh(extra) {
+  var token = AUTH_TOKEN || SUPA_KEY;
+  var h = {
+    'apikey':        SUPA_KEY,
+    'Authorization': 'Bearer ' + token,
+    'Content-Type':  'application/json',
+    'Prefer':        'return=minimal'
+  };
+  if (extra) Object.keys(extra).forEach(function(k){ h[k] = extra[k]; });
+  return h;
+}
+
 function supaReq(method, path, body) {
   var controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
   var timer = controller ? setTimeout(function() { controller.abort(); }, 15000) : null;
-  var token = AUTH_TOKEN || SUPA_KEY;
   return fetch(SUPA_URL + path, {
-    method: method,
-    headers: {
-      'apikey': SUPA_KEY,
-      'Authorization': 'Bearer ' + token,
-      'Content-Type': 'application/json',
-      'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal'
-    },
-    body: body ? JSON.stringify(body) : undefined,
-    signal: controller ? controller.signal : undefined
+    method:  method,
+    headers: _sh({ 'Prefer': method === 'POST' ? 'return=representation' : 'return=minimal' }),
+    body:    body ? JSON.stringify(body) : undefined,
+    signal:  controller ? controller.signal : undefined
   }).then(function(r) {
     if (timer) clearTimeout(timer);
     if (!r.ok) {
-      return r.json().catch(function() { return {}; }).then(function(e) {
+      // Token verlopen → uitloggen
+      if (r.status === 401) { doLogout(); throw new Error('Sessie verlopen. Log opnieuw in.'); }
+      return r.json().catch(function(){ return {}; }).then(function(e) {
         throw new Error(e.message || 'HTTP ' + r.status);
       });
     }
@@ -3513,28 +3518,31 @@ var currentFase = 'alle';
 var currentMode = 'viewer';
 var currentUser = '';
 
-// ── Auto-restore session on page load ──
-(function() {
-  var saved = sessionStorage.getItem('tpa_user');
-  if (saved) {
-    currentUser = saved;
-    currentMode = sessionStorage.getItem('tpa_mode') || 'viewer';
-    // Skip login screen, start app directly
-    document.addEventListener('DOMContentLoaded', function() {
-      var ls = document.getElementById('loginScreen');
-      var ap = document.getElementById('app');
-      if (ls) ls.style.display = 'none';
-      if (ap) ap.style.display = '';
-      startApp().catch(function() {
-        // If startup fails, clear session and show login
-        sessionStorage.removeItem('tpa_user');
-        sessionStorage.removeItem('tpa_mode');
-        if (ls) ls.style.display = 'flex';
-        if (ap) ap.style.display = 'none';
-      });
+// ── Session herstellen via Supabase auth ──
+document.addEventListener('DOMContentLoaded', async function() {
+  try {
+    var sb = _getSupaAuth();
+
+    // Luister naar token-verversing (automatisch elke ~55 min)
+    sb.auth.onAuthStateChange(function(event, session) {
+      if (session) {
+        AUTH_TOKEN = session.access_token;
+      } else if (event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED' && !session) {
+        AUTH_TOKEN = null;
+      }
     });
-  }
-})();
+
+    // Probeer bestaande sessie te herstellen
+    var result = await sb.auth.getSession();
+    if (result.data && result.data.session) {
+      AUTH_TOKEN = result.data.session.access_token;
+      await _authLoadProfile(result.data.session);
+      return; // Klaar — _authLoadProfile start de app
+    }
+  } catch(e) { /* geen sessie beschikbaar */ }
+  // Geen geldige sessie → toon inlogscherm
+  document.getElementById('loginScreen').style.display = 'flex';
+});
 var sortCol = -1, sortDir = 1;
 var pickerTarget    = null;
 var datePicker_target = null;
@@ -3925,8 +3933,7 @@ async function authSignUp() {
     var uid = res.data.user.id;
     await fetch(SUPA_URL + '/rest/v1/profiles', {
       method: 'POST',
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY,
-                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      headers: _sh(),
       body: JSON.stringify({ id: uid, naam: naam, email: email, rol: 'viewer', goedgekeurd: false })
     });
     authShowState('pending');
@@ -4026,7 +4033,7 @@ async function _authLoadProfile(session) {
   AUTH_TOKEN = session.access_token;
   try {
     var res = await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + session.user.id + '&select=*', {
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
+      headers: _sh()
     });
     var profiles = await res.json();
     if (!profiles || !profiles.length) { authShowState('pending'); return; }
@@ -4087,7 +4094,7 @@ async function loadAdminUsers() {
   container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Laden...</div>';
   try {
     var res = await fetch(SUPA_URL + '/rest/v1/profiles?order=aangemaakt_op.desc&select=*', {
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN }
+      headers: _sh()
     });
     var users = await res.json();
     if (!users.length) { container.innerHTML = '<div style="text-align:center;color:var(--text-3);font-size:12px;padding:2rem">Geen gebruikers gevonden.</div>'; return; }
@@ -4123,8 +4130,7 @@ async function adminGoedkeuren(userId) {
   try {
     await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
       method: 'PATCH',
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
-                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      headers: _sh(),
       body: JSON.stringify({ goedgekeurd: true, goedgekeurd_op: new Date().toISOString(), goedgekeurd_door: currentUser })
     });
     showToast('✓ Gebruiker goedgekeurd', 'success');
@@ -4135,8 +4141,7 @@ async function adminSetRol(userId, rol) {
   try {
     await fetch(SUPA_URL + '/rest/v1/profiles?id=eq.' + userId, {
       method: 'PATCH',
-      headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + AUTH_TOKEN,
-                 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      headers: _sh(),
       body: JSON.stringify({ rol: rol })
     });
     showToast('✓ Rol bijgewerkt', 'success');
@@ -4409,7 +4414,7 @@ function loadOpmerkingen() {
       });
     })
     .catch(function(e) {
-      console.warn('Opmerkingen laden mislukt:', e.message);
+      // Opmerkingen niet beschikbaar
     });
 }
 
@@ -5739,13 +5744,13 @@ var BOR_TOTAL_LENGTHS = {};
 
 function borGet(wid){ return supaGet('/rest/v1/boringen?werkpakket_id=eq.'+wid+'&order=boring_nr.asc&select=*'); }
 function borInsert(obj){
-  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(obj)}).then(function(r){return r.json();});
+  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:_sh({'Prefer':'return=representation'}),body:JSON.stringify(obj)}).then(function(r){return r.json();});
 }
 function borPatch(id,obj){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(obj)}).then(function(r){return r.ok?null:r.json().then(function(e){throw new Error(e.message);});});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:_sh(),body:JSON.stringify(obj)}).then(function(r){return r.ok?null:r.json().then(function(e){throw new Error(e.message);});});
 }
 function borDelete(id){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete mislukt'));});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:_sh()}).then(function(r){return r.ok?null:Promise.reject(new Error('Delete mislukt'));});
 }
 
 function loadBoringCounts(){
