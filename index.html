@@ -1947,6 +1947,14 @@ tbody tr      { animation:fadeIn .12s ease both; }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
 </style>
+  <!-- PWA: Dashboard TPA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0071E3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dashboard TPA">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js");});}</script>
 </head>
 <body>
 

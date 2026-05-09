@@ -544,6 +544,14 @@ tbody tr      { animation:fadeIn .12s ease both; }
 ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
 
 </style>
+  <!-- PWA: Dashboard TPA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#0071E3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Dashboard TPA">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <script>if("serviceWorker"in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("/service-worker.js");});}</script>
 </head>
 <body>
 
