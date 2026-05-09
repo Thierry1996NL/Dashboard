@@ -1971,7 +1971,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
       <p class="login-sub">Log in met je e-mailadres en wachtwoord</p>
       <div class="login-field">
         <label class="login-label">E-mailadres</label>
-        <input class="login-input" type="email" id="authEmail" placeholder="naam@bedrijf.nl" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('authPassword').focus()">
+        <input class="login-input" type="email" id="authEmail" placeholder="E-mailadres" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('authPassword').focus()">
       </div>
       <div class="login-field">
         <label class="login-label">Wachtwoord</label>
@@ -1992,7 +1992,7 @@ tbody tr      { animation:fadeIn .12s ease both; }
       </div>
       <div class="login-field">
         <label class="login-label">E-mailadres</label>
-        <input class="login-input" type="email" id="regEmail" placeholder="naam@bedrijf.nl" autocomplete="email">
+        <input class="login-input" type="email" id="regEmail" placeholder="E-mailadres" autocomplete="email">
       </div>
       <div class="login-field">
         <label class="login-label">Wachtwoord</label>
@@ -3980,13 +3980,12 @@ async function authMfaSetup() {
 
     var qrContainer = document.getElementById('mfaQrContainer');
     var qr = res.data.totp.qr_code;
-    qrContainer.innerHTML = '';
     if (qr) {
-      var img = document.createElement('img');
-      img.src = qr.startsWith('data:') ? qr : ('data:image/svg+xml;utf-8,' + encodeURIComponent(qr));
-      img.style.cssText = 'width:180px;height:180px;display:block;margin:0 auto';
-      img.alt = 'QR code';
-      qrContainer.appendChild(img);
+      if (qr.startsWith('data:')) {
+        qrContainer.innerHTML = '<img src="'+qr+'" style="width:180px;height:180px;display:block;margin:0 auto" alt="QR code">';
+      } else {
+        qrContainer.innerHTML = qr;
+      }
     } else {
       qrContainer.innerHTML = '<p style="font-size:11px;color:#333">Gebruik de handmatige code hieronder.</p>';
     }
