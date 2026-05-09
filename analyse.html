@@ -662,7 +662,7 @@ var FASE_STATUS_COLS = {
 
 function supaGet(path) {
   return fetch(SUPA_URL + path, {
-    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY }
+    headers: { 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + (window.AUTH_TOKEN || SUPA_KEY) }
   }).then(function(r) { return r.json(); });
 }
 

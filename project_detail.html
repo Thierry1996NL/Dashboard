@@ -2250,27 +2250,27 @@ var OT_COLORS = ['#0057FF','#FF3B30','#1A7F3C','#FF9500','#881C58','#6F35CE','#0
 // ── Ontwerp Supabase helpers ──
 function ontLoad() {
   return fetch(SUPA_URL+'/rest/v1/ontwerp_lagen?werkpakket_id=eq.'+ROW_IDX+'&order=created_at.asc&select=*', {
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}
   }).then(function(r){ return r.json(); });
 }
 function ontInsert(o) {
   return fetch(SUPA_URL+'/rest/v1/ontwerp_lagen', {
     method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=representation'},
     body:JSON.stringify(o)
   }).then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error((d&&d.message)||'HTTP '+r.status); return d; }); });
 }
 function ontPatch(id, o) {
   return fetch(SUPA_URL+'/rest/v1/ontwerp_lagen?id=eq.'+id, {
     method:'PATCH',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=minimal'},
     body:JSON.stringify(o)
   }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
 }
 function ontDelete(id) {
   return fetch(SUPA_URL+'/rest/v1/ontwerp_lagen?id=eq.'+id, {
     method:'DELETE',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}
   }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
 }
 
@@ -2479,24 +2479,24 @@ var cpEditId = null;
 
 function cpLoad() {
   return fetch(SUPA_URL+'/rest/v1/contactpersonen?werkpakket_id=eq.'+ROW_IDX+'&order=created_at.asc&select=*', {
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}
   }).then(function(r){ return r.json(); });
 }
 function cpInsert(o) {
   return fetch(SUPA_URL+'/rest/v1/contactpersonen', {
-    method:'POST', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    method:'POST', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=representation'},
     body:JSON.stringify(o)
   }).then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error((d&&d.message)||'HTTP '+r.status); return d; }); });
 }
 function cpPatch(id, o) {
   return fetch(SUPA_URL+'/rest/v1/contactpersonen?id=eq.'+id, {
-    method:'PATCH', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    method:'PATCH', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=minimal'},
     body:JSON.stringify(o)
   }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
 }
 function cpDelete(id) {
   return fetch(SUPA_URL+'/rest/v1/contactpersonen?id=eq.'+id, {
-    method:'DELETE', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}
+    method:'DELETE', headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}
   }).then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); });
 }
 
@@ -2579,7 +2579,7 @@ function saveCp() {
 }
 
 function deleteCp() {
-  if (!cpEditId || !await tpaConfirm('Contactpersoon verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
+  if (!cpEditId || !(await tpaConfirm('Contactpersoon verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'}))) return;
   closeCpModal();
   showSaving(true);
   cpDelete(cpEditId).then(function(){
@@ -2651,7 +2651,7 @@ const supa = {
   async req(method, path, body) {
     const r = await fetch(SUPA_URL + path, {
       method,
-      headers: { 'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':'return=minimal' },
+      headers: { 'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':method==='POST'?'return=representation':'return=minimal' },
       body: body ? JSON.stringify(body) : undefined
     });
     if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message||'HTTP '+r.status); }
@@ -3545,7 +3545,7 @@ function buildDatumOverzicht() {
     { key:'sleufloze',    label:'Sleufloze technieken' }
   ];
 
-  function wekenTot(d) { return d ? Math.ceil((d - today) / (1000*60*60*24*7)) : null; }
+  
   function fmtDate(d)  {
     return String(d.getDate()).padStart(2,'0')+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+d.getFullYear();
   }
@@ -4008,7 +4008,7 @@ async function loadComments() {
     renderComments();
     document.getElementById('commentsSection').style.display = 'block';
   } catch(e) {
-    console.warn('Comments laden mislukt', e);
+    /* log removed */
   }
 }
 
@@ -4074,7 +4074,7 @@ async function postComment() {
 }
 
 async function deleteComment(faseKey) {
-  if (!await tpaConfirm('Opmerking verwijderen?', {type:'danger',title:'Opmerking verwijderen',okTxt:'Verwijderen'})) return;
+  if (!(await tpaConfirm('Opmerking verwijderen?', {type:'danger',title:'Opmerking verwijderen',okTxt:'Verwijderen'}))) return;
   try {
     await supa.req('DELETE', '/rest/v1/opmerkingen?row_idx=eq.'+ROW_IDX+'&fase=eq.'+encodeURIComponent(faseKey));
     await loadComments();
@@ -5224,15 +5224,15 @@ function exportProefsleuvenCsv() {
 
 // ── Supabase helpers ──
 function dkInsert(o) {
-  return fetch(SUPA_URL+'/rest/v1/duikers',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)})
+  return fetch(SUPA_URL+'/rest/v1/duikers',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)})
   .then(function(r){ return r.json().then(function(d){ if(!r.ok) throw new Error((d&&(d.message||d.error))||('HTTP '+r.status)); return d; }); });
 }
 function dkPatch(id,o) {
-  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)})
+  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)})
   .then(function(r){ if(!r.ok) return r.json().catch(function(){return{};}).then(function(d){ throw new Error((d&&(d.message||d.error))||('HTTP '+r.status)); }); });
 }
 function dkDel(id) {
-  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}})
+  return fetch(SUPA_URL+'/rest/v1/duikers?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}})
   .then(function(r){ if(!r.ok) throw new Error('Verwijderen mislukt'); });
 }
 
@@ -5735,7 +5735,7 @@ function saveDkm(){
     if(saved) fillDkmForm(saved); else showDkmForm();
   }).catch(function(err){
     showSaving(false); document.getElementById('btnDkmSave').disabled=false;
-    console.error('Opslaan duiker mislukt:',err);
+    /* log removed */
     showToast('\u2717 Opslaan mislukt: '+(err.message||'Onbekende fout'),'error');
   });
 }
@@ -5745,7 +5745,7 @@ function deleteDkm(){
   if(dkmSelId===null) return;
   var d=DK_DATA.find(function(x){return x.id===dkmSelId;});
   var nr=d?d.duiker_nr:'deze duiker';
-  if(!await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
+  if(!(await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'}))) return;
   showSaving(true);
   dkDel(dkmSelId).then(function(){
     DK_DATA=DK_DATA.filter(function(x){return x.id!==dkmSelId;});
@@ -5858,7 +5858,7 @@ function togglePsWrap() {
 function psInsert(o) {
   return fetch(SUPA_URL+'/rest/v1/proefsleuven', {
     method:'POST',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=representation'},
     body:JSON.stringify(o)
   }).then(function(r) {
     return r.json().then(function(data) {
@@ -5873,7 +5873,7 @@ function psInsert(o) {
 function psPatch(id,o) {
   return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id, {
     method:'PATCH',
-    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},
+    headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=minimal'},
     body:JSON.stringify(o)
   }).then(function(r) {
     if (!r.ok) {
@@ -5884,7 +5884,7 @@ function psPatch(id,o) {
   });
 }
 function psDel(id) {
-  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
+  return fetch(SUPA_URL+'/rest/v1/proefsleuven?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
 }
 
 // ── Open/sluiten ──
@@ -6362,7 +6362,7 @@ function savePsm() {
   }).catch(function(err) {
     showSaving(false);
     document.getElementById('btnPsmSave').disabled = false;
-    console.error('Opslaan proefsleuf mislukt:', err);
+    /* log removed */
     showToast('✗ Opslaan mislukt: ' + (err.message || 'Onbekende fout'), 'error');
   });
 }
@@ -6372,7 +6372,7 @@ function deletePsm() {
   if (psmSelId===null) return;
   var s  = PS_DATA.find(function(x){ return x.id===psmSelId; });
   var nr = s ? s.sleuf_nr : 'deze proefsleuf';
-  if (!await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
+  if (!(await tpaConfirm('Weet je zeker dat je "'+nr+'" wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'}))) return;
   showSaving(true);
   psDel(psmSelId).then(function() {
     PS_DATA = PS_DATA.filter(function(x){ return x.id!==psmSelId; });
@@ -6388,13 +6388,13 @@ function deletePsm() {
 
 // ── Supabase helpers ──
 function borInsert(o){
-  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();});
+  return fetch(SUPA_URL+'/rest/v1/boringen',{method:'POST',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=representation'},body:JSON.stringify(o)}).then(function(r){return r.json();});
 }
 function borPatch(id,o){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw new Error('Opslaan mislukt');});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'PATCH',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY),'Content-Type':'application/json','Prefer':'return=minimal'},body:JSON.stringify(o)}).then(function(r){if(!r.ok)throw new Error('Opslaan mislukt');});
 }
 function borDel(id){
-  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
+  return fetch(SUPA_URL+'/rest/v1/boringen?id=eq.'+id,{method:'DELETE',headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+(window.AUTH_TOKEN || SUPA_KEY)}}).then(function(r){if(!r.ok)throw new Error('Verwijderen mislukt');});
 }
 
 // ── Modal open / sluiten ──
@@ -6592,7 +6592,7 @@ async function deleteBorm() {
   if (borSelId === null) return;
   var b   = BOR_DATA.find(function(x){ return x.id === borSelId; });
   var lbl = b ? '"'+b.boring_nr+'"' : 'deze boring';
-  if (!await tpaConfirm('Weet je zeker dat je '+lbl+' wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'})) return;
+  if (!(await tpaConfirm('Weet je zeker dat je '+lbl+' wilt verwijderen?', {type:'danger',title:'Verwijderen',okTxt:'Verwijderen'}))) return;
   try {
     await borDel(borSelId);
     BOR_DATA = BOR_DATA.filter(function(x){ return x.id !== borSelId; });
