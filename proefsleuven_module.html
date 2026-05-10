@@ -508,7 +508,11 @@ tbody tr      { animation:fadeIn .12s ease both; }
   (function() {
     var SUPA_URL = 'https://yuyogdqobekvsvjgwllf.supabase.co';
     var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl1eW9nZHFvYmVrdnN2amd3bGxmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1MTk5MDgsImV4cCI6MjA5MjA5NTkwOH0.Fyvn5qtlsIopNNHh7ilp27o4BX1nF1JPHChSYvt7S_c';
-    var _sb = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth:{persistSession:true}}) : null;
+    var _sb = null;
+    if (window.supabase) {
+      var _stor = (function(){ try { localStorage.setItem('__t__','1'); localStorage.removeItem('__t__'); return localStorage; } catch(e){ return sessionStorage; } })();
+      _sb = window.supabase.createClient(SUPA_URL, SUPA_KEY, {auth:{persistSession:true,autoRefreshToken:true,storage:_stor}});
+    }
     if (!_sb) return; // Library nog niet geladen, DOMContentLoaded handelt het af
     document.addEventListener('DOMContentLoaded', async function() {
       try {

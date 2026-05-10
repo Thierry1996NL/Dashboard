@@ -3855,8 +3855,24 @@ var _authProfile = null;
 
 function _getSupaAuth() {
   if (!_supaAuth) {
+    /* Edge "Tracking Prevention" kan localStorage blokkeren.
+       Probeer localStorage, val terug op sessionStorage. */
+    var storage = (function() {
+      try {
+        localStorage.setItem('__tpa_test__', '1');
+        localStorage.removeItem('__tpa_test__');
+        return localStorage;
+      } catch(e) {
+        return sessionStorage;
+      }
+    })();
+
     _supaAuth = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
-      auth: { persistSession: true, autoRefreshToken: true }
+      auth: {
+        persistSession:   true,
+        autoRefreshToken: true,
+        storage:          storage
+      }
     });
   }
   return _supaAuth;
