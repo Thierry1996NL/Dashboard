@@ -1991,8 +1991,6 @@ tbody tr      { animation:fadeIn .12s ease both; }
 </style>
   <link rel="icon" type="image/png" href="/icons/icon-192.png">
   <link rel="apple-touch-icon" href="/icons/icon-192.png">
-  <!-- QR code generator -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Supabase JS (auth) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 </head>
@@ -4006,27 +4004,33 @@ async function authMfaSetup() {
     if (res.error) throw res.error;
     _mfaFactorId = res.data.id;
 
-    // QR code: genereer via canvas-library in tijdelijke div
-    // qrcodejs maakt ook een <img> — we pakken alleen de <canvas>
+    // QR code: gebruik de data-URI direct van Supabase via createElement
+    // (geen CDN nodig, werkt ook als tracking prevention aan staat)
     var qrContainer = document.getElementById('mfaQrContainer');
     qrContainer.innerHTML = '';
-    var uri = res.data.totp.uri;
-    if (uri && typeof QRCode !== 'undefined') {
-      var tmp = document.createElement('div');
-      document.body.appendChild(tmp);
-      new QRCode(tmp, {
-        text: uri, width: 180, height: 180,
-        colorDark: '#000000', colorLight: '#ffffff',
-        correctLevel: QRCode.CorrectLevel.M
-      });
-      var canvas = tmp.querySelector('canvas');
-      if (canvas) {
-        canvas.style.cssText = 'display:block;margin:0 auto;border-radius:6px';
-        qrContainer.appendChild(canvas);
-      }
-      document.body.removeChild(tmp);
+    var qrDataUri = res.data.totp.qr_code;
+    var qrUri     = res.data.totp.uri;
+
+    if (qrDataUri) {
+      // Methode 1: data-URI als img src via createElement (geen innerHTML escaping)
+      var img = document.createElement('img');
+      img.style.cssText = 'width:180px;height:180px;display:block;margin:0 auto;border-radius:6px;image-rendering:pixelated';
+      img.alt = 'QR code — scan met Microsoft Authenticator';
+      img.src = qrDataUri;
+      img.onerror = function() {
+        // Fallback als data-URI niet laadt
+        qrContainer.innerHTML = '<p style="font-size:12px;color:#555;text-align:center;padding:.5rem">QR-code kon niet worden weergegeven.<br>Gebruik de handmatige code hieronder.</p>';
+      };
+      qrContainer.appendChild(img);
+    } else if (qrUri) {
+      // Methode 2: Google Charts API als data-URI laadt niet
+      var gcImg = document.createElement('img');
+      gcImg.style.cssText = 'width:180px;height:180px;display:block;margin:0 auto;border-radius:6px';
+      gcImg.alt = 'QR code';
+      gcImg.src = 'https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=' + encodeURIComponent(qrUri);
+      qrContainer.appendChild(gcImg);
     } else {
-      qrContainer.innerHTML = '<p style="font-size:12px;color:#444;text-align:center;padding:.5rem">Gebruik de handmatige code hieronder in Microsoft Authenticator.</p>';
+      qrContainer.innerHTML = '<p style="font-size:12px;color:#555;text-align:center;padding:.5rem">Gebruik de handmatige code hieronder om toe te voegen aan Microsoft Authenticator.</p>';
     }
 
     document.getElementById('mfaSecret').textContent = res.data.totp.secret;
