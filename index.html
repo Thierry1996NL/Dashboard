@@ -2012,13 +2012,13 @@ tbody tr      { animation:fadeIn .12s ease both; }
       <p class="login-sub">Log in met je e-mailadres en wachtwoord</p>
       <div class="login-field">
         <label class="login-label">E-mailadres</label>
-        <input class="login-input" type="email" id="authEmail" placeholder="E-mailadres" autocomplete="email" onkeydown="if(event.key==='Enter')document.getElementById('authPassword').focus()">
+        <input class="login-input" type="email" id="authEmail" placeholder="E-mailadres" autocomplete="off" onkeydown="if(event.key==='Enter')document.getElementById('authPassword').focus()">
       </div>
       <div class="login-field">
         <label class="login-label">Wachtwoord</label>
-        <input class="login-input" type="password" id="authPassword" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')authSignIn()">
+        <input class="login-input" type="password" id="authPassword" placeholder="••••••••" autocomplete="off" onkeydown="if(event.key==='Enter')authSignIn()">
       </div>
-      <button class="login-btn" id="authSignInBtn" onclick="authSignIn()">Inloggen →</button>
+      <button class="login-btn" type="button" id="authSignInBtn" onclick="authSignIn()">Inloggen →</button>
       <div class="login-error" id="authError"></div>
       <p class="auth-switch">Nog geen account? <a href="#" onclick="authShowState('register');return false;">Registreren</a></p>
     </div>
@@ -4038,8 +4038,11 @@ async function authMfaVerify() {
       document.getElementById('mfaVerifyCode').value = '';
       document.getElementById('mfaVerifyCode').focus();
       var errMsg = vr.error.message || JSON.stringify(vr.error);
-      var msg = 'Fout: ' + errMsg;
-      if (_mfaFailCount >= 2) msg += ' — Klik op "MFA opnieuw instellen" om opnieuw te beginnen.';
+      /* Toon tijdinfo voor debugging */
+      var now = new Date();
+      var secs = now.getSeconds() % 30;
+      var msg = 'Fout (' + errMsg + '). Jouw systeemtijd: ' + now.toTimeString().slice(0,8) + ' — code vernieuwd over ' + (30 - secs) + 's.';
+      if (_mfaFailCount >= 2) msg += ' Probeer de code IN TE VOEREN zodra hij net ververst is (begint bij 29s).';
       _authShowError('mfaVerifyError', msg);
       return;
     }
@@ -6354,6 +6357,18 @@ document.addEventListener('DOMContentLoaded', async function() {
   if (ls) ls.style.display = 'flex';
   authShowState('login');
 });
+
+// Noodvalide: als de pagina na 3 seconden nog volledig leeg is, toon loginscherm
+setTimeout(function() {
+  var ls = document.getElementById('loginScreen');
+  var ap = document.getElementById('app');
+  var lsHidden = !ls || ls.style.display === 'none';
+  var apHidden = !ap || ap.style.display === 'none' || ap.style.display === '';
+  if (lsHidden && apHidden) {
+    if (ls) ls.style.display = 'flex';
+    authShowState('login');
+  }
+}, 3000);
 
 // ── Sidebar init ──
 document.addEventListener('DOMContentLoaded', function() {
