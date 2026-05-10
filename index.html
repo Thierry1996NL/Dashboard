@@ -1989,6 +1989,8 @@ tbody tr      { animation:fadeIn .12s ease both; }
   .col-mgr-btn:hover { background:var(--surface3); color:var(--text); border-color:var(--border-strong); }
 
 </style>
+  <link rel="icon" type="image/png" href="/icons/icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
   <!-- QR code generator -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
   <!-- Supabase JS (auth) -->
@@ -3855,24 +3857,31 @@ var _authProfile = null;
 
 function _getSupaAuth() {
   if (!_supaAuth) {
-    /* Edge "Tracking Prevention" kan localStorage blokkeren.
-       Probeer localStorage, val terug op sessionStorage. */
-    var storage = (function() {
-      try {
-        localStorage.setItem('__tpa_test__', '1');
-        localStorage.removeItem('__tpa_test__');
-        return localStorage;
-      } catch(e) {
-        return sessionStorage;
-      }
-    })();
+    /* In-memory storage — werkt altijd, ook als localStorage/sessionStorage
+       geblokkeerd worden door Edge Tracking Prevention.
+       Nadeel: sessie verdwijnt bij pagina-sluiten, gebruiker logt opnieuw in. */
+    var _mem = {};
+    var memStorage = {
+      getItem:    function(k) { return _mem.hasOwnProperty(k) ? _mem[k] : null; },
+      setItem:    function(k, v) { _mem[k] = String(v); },
+      removeItem: function(k) { delete _mem[k]; },
+      clear:      function() { _mem = {}; },
+      key:        function(i) { return Object.keys(_mem)[i] || null; },
+      get length(){ return Object.keys(_mem).length; }
+    };
+
+    /* Probeer toch localStorage voor sessiepersistentie */
+    var storage = memStorage;
+    try {
+      localStorage.setItem('__tpa__', '1');
+      localStorage.removeItem('__tpa__');
+      storage = localStorage;
+    } catch(e) {
+      try { sessionStorage.setItem('__tpa__', '1'); sessionStorage.removeItem('__tpa__'); storage = sessionStorage; } catch(e2) { /* gebruik in-memory */ }
+    }
 
     _supaAuth = window.supabase.createClient(SUPA_URL, SUPA_KEY, {
-      auth: {
-        persistSession:   true,
-        autoRefreshToken: true,
-        storage:          storage
-      }
+      auth: { persistSession: true, autoRefreshToken: true, storage: storage }
     });
   }
   return _supaAuth;
