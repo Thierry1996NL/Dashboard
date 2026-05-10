@@ -4037,8 +4037,9 @@ async function authMfaVerify() {
       _mfaFailCount++;
       document.getElementById('mfaVerifyCode').value = '';
       document.getElementById('mfaVerifyCode').focus();
-      var msg = 'Code onjuist of verlopen — wacht op een nieuwe code en probeer direct.';
-      if (_mfaFailCount >= 2) msg += ' Klik op "MFA opnieuw instellen" als het blijft mislukken.';
+      var errMsg = vr.error.message || JSON.stringify(vr.error);
+      var msg = 'Fout: ' + errMsg;
+      if (_mfaFailCount >= 2) msg += ' — Klik op "MFA opnieuw instellen" om opnieuw te beginnen.';
       _authShowError('mfaVerifyError', msg);
       return;
     }
@@ -4131,7 +4132,8 @@ async function authMfaSetupVerify() {
     if (vr.error) {
       document.getElementById('mfaSetupCode').value = '';
       document.getElementById('mfaSetupCode').focus();
-      _authShowError('mfaSetupError', 'Code onjuist. Wacht tot de code in de app vernieuwd is en probeer opnieuw.');
+      var errMsg = vr.error.message || JSON.stringify(vr.error);
+      _authShowError('mfaSetupError', 'Fout: ' + errMsg + ' — wacht tot de code vernieuwd is en probeer opnieuw.');
       return;
     }
 
