@@ -6,7 +6,7 @@
    - Overige assets → Cache first   (snel laden)
 ══════════════════════════════════════ */
 
-const CACHE = 'tpa-v1';
+const CACHE = 'tpa-v2';
 
 const SHELL = [
   '/index.html',
