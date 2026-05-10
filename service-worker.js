@@ -1,12 +1,10 @@
 /* ══════════════════════════════════════
-   Dashboard TPA — Service Worker v1
-   Strategie:
-   - HTML pagina's  → Network first (altijd verse versie)
-   - Supabase API   → Network only  (live data)
-   - Overige assets → Cache first   (snel laden)
+   Dashboard TPA — Service Worker v3
+   Simpel en robuust: netwerk-eerst,
+   geen clone-fouten meer
 ══════════════════════════════════════ */
 
-const CACHE = 'tpa-v2';
+const CACHE = 'tpa-v3';
 
 const SHELL = [
   '/index.html',
@@ -22,7 +20,7 @@ const SHELL = [
   '/icons/icon-512.png'
 ];
 
-/* ── Install ── */
+/* ── Install: cache shell ── */
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE)
@@ -31,7 +29,7 @@ self.addEventListener('install', e => {
   );
 });
 
-/* ── Activate: oude caches opruimen ── */
+/* ── Activate: verwijder ALLE oude caches ── */
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys()
@@ -42,38 +40,49 @@ self.addEventListener('activate', e => {
   );
 });
 
-/* ── Fetch ── */
+/* ── Fetch: netwerk-eerst, correcte clone ── */
 self.addEventListener('fetch', e => {
   const url = e.request.url;
 
-  /* Supabase → altijd netwerk */
-  if (url.includes('supabase.co')) {
-    e.respondWith(fetch(e.request));
-    return;
+  /* Supabase + externe CDNs → altijd netwerk, nooit cachen */
+  if (url.includes('supabase.co') ||
+      url.includes('cdn.jsdelivr.net') ||
+      url.includes('cdnjs.cloudflare.com')) {
+    return; /* Browser handelt zelf af */
   }
 
-  /* Navigatie (HTML) → netwerk eerst, cache als fallback */
+  /* Navigatie (HTML pagina's) → netwerk eerst */
   if (e.request.mode === 'navigate') {
     e.respondWith(
       fetch(e.request)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE).then(c => c.put(e.request, clone));
-          return res;
+        .then(networkRes => {
+          /* Clone VÓÓR het returnen om body-al-gebruikt fout te voorkomen */
+          if (networkRes && networkRes.status === 200) {
+            const toCache = networkRes.clone();
+            caches.open(CACHE).then(c => c.put(e.request, toCache));
+          }
+          return networkRes;
         })
-        .catch(() => caches.match(e.request))
+        .catch(() => caches.match(e.request)
+          .then(cached => cached || Response.error())
+        )
     );
     return;
   }
 
-  /* Overig → cache eerst, dan netwerk */
+  /* Statische assets (png, json, js) → cache eerst, netwerk als fallback */
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(e.request).then(res => {
-        if (!res || res.status !== 200 || res.type === 'opaque') return res;
-        caches.open(CACHE).then(c => c.put(e.request, res.clone()));
-        return res;
+
+      return fetch(e.request).then(networkRes => {
+        if (!networkRes || networkRes.status !== 200 || networkRes.type === 'opaque') {
+          return networkRes;
+        }
+        /* Clone VÓÓR alle operaties */
+        const toCache = networkRes.clone();
+        caches.open(CACHE).then(c => c.put(e.request, toCache));
+        return networkRes;
       });
     })
   );
