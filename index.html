@@ -2043,53 +2043,6 @@ tbody tr      { animation:fadeIn .12s ease both; }
       <div class="login-error" id="regError"></div>
       <p class="auth-switch">Al een account? <a href="#" onclick="authShowState('login');return false;">Inloggen</a></p>
     </div>
-
-    <!-- ── STATE: MFA instellen (eerste keer) ── -->
-    <!-- ── STATE: MFA instellen ── -->
-    <div id="authStateMfaSetup" style="display:none">
-      <h1 class="login-title">Authenticatie instellen</h1>
-      <p class="login-sub">Scan de QR-code met <strong style="color:rgba(255,255,255,.7)">Microsoft Authenticator</strong></p>
-      <div id="mfaQrContainer" style="text-align:center;margin:.75rem 0;background:#fff;border-radius:10px;padding:14px;width:100%;box-sizing:border-box;min-height:60px"></div>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:.25rem 0 .5rem">
-        <svg width="20" height="20" viewBox="0 0 20 20" style="transform:rotate(-90deg)">
-          <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2.5"/>
-          <circle id="mfaSetupRing" cx="10" cy="10" r="8" fill="none" stroke="#0071E3" stroke-width="2.5" stroke-dasharray="50.3" stroke-dashoffset="0" stroke-linecap="round" style="transition:stroke-dashoffset 1s linear"/>
-        </svg>
-        <span style="font-size:11px;color:rgba(255,255,255,.4)">Vernieuwd over <span id="mfaSetupCountdown" style="color:rgba(255,255,255,.65);font-weight:600">30</span>s</span>
-      </div>
-      <p style="font-size:10px;color:rgba(255,255,255,.3);text-align:center;margin:0 0 .75rem">Of handmatig: <span id="mfaSecret" style="color:rgba(255,255,255,.55);font-family:monospace;letter-spacing:.05em;user-select:all;cursor:pointer" title="Klik om te kopiëren" onclick="navigator.clipboard&&navigator.clipboard.writeText(this.textContent)"></span></p>
-      <div class="login-field">
-        <label class="login-label">Voer de 6-cijferige code in uit de app</label>
-        <input class="login-input" type="text" id="mfaSetupCode" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')authMfaSetupVerify()">
-      </div>
-      <button class="login-btn" id="mfaSetupBtn" onclick="authMfaSetupVerify()">Verifiëren en verder →</button>
-      <div class="login-error" id="mfaSetupError"></div>
-    </div>
-
-    <!-- ── STATE: MFA verificatie bij login ── -->
-    <div id="authStateMfaVerify" style="display:none">
-      <h1 class="login-title">Verificatie</h1>
-      <p class="login-sub">Open <strong style="color:rgba(255,255,255,.7)">Microsoft Authenticator</strong> en voer de code in</p>
-      <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin:.5rem 0 1rem">
-        <svg width="20" height="20" viewBox="0 0 20 20" style="transform:rotate(-90deg)">
-          <circle cx="10" cy="10" r="8" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2.5"/>
-          <circle id="mfaVerifyRing" cx="10" cy="10" r="8" fill="none" stroke="#0071E3" stroke-width="2.5" stroke-dasharray="50.3" stroke-dashoffset="0" stroke-linecap="round" style="transition:stroke-dashoffset 1s linear"/>
-        </svg>
-        <span style="font-size:11px;color:rgba(255,255,255,.4)">Vernieuwd over <span id="mfaVerifyCountdown" style="color:rgba(255,255,255,.65);font-weight:600">30</span>s</span>
-      </div>
-      <div class="login-field">
-        <label class="login-label">Verificatiecode (6 cijfers)</label>
-        <input class="login-input" type="text" id="mfaVerifyCode" placeholder="000000" maxlength="6" inputmode="numeric" autocomplete="one-time-code" oninput="this.value=this.value.replace(/\D/g,'')" onkeydown="if(event.key==='Enter')authMfaVerify()">
-      </div>
-      <button class="login-btn" id="mfaVerifyBtn" onclick="authMfaVerify()">Verifiëren →</button>
-      <div class="login-error" id="mfaVerifyError"></div>
-      <p class="auth-switch" style="margin-top:.75rem">
-        <a href="#" onclick="authSignOut();authShowState('login');return false;">← Inloggen</a>
-        &nbsp;·&nbsp;
-        <a href="#" onclick="authMfaSelfReset();return false;">MFA opnieuw instellen</a>
-      </p>
-    </div>
-
     <!-- ── STATE: wachten op goedkeuring ── -->
     <div id="authStatePending" style="display:none">
       <div style="text-align:center;padding:1rem 0">
@@ -3868,8 +3821,6 @@ function setRole(role) {
 // SUPABASE AUTH + MFA
 // ══════════════════════════════════════════
 var _supaAuth = null;   // Supabase JS client (alleen voor auth)
-var _mfaFactorId = null;
-var _mfaChallengeId = null;
 var _authProfile = null;
 
 function _getSupaAuth() {
@@ -3905,11 +3856,11 @@ function _getSupaAuth() {
 }
 
 function authShowState(state) {
-  ['authStateLogin','authStateRegister','authStateMfaSetup','authStateMfaVerify','authStatePending']
+  ['authStateLogin','authStateRegister','authStatePending']
     .forEach(function(id){ document.getElementById(id).style.display = 'none'; });
   document.getElementById('authState' + state.charAt(0).toUpperCase() + state.slice(1)).style.display = '';
   // Reset errors
-  ['authError','regError','mfaSetupError','mfaVerifyError'].forEach(function(id){
+  ['authError','regError'].forEach(function(id){
     var el = document.getElementById(id); if(el){ el.style.display='none'; el.textContent=''; }
   });
 }
@@ -3926,7 +3877,7 @@ function _authSetBtnLoading(btnId, loading, label) {
   if (!loading && label) btn.dataset.label = label;
 }
 
-/* ── Inloggen ── */
+/* ── Inloggen (zonder MFA) ── */
 async function authSignIn() {
   var email = (document.getElementById('authEmail').value||'').trim();
   var pass  = (document.getElementById('authPassword').value||'').trim();
@@ -3937,20 +3888,7 @@ async function authSignIn() {
     var res = await sb.auth.signInWithPassword({ email: email, password: pass });
     if (res.error) throw res.error;
     AUTH_TOKEN = res.data.session.access_token;
-    // Controleer MFA
-    var factors = await sb.auth.mfa.listFactors();
-    var totpFactors = (factors.data && factors.data.totp) ? factors.data.totp : [];
-    if (totpFactors.length > 0) {
-      /* MFA ingesteld → toon verificatiescherm met countdown */
-      _mfaFactorId = totpFactors[0].id;
-      _mfaFailCount = 0;
-      authShowState('mfaVerify');
-      _startMfaTimer('mfaVerifyRing', 'mfaVerifyCountdown');
-      setTimeout(function(){ document.getElementById('mfaVerifyCode').focus(); }, 80);
-    } else {
-      // Geen MFA → controleer profiel
-      await _authLoadProfile(res.data.session);
-    }
+    await _authLoadProfile(res.data.session);
   } catch(e) {
     _authShowError('authError', _authFriendlyError(e.message));
   } finally { _authSetBtnLoading('authSignInBtn', false, 'Inloggen →'); }
@@ -3983,192 +3921,6 @@ async function authSignUp() {
   } finally { _authSetBtnLoading('authSignUpBtn', false, 'Account aanmaken →'); }
 }
 
-/* ══════════════════════════════════════════
-   MFA — VOLLEDIG HERSCHREVEN
-   - Countdown timer
-   - Geen challengeAndVerify (buggy) → challenge + verify apart
-   - Auto-retry bij timing fouten
-   - Robuuste factor cleanup
-══════════════════════════════════════════ */
-
-var _mfaTimer       = null;   // interval voor countdown
-var _mfaFailCount   = 0;
-
-/* Countdown timer die toont hoeveel seconden tot de volgende code */
-function _startMfaTimer(ringId, countdownId) {
-  _stopMfaTimer();
-  function tick() {
-    var now  = Math.floor(Date.now() / 1000);
-    var secs = 30 - (now % 30);
-    var el   = document.getElementById(countdownId);
-    var ring = document.getElementById(ringId);
-    if (el)   el.textContent = secs;
-    if (ring) ring.style.strokeDashoffset = String(50.3 * (1 - secs / 30));
-  }
-  tick();
-  _mfaTimer = setInterval(tick, 1000);
-}
-function _stopMfaTimer() {
-  if (_mfaTimer) { clearInterval(_mfaTimer); _mfaTimer = null; }
-}
-
-/* ── MFA verifiëren bij inloggen ── */
-async function authMfaVerify() {
-  var code = (document.getElementById('mfaVerifyCode').value||'').replace(/\D/g,'');
-  if (code.length !== 6) { _authShowError('mfaVerifyError','Voer een 6-cijferige code in.'); return; }
-
-  var btn = document.getElementById('mfaVerifyBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Verifiëren...'; }
-
-  try {
-    var sb = _getSupaAuth();
-
-    /* Maak een verse challenge aan voor elke verificatiepoging */
-    var factors = await sb.auth.mfa.listFactors();
-    var totp    = (factors.data && factors.data.totp) ? factors.data.totp : [];
-    if (!totp.length) { _authShowError('mfaVerifyError','Geen MFA factor gevonden. Log opnieuw in.'); return; }
-
-    _mfaFactorId = totp[0].id;
-    var ch = await sb.auth.mfa.challenge({ factorId: _mfaFactorId });
-    if (ch.error) throw ch.error;
-
-    var vr = await sb.auth.mfa.verify({ factorId: _mfaFactorId, challengeId: ch.data.id, code: code });
-    if (vr.error) {
-      _mfaFailCount++;
-      document.getElementById('mfaVerifyCode').value = '';
-      document.getElementById('mfaVerifyCode').focus();
-      var errMsg = vr.error.message || JSON.stringify(vr.error);
-      /* Toon tijdinfo voor debugging */
-      var now = new Date();
-      var secs = now.getSeconds() % 30;
-      var msg = 'Fout (' + errMsg + '). Jouw systeemtijd: ' + now.toTimeString().slice(0,8) + ' — code vernieuwd over ' + (30 - secs) + 's.';
-      if (_mfaFailCount >= 2) msg += ' Probeer de code IN TE VOEREN zodra hij net ververst is (begint bij 29s).';
-      _authShowError('mfaVerifyError', msg);
-      return;
-    }
-
-    _mfaFailCount = 0;
-    _stopMfaTimer();
-    AUTH_TOKEN = vr.data.session.access_token;
-    await _authLoadProfile(vr.data.session);
-  } catch(e) {
-    _mfaFailCount++;
-    document.getElementById('mfaVerifyCode').value = '';
-    document.getElementById('mfaVerifyCode').focus();
-    _authShowError('mfaVerifyError', 'Fout: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Verifiëren →'; }
-  }
-}
-
-/* ── MFA instellen (eerste keer) ── */
-async function authMfaSetup() {
-  var btn = document.getElementById('mfaSetupBtn');
-  try {
-    var sb = _getSupaAuth();
-
-    /* Verwijder ALLE bestaande factors — ook verified — om conflicten te voorkomen */
-    var existing = await sb.auth.mfa.listFactors();
-    var all = (existing.data && existing.data.all) ? existing.data.all : [];
-    for (var i = 0; i < all.length; i++) {
-      await sb.auth.mfa.unenroll({ factorId: all[i].id });
-    }
-
-    var enroll = await sb.auth.mfa.enroll({ factorType: 'totp', issuer: 'Dashboard TPA' });
-    if (enroll.error) throw enroll.error;
-    _mfaFactorId = enroll.data.id;
-
-    /* QR code weergeven — data-URI direct als img.src */
-    var qrContainer = document.getElementById('mfaQrContainer');
-    qrContainer.innerHTML = '';
-    var qrDataUri = enroll.data.totp.qr_code;
-    var qrUri     = enroll.data.totp.uri;
-    var secret    = enroll.data.totp.secret;
-
-    if (qrDataUri) {
-      var img = document.createElement('img');
-      img.style.cssText = 'width:180px;height:180px;display:block;margin:0 auto;border-radius:6px';
-      img.alt = 'QR code';
-      img.src = qrDataUri;
-      img.onerror = function() {
-        /* Fallback: Google Charts als data-URI blokkeert */
-        if (qrUri) {
-          img.src = 'https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=' + encodeURIComponent(qrUri);
-          img.onerror = function() {
-            qrContainer.innerHTML = '<p style="font-size:12px;color:#555;text-align:center;padding:.5rem">Gebruik de handmatige code hieronder.</p>';
-          };
-        }
-      };
-      qrContainer.appendChild(img);
-    } else if (qrUri) {
-      var gcImg = document.createElement('img');
-      gcImg.style.cssText = 'width:180px;height:180px;display:block;margin:0 auto;border-radius:6px';
-      gcImg.src = 'https://chart.googleapis.com/chart?chs=180x180&cht=qr&chl=' + encodeURIComponent(qrUri);
-      qrContainer.appendChild(gcImg);
-    }
-
-    document.getElementById('mfaSecret').textContent = secret;
-    authShowState('mfaSetup');
-    _startMfaTimer('mfaSetupRing', 'mfaSetupCountdown');
-    setTimeout(function(){ document.getElementById('mfaSetupCode').focus(); }, 80);
-  } catch(e) {
-    showToast('MFA setup fout: ' + e.message, 'error');
-  }
-}
-
-/* ── Setup verificatie (aparte challenge + verify, niet challengeAndVerify) ── */
-async function authMfaSetupVerify() {
-  var code = (document.getElementById('mfaSetupCode').value||'').replace(/\D/g,'');
-  if (code.length !== 6) { _authShowError('mfaSetupError','Voer een 6-cijferige code in.'); return; }
-
-  var btn = document.getElementById('mfaSetupBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Verifiëren...'; }
-
-  try {
-    var sb = _getSupaAuth();
-
-    /* Gebruik challenge + verify apart (betrouwbaarder dan challengeAndVerify) */
-    var ch = await sb.auth.mfa.challenge({ factorId: _mfaFactorId });
-    if (ch.error) throw ch.error;
-
-    var vr = await sb.auth.mfa.verify({ factorId: _mfaFactorId, challengeId: ch.data.id, code: code });
-    if (vr.error) {
-      document.getElementById('mfaSetupCode').value = '';
-      document.getElementById('mfaSetupCode').focus();
-      var errMsg = vr.error.message || JSON.stringify(vr.error);
-      _authShowError('mfaSetupError', 'Fout: ' + errMsg + ' — wacht tot de code vernieuwd is en probeer opnieuw.');
-      return;
-    }
-
-    _stopMfaTimer();
-    AUTH_TOKEN = vr.data.session.access_token;
-    await _authLoadProfile(vr.data.session);
-  } catch(e) {
-    document.getElementById('mfaSetupCode').value = '';
-    document.getElementById('mfaSetupCode').focus();
-    _authShowError('mfaSetupError', 'Fout bij verifiëren: ' + e.message);
-  } finally {
-    if (btn) { btn.disabled = false; btn.textContent = 'Verifiëren en verder →'; }
-  }
-}
-
-/* ── MFA zelf resetten vanuit verificatiescherm ── */
-async function authMfaSelfReset() {
-  if (!confirm('MFA opnieuw instellen? Je scant daarna een nieuwe QR-code.')) return;
-  try {
-    var sb = _getSupaAuth();
-    var factors = await sb.auth.mfa.listFactors();
-    var all = (factors.data && factors.data.all) ? factors.data.all : [];
-    for (var i = 0; i < all.length; i++) {
-      await sb.auth.mfa.unenroll({ factorId: all[i].id });
-    }
-    _mfaFailCount = 0;
-    await authMfaSetup();
-  } catch(e) {
-    _authShowError('mfaVerifyError', 'Reset fout: ' + e.message);
-  }
-}
-
 /* ── Profiel laden na succesvolle auth ── */
 async function _authLoadProfile(session) {
   if (!session) { authShowState('login'); return; }
@@ -4181,11 +3933,6 @@ async function _authLoadProfile(session) {
     if (!profiles || !profiles.length) { authShowState('pending'); return; }
     _authProfile = profiles[0];
     if (!_authProfile.goedgekeurd) { authShowState('pending'); return; }
-    // Check MFA — als nog niet ingesteld, verplicht instellen
-    var sb = _getSupaAuth();
-    var factors = await sb.auth.mfa.listFactors();
-    var hasMfa = factors.data && factors.data.totp && factors.data.totp.length > 0;
-    if (!hasMfa) { await authMfaSetup(); return; }
     // Alles OK → app starten
     currentUser = _authProfile.naam;
     currentMode = _authProfile.rol === 'editor' || _authProfile.rol === 'admin' ? 'editor' : 'viewer';
