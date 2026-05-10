@@ -4084,6 +4084,46 @@ function doLogout() {
 }
 
 // ══ APP START ══
+function applyModeUI() {
+  var isEditor = currentMode === 'editor';
+
+  /* Mode-switch knop */
+  var sw = document.getElementById('modeSwitch');
+  if (sw) sw.className = 'mode-switch ' + (isEditor ? 'is-editor' : 'is-viewer');
+
+  /* Slider positie */
+  var slider = document.getElementById('modeSlider');
+  var active = document.getElementById(isEditor ? 'msEditor' : 'msViewer');
+  if (slider && active) {
+    slider.style.left   = active.offsetLeft + 'px';
+    slider.style.width  = active.offsetWidth + 'px';
+  }
+
+  /* Editor-only elementen tonen/verbergen */
+  var tableCard = document.getElementById('tableCard');
+  if (tableCard) {
+    tableCard.classList.toggle('mode-editor', isEditor);
+    tableCard.classList.toggle('mode-viewer', !isEditor);
+  }
+  document.querySelectorAll('.editor-only').forEach(function(el) {
+    el.style.display = isEditor ? '' : 'none';
+  });
+
+  /* Bewerkermodus banner */
+  var banner = document.getElementById('archiefBanner');
+  // banner is controlled by archiefModus, not by editor mode
+
+  /* Modus-banner bovenaan tabel */
+  var modeBanner = document.getElementById('modeBanner');
+  if (modeBanner) modeBanner.style.display = isEditor ? 'flex' : 'none';
+
+  /* Archief-knop zichtbaarheid */
+  var btnArchief = document.getElementById('btnArchief');
+  if (btnArchief) {
+    btnArchief.classList.toggle('active', typeof archiefModus !== 'undefined' && archiefModus);
+  }
+}
+
 function startApp() {
   document.getElementById('loginScreen').style.display = 'none';
   var appEl = document.getElementById('app');
