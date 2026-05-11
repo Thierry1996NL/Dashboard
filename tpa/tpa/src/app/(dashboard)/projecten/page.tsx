@@ -289,7 +289,7 @@ export default function ProjectenPage() {
                   const overallStatus = getProjectStatus(cd);
 
                   return (
-                    <tr key={p.row_idx}>
+                    <tr key={p.row_idx} style={{ cursor: 'pointer' }} onClick={() => router.push(`/project/${p.row_idx}`)}>
                       {visibleCols.map(col => {
                         const val = cd[String(col.i)] ?? '';
                         const isStatus = isStatusCol(col.i);
@@ -298,7 +298,7 @@ export default function ProjectenPage() {
                           <td
                             key={col.i}
                             className={isStatus && mode === 'editor' ? 'editable' : ''}
-                            onClick={isStatus ? (e) => openPicker(e, p.row_idx, col.i) : undefined}
+                            onClick={isStatus ? (e) => { e.stopPropagation(); openPicker(e, p.row_idx, col.i); } : undefined}
                           >
                             {isStatus ? (
                               <StatusBadge status={val as StatusValue} />
@@ -327,7 +327,7 @@ export default function ProjectenPage() {
                       )}
 
                       {/* Actions */}
-                      <td>
+                      <td onClick={e => e.stopPropagation()}>
                         <div style={{ display: 'flex', gap: 4 }}>
                           <button
                             className="btn"
